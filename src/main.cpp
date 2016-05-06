@@ -1,18 +1,16 @@
+#include "traveling_will_game.h"
+
 #include <iostream>
-#include "../inc/game.h"
+#include <ijengine/game.h>
+#include <ijengine/exception.h>
+#include <ijengine/engine.h>
+#include <ijengine/events_translator.h>
+
+using namespace ijengine;
+using namespace std;
 
 int main(){
-	Game game;
+  TravelingWillGame game("Traveling Will", 640, 480);
 
-	game.init();
-
-	while(!game.is_done()){
-		game.get_input();
-		game.update();
-		game.draw();
-	}
-
-	game.quit();
-
-	return 0;
+  return game.run("1");
 }
