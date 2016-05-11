@@ -12,12 +12,12 @@ using namespace std;
 int main(){
 
     try {
-  TravelingWillGame game("Traveling Will", 854, 480);
-game.run("1");
-    } catch (Exception ex)
-    {
+        TravelingWillGame game("Traveling Will", 854, 480);
+        game.run("1");
+    }
+    catch (Exception ex){
         cout << ex.what() << endl;
     }
 
-  return 0;
+    return 0;
 }

@@ -9,8 +9,8 @@ using namespace ijengine;
 
 class TravelingWillLevelFactory : public LevelFactory {
 public:
-  TravelingWillLevel * make_level(const string& level_id);
-  void release(Level *level);
+    TravelingWillLevel * make_level(const string& level_id);
+    void release(Level *level);
 };
 
 #endif
