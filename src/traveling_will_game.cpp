@@ -1,5 +1,6 @@
 #include "traveling_will_game.h"
 
+#include <ijengine/engine.h>
 #include <ijengine/system_event.h>
 
 TravelingWillGame::TravelingWillGame(const string& title, int w, int h)
@@ -7,6 +8,7 @@ TravelingWillGame::TravelingWillGame(const string& title, int w, int h)
   m_translator.add_translation(SystemEvent(0, SystemEvent::QUIT), GameEvent(GAME_EVENT_QUIT));
   event::register_translator(&m_translator);
   level::register_factory(&m_level_factory);
+  resources::set_textures_dir("res");
 }
 
 TravelingWillGame::~TravelingWillGame(){

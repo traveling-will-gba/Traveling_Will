@@ -10,7 +10,14 @@ using namespace ijengine;
 using namespace std;
 
 int main(){
-  TravelingWillGame game("Traveling Will", 640, 480);
 
-  return game.run("1");
+    try {
+  TravelingWillGame game("Traveling Will", 854, 480);
+game.run("1");
+    } catch (Exception ex)
+    {
+        cout << ex.what() << endl;
+    }
+
+  return 0;
 }
