@@ -4,20 +4,33 @@
 #include <ijengine/engine.h>
 #include <ijengine/keyboard_event.h>
 
+#include <unistd.h>
+
 using namespace std;
 using namespace ijengine;
 
 static const int GAME_EVENT_JUMP = 16;
 
-TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string& next_level)
+TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_start(-1),
-    m_camera_x(0), m_camera_y(800),
-    m_x_speed(4000 / 19000.0), m_y_speed(0), m_state(RUNNING),
-    m_texture(resources::get_texture("test.jpg")), m_will(resources::get_texture("dino.png")) {
+    m_camera_x(0), m_camera_y(80),
+    m_y_speed(0), m_state(RUNNING){
 
-    m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::SPACE, KeyboardEvent::NONE), GameEvent(GAME_EVENT_JUMP));
-    event::register_translator(&m_translator);
-    event::register_listener(this);
+	m_current_level = current_level;
+
+	printf("%s\n", current_level.c_str());
+
+	if(current_level == "menu"){
+		m_texture = resources::get_texture("Menu.png");
+	}else if(current_level == "1"){
+		m_will = resources::get_texture("dino.png");
+		m_texture = resources::get_texture("test2.png");
+		m_x_speed = 4000/19000.0;
+
+		m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::SPACE, KeyboardEvent::NONE), GameEvent(GAME_EVENT_JUMP));
+		event::register_translator(&m_translator);
+		event::register_listener(this);
+	}
 }
 
 TravelingWillLevel::~TravelingWillLevel(){
@@ -40,6 +53,7 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
 }
 
 string TravelingWillLevel::next() const{
+	sleep(1);
     return m_next;
 }
 
@@ -47,14 +61,17 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_start == -1)
         m_start = now;
 
+	if(m_current_level == "menu")
+		m_done = true;
+
     if(m_camera_x > 1200)
         m_done = true;
 
     if(m_state == JUMPING){
         m_y_speed += (now - m_start)/300.0 * 0.5;
 
-        if(m_camera_y + (now - m_start) * m_y_speed > 800){
-            m_camera_y = 800;
+        if(m_camera_y + (now - m_start) * m_y_speed > 80){
+            m_camera_y = 80;
             m_y_speed = 0;
             m_state = RUNNING;
         }
@@ -70,5 +87,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     canvas->clear();
     canvas->draw(m_texture.get(), Rectangle(m_camera_x, m_camera_y, 854, 480), 0, 0);
-    canvas->draw(m_will.get(), 50, 380);
+
+	if(m_current_level != "menu")
+	    canvas->draw(m_will.get(), 50, 260);
 }
