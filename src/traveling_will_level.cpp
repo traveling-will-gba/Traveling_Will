@@ -34,7 +34,10 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_camera_y = 285;
             m_will_x = 50;
             m_will_y = 270;
+            m_boss_x = 690;
+            m_boss_y = 190;
             m_texture = resources::get_texture("background.png");
+            m_boss = resources::get_texture("capetinha_voador.png");
             m_x_speed = 4000/19000.0;
 
             m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::SPACE, KeyboardEvent::NONE), GameEvent(GAME_EVENT_JUMP));
@@ -112,17 +115,19 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_state == JUMPING){
         m_y_speed += (now - m_start)/300.0 * 0.5;
 
-        if(m_camera_y + (now - m_start) * m_y_speed > 285){
-            m_camera_y = 285;
+        if(m_will_y + (now - m_start) * m_y_speed > 270){
+            m_will_y = 270;
+            m_boss_y = 190;
             m_y_speed = 0;
             m_state = RUNNING;
         }
     }
 
     m_camera_x += (now - m_start) * m_x_speed;
-    m_camera_y += (now - m_start) * m_y_speed;
+    m_will_y += (now - m_start) * m_y_speed;
 
-//    printf("state = %d, cx = %.2f, cy = %.2f, wx = %.2f, wy = %.2f\n", m_state, m_camera_x, m_camera_y, m_will_x, m_will_y);
+    // printf("cx = %.2f cy = %.2f boosx = %.2f bossy = %.2f\n",m_camera_x, m_camera_y, m_boss_x, m_boss_y);
+    // printf("state = %d, cx = %.2f, cy = %.2f, wx = %.2f, wy = %.2f\n", m_state, m_camera_x, m_camera_y, m_will_x, m_will_y);
     m_start = now;
 }
 
@@ -130,6 +135,8 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     canvas->clear();
     canvas->draw(m_texture.get(), Rectangle(m_camera_x, m_camera_y, 854, 480), 0, 0);
 
-    if(m_current_level != "menu")
+    if(m_current_level != "menu"){
         canvas->draw(m_will.get(), m_will_x, m_will_y);
+        canvas->draw(m_boss.get(), m_boss_x, m_boss_y);
+    }
 }
