@@ -2,9 +2,11 @@
 #include "traveling_will_level_factory.h"
 
 TravelingWillLevel * TravelingWillLevelFactory::make_level(const string& level_id){
-    if(level_id == "1")
-        return new TravelingWillLevel(255, 0, 0);
-    else
+    if(level_id == "menu")
+        return new TravelingWillLevel(255, 0, 0, "menu", "1");
+    else if(level_id == "1")
+        return new TravelingWillLevel(255, 0, 0, "1");
+	else
         return nullptr;
 }
 

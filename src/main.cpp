@@ -13,7 +13,7 @@ int main(){
 
     try {
         TravelingWillGame game("Traveling Will", 854, 480);
-        game.run("1");
+        game.run("menu");
     }
     catch (Exception ex){
         cout << ex.what() << endl;
