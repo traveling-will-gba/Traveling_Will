@@ -12,10 +12,11 @@ using namespace ijengine;
 static const int GAME_EVENT_JUMP = 16;
 static const int GAME_EVENT_SLIDE_PRESSED = 32;
 static const int GAME_EVENT_SLIDE_RELEASED = 64;
+static const int GAME_EVENT_MENU_SELECT = 128;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_start(-1),
-    m_camera_x(0), m_y_speed(0), m_state(RUNNING){
+    m_camera_x(0), m_y_speed(0), m_state(NOTHING){
 
         m_current_level = current_level;
 
@@ -24,10 +25,13 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
         if(current_level == "menu"){
             m_camera_y = 0;
             m_texture = resources::get_texture("Menu.png");
+
+            m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::C, KeyboardEvent::NONE), GameEvent(GAME_EVENT_MENU_SELECT));
         }
         else if(current_level == "1"){
+            m_state = RUNNING;
             m_will = resources::get_texture("will.png");
-            m_camera_y = 80;
+            m_camera_y = 285;
             m_will_x = 50;
             m_will_y = 270;
             m_texture = resources::get_texture("background.png");
@@ -37,9 +41,10 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::DOWN, KeyboardEvent::NONE), GameEvent(GAME_EVENT_SLIDE_PRESSED));
             m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::RELEASED, KeyboardEvent::DOWN, KeyboardEvent::NONE), GameEvent(GAME_EVENT_SLIDE_RELEASED));
 
-            event::register_translator(&m_translator);
-            event::register_listener(this);
         }
+
+        event::register_translator(&m_translator);
+        event::register_listener(this);
 }
 
 TravelingWillLevel::~TravelingWillLevel(){
@@ -52,23 +57,26 @@ bool TravelingWillLevel::done() const{
 }
 
 bool TravelingWillLevel::on_event(const GameEvent& event){
-    if(event.type() == GAME_EVENT_JUMP && m_state != JUMPING){
+    if(event.type() == GAME_EVENT_MENU_SELECT && m_state == NOTHING){
+        m_state = SELECTING;
+        return true;
+    }
+
+    if(event.type() == GAME_EVENT_JUMP && m_state == RUNNING){
         m_y_speed = -0.5;
         m_state = JUMPING;
         return true;
     }
 
-    else if(event.type() == GAME_EVENT_SLIDE_PRESSED){
+    if(event.type() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING){
         m_will = resources::get_texture("will-slide.png");
         m_state = SLIDING;
-        // m_will_y = 300;
         return true;
     }
 
-    else if(event.type() == GAME_EVENT_SLIDE_RELEASED){
+    if(event.type() == GAME_EVENT_SLIDE_RELEASED && m_state == SLIDING){
         m_will = resources::get_texture("will.png");
         m_state = RUNNING;
-        // m_will_y = 270;
         return true;
     }
 
@@ -76,7 +84,7 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
 }
 
 string TravelingWillLevel::next() const{
-    sleep(1);
+//    sleep(1);
     return m_next;
 }
 
@@ -84,17 +92,28 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_start == -1)
         m_start = now;
 
-    if(m_camera_x > 1200 && m_camera_x < 1300)
-        m_camera_x = 0;
+    if(m_state == NOTHING) printf("NOTHING\n");
+    if(m_state == RUNNING) printf("RUNNING\n");
+    if(m_state == JUMPING) printf("JUMPING\n");
+    if(m_state == SELECTING) printf("SELECTING\n");
+    if(m_state == SLIDING) printf("SLIDING\n");
 
-	if(m_current_level == "menu")
-		m_done = true;
+    if(m_state == SELECTING){
+        printf("acabou\n");
+        m_state = RUNNING;
+        m_done = true;
+    }
+
+    if(m_camera_x > 852){
+        double diff = m_camera_x - 852;
+        m_camera_x = diff;
+    }
 
     if(m_state == JUMPING){
         m_y_speed += (now - m_start)/300.0 * 0.5;
 
-        if(m_camera_y + (now - m_start) * m_y_speed > 80){
-            m_camera_y = 80;
+        if(m_camera_y + (now - m_start) * m_y_speed > 285){
+            m_camera_y = 285;
             m_y_speed = 0;
             m_state = RUNNING;
         }
@@ -103,7 +122,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     m_camera_x += (now - m_start) * m_x_speed;
     m_camera_y += (now - m_start) * m_y_speed;
 
-    printf("state = %d, cx = %.2f, cy = %.2f, wx = %.2f, wy = %.2f\n", m_state, m_camera_x, m_camera_y, m_will_x, m_will_y);
+//    printf("state = %d, cx = %.2f, cy = %.2f, wx = %.2f, wy = %.2f\n", m_state, m_camera_x, m_camera_y, m_will_x, m_will_y);
     m_start = now;
 }
 

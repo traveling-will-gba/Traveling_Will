@@ -27,7 +27,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
     private:
-        typedef enum { RUNNING, JUMPING, SLIDING } State;
+        typedef enum { RUNNING, JUMPING, SLIDING, SELECTING, NOTHING } State;
         int m_r, m_g, m_b;
         bool m_done;
         string m_next;
