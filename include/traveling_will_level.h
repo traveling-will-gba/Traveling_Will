@@ -27,12 +27,13 @@ protected:
     void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
 private:
-    typedef enum { RUNNING, JUMPING } State;
+    typedef enum { RUNNING, JUMPING, SLIDING } State;
     int m_r, m_g, m_b;
     bool m_done;
     string m_next;
     int m_start;
     double m_camera_x, m_camera_y;
+    double m_will_x, m_will_y;
     double m_x_speed, m_y_speed;
     State m_state;
     shared_ptr<Texture> m_texture, m_will;
