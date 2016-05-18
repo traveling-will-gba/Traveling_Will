@@ -40,7 +40,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             event::register_translator(&m_translator);
             event::register_listener(this);
         }
-    }
+}
 
 TravelingWillLevel::~TravelingWillLevel(){
     event::unregister_listener(this);
@@ -87,8 +87,8 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_camera_x > 1200 && m_camera_x < 1300)
         m_camera_x = 0;
 
-    if(m_current_level == "menu")
-        m_done = true;
+	if(m_current_level == "menu")
+		m_done = true;
 
     if(m_state == JUMPING){
         m_y_speed += (now - m_start)/300.0 * 0.5;
