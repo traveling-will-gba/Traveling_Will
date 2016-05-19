@@ -14,11 +14,12 @@ using namespace ijengine;
 
 class TravelingWillLevel : public Level, public GameEventsListener {
     public:
-        TravelingWillLevel(int r, int g, int b, const string& current_level, const string& next_level = "");
+        TravelingWillLevel(int r, int g, int b, const string& current_level, const string& next_level = "", const string audio_path = "");
         ~TravelingWillLevel();
 
         bool done() const;
         string next() const;
+        string audio() const;
 
         bool on_event(const GameEvent& event);
 
@@ -36,7 +37,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         double m_will_x, m_will_y;
         double m_boss_x, m_boss_y;
         double m_x_speed, m_y_speed;
-        string m_current_level;
+        string m_current_level, m_audio;
         State m_state;
         shared_ptr<Texture> m_texture, m_will, m_boss;
         EventsTranslator m_translator;
