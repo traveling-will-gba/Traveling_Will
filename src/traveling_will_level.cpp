@@ -13,6 +13,7 @@ static const int GAME_EVENT_JUMP = 16;
 static const int GAME_EVENT_SLIDE_PRESSED = 32;
 static const int GAME_EVENT_SLIDE_RELEASED = 64;
 static const int GAME_EVENT_MENU_SELECT = 128;
+static const int NUMBER_OF_SCREENS = 2;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_start(-1), m_camera_x(0),
@@ -38,6 +39,14 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_background[0] = resources::get_texture("background_floresta_0.png");
             m_background[1] = resources::get_texture("background_floresta_1.png");
             m_background[2] = resources::get_texture("background_floresta_2.png");
+
+            current_image = 0;
+            for(int i = 0; i < NUMBER_OF_SCREENS; ++i){
+            	level_image_path[i] = "level_" + to_string(i) + ".png";
+           	}
+
+            m_level[0] = resources::get_texture("level_0.png");
+            m_level[1] = resources::get_texture("level_1.png");
             m_boss = resources::get_texture("capetinha_voador.png");
             m_x_speed = 4000/19000.0;
 
@@ -115,6 +124,11 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_camera_x > 852){
         double diff = m_camera_x - 852;
         m_camera_x = diff;
+
+        current_image = (current_image + 1)%NUMBER_OF_SCREENS;
+        int next_image = (current_image + 1)%NUMBER_OF_SCREENS;
+        m_level[0] = resources::get_texture(level_image_path[current_image]);
+        m_level[1] = resources::get_texture(level_image_path[next_image]);
     }
 
     if(m_state == JUMPING){
@@ -141,6 +155,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     if(m_current_level != "menu"){
         canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 854, 480), 0, 0);
         canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 854, 480), 0, 0);
+        canvas->draw(m_level[0].get(), Rectangle(m_camera_x, m_camera_y, 854, 480), 0, 0);
         canvas->draw(m_will.get(), m_will_x, m_will_y);
         canvas->draw(m_boss.get(), m_boss_x, m_boss_y);
     }
