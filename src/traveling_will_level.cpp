@@ -23,19 +23,21 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 
         if(m_current_level == "menu"){
             m_camera_y = 0;
-            m_texture = resources::get_texture("Menu.png");
+            m_background[0] = resources::get_texture("Menu.png");
 
             m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::C, KeyboardEvent::NONE), GameEvent(GAME_EVENT_MENU_SELECT));
         }
         else if(m_current_level == "1"){
             m_state = RUNNING;
             m_will = resources::get_texture("will.png");
-            m_camera_y = 285;
+            m_camera_y = 0;
             m_will_x = 50;
-            m_will_y = 270;
+            m_will_y = 293;
             m_boss_x = 690;
             m_boss_y = 190;
-            m_texture = resources::get_texture("background.png");
+            m_background[0] = resources::get_texture("background_floresta_0.png");
+            m_background[1] = resources::get_texture("background_floresta_1.png");
+            m_background[2] = resources::get_texture("background_floresta_2.png");
             m_boss = resources::get_texture("capetinha_voador.png");
             m_x_speed = 4000/19000.0;
 
@@ -118,8 +120,8 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_state == JUMPING){
         m_y_speed += (now - m_start)/300.0 * 0.5;
 
-        if(m_will_y + (now - m_start) * m_y_speed > 270){
-            m_will_y = 270;
+        if(m_will_y + (now - m_start) * m_y_speed > 293){
+            m_will_y = 293;
             m_boss_y = 190;
             m_y_speed = 0;
             m_state = RUNNING;
@@ -134,9 +136,11 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
 void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     canvas->clear();
-    canvas->draw(m_texture.get(), Rectangle(m_camera_x, m_camera_y, 854, 480), 0, 0);
+    canvas->draw(m_background[0].get(), Rectangle(0, 0, 854, 480), 0, 0);
 
     if(m_current_level != "menu"){
+        canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 854, 480), 0, 0);
+        canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 854, 480), 0, 0);
         canvas->draw(m_will.get(), m_will_x, m_will_y);
         canvas->draw(m_boss.get(), m_boss_x, m_boss_y);
     }
