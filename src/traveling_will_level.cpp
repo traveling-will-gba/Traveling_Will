@@ -13,7 +13,7 @@ static const int GAME_EVENT_JUMP = 16;
 static const int GAME_EVENT_SLIDE_PRESSED = 32;
 static const int GAME_EVENT_SLIDE_RELEASED = 64;
 static const int GAME_EVENT_MENU_SELECT = 128;
-static const int NUMBER_OF_SCREENS = 2;
+static const int NUMBER_OF_SCREENS = 4;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_start(-1), m_camera_x(0),
@@ -24,30 +24,31 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 
         if(m_current_level == "menu"){
             m_camera_y = 0;
-            m_background[0] = resources::get_texture("Menu.png");
+            printf("[%s]\n", (m_current_level + "/Menu.png").c_str());
+            m_background[0] = resources::get_texture(m_current_level + "/Menu.png");
 
             m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::C, KeyboardEvent::NONE), GameEvent(GAME_EVENT_MENU_SELECT));
         }
         else if(m_current_level == "1"){
             m_state = RUNNING;
-            m_will = resources::get_texture("will.png");
+            m_will = resources::get_texture(m_current_level + "/will.png");
             m_camera_y = 0;
             m_will_x = 50;
             m_will_y = 293;
             m_boss_x = 690;
             m_boss_y = 190;
-            m_background[0] = resources::get_texture("background_floresta_0.png");
-            m_background[1] = resources::get_texture("background_floresta_1.png");
-            m_background[2] = resources::get_texture("background_floresta_2.png");
+            m_background[0] = resources::get_texture(m_current_level + "/background_floresta_0.png");
+            m_background[1] = resources::get_texture(m_current_level + "/background_floresta_1.png");
+            m_background[2] = resources::get_texture(m_current_level + "/background_floresta_2.png");
 
             current_image = 0;
             for(int i = 0; i < NUMBER_OF_SCREENS; ++i){
-            	level_image_path[i] = "level_" + to_string(i) + ".png";
+            	level_image_path[i] = m_current_level + "/level_" + to_string(i) + ".png";
            	}
 
-            m_level[0] = resources::get_texture("level_0.png");
-            m_level[1] = resources::get_texture("level_1.png");
-            m_boss = resources::get_texture("capetinha_voador.png");
+            m_level[0] = resources::get_texture(m_current_level + "/level_0.png");
+            m_level[1] = resources::get_texture(m_current_level + "/level_1.png");
+            m_boss = resources::get_texture(m_current_level + "/capetinha_voador.png");
             m_x_speed = 4000/19000.0;
 
             m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::SPACE, KeyboardEvent::NONE), GameEvent(GAME_EVENT_JUMP));
