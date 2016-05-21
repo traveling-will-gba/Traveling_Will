@@ -6,14 +6,16 @@
 
 #include <unistd.h>
 
+#include <iostream>
+
 using namespace std;
 using namespace ijengine;
 
-static const int GAME_EVENT_JUMP = 16;
-static const int GAME_EVENT_SLIDE_PRESSED = 32;
-static const int GAME_EVENT_SLIDE_RELEASED = 64;
-static const int GAME_EVENT_MENU_SELECT = 128;
-static const int NUMBER_OF_SCREENS = 4;
+static const int GAME_EVENT_JUMP =              1 << 4;
+static const int GAME_EVENT_SLIDE_PRESSED =     1 << 5;
+static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
+static const int GAME_EVENT_MENU_SELECT =       1 << 7;
+static const int NUMBER_OF_SCREENS = 2;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_start(-1), m_camera_x(0),
@@ -26,8 +28,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_camera_y = 0;
             printf("[%s]\n", (m_current_level + "/Menu.png").c_str());
             m_background[0] = resources::get_texture(m_current_level + "/Menu.png");
-
-            m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::C, KeyboardEvent::NONE), GameEvent(GAME_EVENT_MENU_SELECT));
         }
         else if(m_current_level == "1"){
             m_state = RUNNING;
@@ -50,20 +50,13 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_level[1] = resources::get_texture(m_current_level + "/level_1.png");
             m_boss = resources::get_texture(m_current_level + "/capetinha_voador.png");
             m_x_speed = 4000/19000.0;
-
-            m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::SPACE, KeyboardEvent::NONE), GameEvent(GAME_EVENT_JUMP));
-            m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::PRESSED, KeyboardEvent::DOWN, KeyboardEvent::NONE), GameEvent(GAME_EVENT_SLIDE_PRESSED));
-            m_translator.add_translation(KeyboardEvent(0, KeyboardEvent::RELEASED, KeyboardEvent::DOWN, KeyboardEvent::NONE), GameEvent(GAME_EVENT_SLIDE_RELEASED));
-
         }
 
-        event::register_translator(&m_translator);
         event::register_listener(this);
 }
 
 TravelingWillLevel::~TravelingWillLevel(){
     event::unregister_listener(this);
-    event::unregister_translator(&m_translator);
 }
 
 bool TravelingWillLevel::done() const{
@@ -79,30 +72,30 @@ string TravelingWillLevel::audio() const{
 }
 
 bool TravelingWillLevel::on_event(const GameEvent& event){
-    if(event.type() == GAME_EVENT_MENU_SELECT && m_state == NOTHING){
+    if(event.id() == GAME_EVENT_MENU_SELECT && m_state == NOTHING){
         m_state = SELECTING;
         return true;
     }
 
-    if(event.type() == GAME_EVENT_JUMP && m_state == RUNNING){
+    if(event.id() == GAME_EVENT_JUMP && m_state == RUNNING){
         m_y_speed = -0.5;
         m_state = JUMPING;
         return true;
     }
 
-    if(event.type() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING){
+    if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING){
         m_will = resources::get_texture("will-slide.png");
         m_state = SLIDING;
         return true;
     }
 
-    if(event.type() == GAME_EVENT_SLIDE_RELEASED && m_state == SLIDING){
+    if(event.id() == GAME_EVENT_SLIDE_RELEASED && m_state == SLIDING){
         m_will = resources::get_texture("will.png");
         m_state = RUNNING;
         return true;
     }
 
-    return false;
+    return true;
 }
 
 void TravelingWillLevel::update_self(unsigned now, unsigned){

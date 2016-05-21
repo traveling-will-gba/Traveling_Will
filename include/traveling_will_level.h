@@ -6,6 +6,7 @@
 #include <ijengine/level.h>
 #include <ijengine/texture.h>
 #include <ijengine/events_translator.h>
+#include <ijengine/game_events_listener.h>
 
 using std::string;
 using std::shared_ptr;
@@ -40,7 +41,6 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         string m_current_level, m_audio, level_image_path[12];
         State m_state;
         shared_ptr<Texture> m_background[3], m_level[2], m_sky, m_will, m_boss;
-        EventsTranslator m_translator;
 };
 
 #endif
