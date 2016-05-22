@@ -17,8 +17,8 @@ static const int GAME_EVENT_SLIDE_PRESSED =     1 << 5;
 static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
 static const int GAME_EVENT_MENU_SELECT =       1 << 7;
 static const int NUMBER_OF_SCREENS =            12;
-static const int WILL_HEIGHT =                  77;
-static const int WILL_WIDTH =                   78;
+static const int WILL_HEIGHT =                  45;
+static const int WILL_WIDTH =                   57;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
@@ -34,7 +34,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
         }
         else if(m_current_level == "1"){
             m_state = RUNNING;
-            m_will = resources::get_texture(m_current_level + "/will.png");
             m_camera_y = 0;
             change = 0;
             m_will_x = 50;
@@ -43,6 +42,11 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_background[0] = resources::get_texture(m_current_level + "/background_floresta_0.png");
             m_background[1] = resources::get_texture(m_current_level + "/background_floresta_1.png");
             m_background[2] = resources::get_texture(m_current_level + "/background_floresta_2.png");
+
+            m_will[RUNNING] = m_will[SELECTING] = m_will[NOTHING] = m_will[GAME_OVER] = resources::get_texture(m_current_level + "/will.png");
+            m_will[JUMPING] = resources::get_texture(m_current_level + "/will-jump.png");
+            m_will[SLIDING] = resources::get_texture(m_current_level + "/will-slide.png");
+
 
             current_image = 0;
             int aux2[] = {300, 200, 150, 400, 150, 200, 400, 300, 200, 150, 400, 400, 400};
@@ -106,13 +110,11 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
     }
 
     if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING){
-        m_will = resources::get_texture("will-slide.png");
         m_state = SLIDING;
         return true;
     }
 
     if(event.id() == GAME_EVENT_SLIDE_RELEASED && m_state == SLIDING){
-        m_will = resources::get_texture("will.png");
         m_state = RUNNING;
         return true;
     }
@@ -151,8 +153,8 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_camera_x -= 852;
     }
 
-    if(sprite_counter > 5){
-        sprite_counter -= 5;
+    if(sprite_counter > 5.9){
+        sprite_counter -= 5.9;
     }
 
     //printf("%.2f x %.2f\n", m_will_y, m_will_floor);
@@ -226,7 +228,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 
         //printf("will height = %.2f\n", m_will_y);
         printf("sc = %.2f e dist = %.3f\n", sprite_counter, WILL_WIDTH* (int)sprite_counter);
-        canvas->draw(m_will.get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT), m_will_x, m_will_y);
+        canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
         //canvas->draw(m_boss.get(), m_boss_x - m_camera_x*2, m_boss_y);
 
         if(m_state == GAME_OVER){

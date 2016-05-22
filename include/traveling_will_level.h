@@ -41,7 +41,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         double m_x_speed, m_y_speed;
         string m_current_level, m_audio, level_image_path[20];
         State m_state;
-        shared_ptr<Texture> m_background[3], m_level[20], m_will, m_boss;
+        shared_ptr<Texture> m_background[3], m_level[20], m_will[6], m_boss;
 };
 
 #endif
