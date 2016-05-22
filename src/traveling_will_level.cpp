@@ -18,6 +18,7 @@ static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
 static const int GAME_EVENT_MENU_SELECT =       1 << 7;
 static const int NUMBER_OF_SCREENS =            12;
 static const int WILL_HEIGHT =                  45;
+static const int WILL_WIDTH =                   57;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
@@ -37,7 +38,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_camera_y = 0;
             change = 0;
             m_will_x = 50;
-            m_will_y = 480 - 400 - 45;
             m_boss_x = 690;
             m_boss_y = 190;
             m_background[0] = resources::get_texture(m_current_level + "/background_floresta_0.png");
@@ -53,11 +53,16 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
                 printf("Deu ruim\n");
                 exit(0);
             }
-            for(int i = 11; i >= 0; --i){
+            level_design >> n_screens;
+            for(int i = n_screens - 1; i >= 0; --i){
                 level_design >> level_image_height[i];
                 printf("level_image_height[%d] = %d\n", i, level_image_height[i]);
            	}
             level_design.close();
+
+
+            m_will_y = m_will_floor = 480 - level_image_height[n_screens - 1] - WILL_HEIGHT;
+            printf("%.2f %.2f\n", m_will_y, m_will_floor);
 
             for(int i = 1; i < 9; ++i){
                 printf("Deu bom em %d [%s]\n", i,(m_current_level  + "/" + to_string(i*50) + ".png").c_str());
@@ -143,19 +148,12 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
     if(m_camera_x > 852){
         m_camera_x -= 852;
-
-        current_image = (current_image + 1)%NUMBER_OF_SCREENS;
-        int next_image = (current_image + 1)%NUMBER_OF_SCREENS;
-        //m_level[0] = resources::get_texture(level_image_path[current_image]);
-        //m_level[1] = resources::get_texture(level_image_path[next_image]);
     }
 
 
     //printf("%.2f x %.2f\n", m_will_y, m_will_floor);
-    if(m_will_y + (now - m_start) * m_y_speed > m_will_floor + WILL_HEIGHT){
+    if(m_will_y + (now - m_start) * m_y_speed > m_will_floor + 20){
         m_state = GAME_OVER;
-        m_y_speed = 0;
-        m_x_speed = 0;
     }
 
     if(m_will_y < m_will_floor && m_state != JUMPING){
@@ -192,17 +190,19 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
         printf("----------\n");
-        int aux = 3, height;
+        int aux = n_screens - 7, height;
+        bool finished = true;
         for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
         	//printf("%d, %d, %d\n", 852 - i, aux - change, change);
         	if(aux - change >= 0){
+                finished = false;
                 height = level_image_height[aux - change];
-                if(852 - i >= 50 && 852 - i <= 107){
+                if(852 - i >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
                     printf("%.2f x %.2f\n",480.0 - height - WILL_HEIGHT, m_will_floor);
                     m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
                     printf("Entrou %.2f\n", m_will_y);
                 }
-                if(852 - i == 50){
+                if(852 - i == m_will_x){
                     m_will_floor = 480.0 - height - WILL_HEIGHT;
                 }
                 //printf("height = %d\n", height);
@@ -211,7 +211,9 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
             }
         	aux++;
         }
+        printf("%.2f e %.2f\n", m_will_y, m_will_floor);
         
+        if(finished) m_state = GAME_OVER;
         //for(int i = change; i < 8 + change; ++i){
         //	printf("Desenhou %d em %.2f,%.2f\n", i, m_reverse_camera_x - 142*(8 - i), m_will_y);
         //	canvas->draw(m_level[i].get(), m_reverse_camera_x - 142*(12 - i), m_will_y);
@@ -222,6 +224,8 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         //canvas->draw(m_boss.get(), m_boss_x - m_camera_x*2, m_boss_y);
 
         if(m_state == GAME_OVER){
+            m_y_speed = 0;
+            m_x_speed = 0;
             canvas->draw(m_boss.get(), 100, 100);
         }
     }
