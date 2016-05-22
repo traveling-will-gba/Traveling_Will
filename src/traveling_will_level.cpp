@@ -16,6 +16,9 @@ static const int GAME_EVENT_JUMP =              1 << 4;
 static const int GAME_EVENT_SLIDE_PRESSED =     1 << 5;
 static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
 static const int GAME_EVENT_MENU_SELECT =       1 << 7;
+static const int GAME_MOUSE_CLICK =             1 << 8;
+static const int GAME_MOUSE_MOVEMENT =          1 << 9;
+static const int GAME_MOUSE_MOTION =            1 << 10;
 static const int NUMBER_OF_SCREENS =            12;
 static const int WILL_HEIGHT =                  45;
 static const int WILL_WIDTH =                   57;
@@ -30,8 +33,22 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 
         if(m_current_level == "menu"){
             m_camera_y = 0;
-            printf("[%s]\n", (m_current_level + "/Menu.png").c_str());
-            m_background[0] = resources::get_texture(m_current_level + "/Menu.png");
+            printf("[%s]\n", (m_current_level + "/menu-empty.png").c_str());
+            m_background[0] = resources::get_texture(m_current_level + "/menu-empty.png");
+
+            m_buttons[0] = resources::get_texture(m_current_level + "/button1.png");
+            m_buttons_x[0] = 260;
+            m_buttons_y[0] = 200;
+
+            for(int i=1;i<3;i++){
+                m_buttons[i] = resources::get_texture(m_current_level + "/button" + to_string(i+1) + ".png");
+                m_buttons_x[i] = 260;
+                m_buttons_y[i] = m_buttons_y[i-1] + 80;
+            }
+
+            m_buttons[3] = resources::get_texture(m_current_level + "/button4.png");
+            m_buttons_x[3] = 700;
+            m_buttons_y[3] = 400;
         }
         else if(m_current_level == "1"){
             //Sets level information
@@ -116,25 +133,63 @@ string TravelingWillLevel::audio() const{
 }
 
 bool TravelingWillLevel::on_event(const GameEvent& event){
-    if(event.id() == GAME_EVENT_MENU_SELECT && m_state == NOTHING){
-        m_state = SELECTING;
-        return true;
-    }
+    if(m_current_level == "menu"){
+        if(event.id() == GAME_EVENT_MENU_SELECT && m_state == NOTHING){
+            m_state = SELECTING;
+            return true;
+        }
 
-    if(event.id() == GAME_EVENT_JUMP && m_state == RUNNING){
-        m_y_speed = -0.5;
-        m_state = JUMPING;
-        return true;
-    }
+        if(event.id() == GAME_EVENT_SLIDE_PRESSED){
+            printf("PRA BAIXO\n");
+        }
 
-    if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING){
-        m_state = SLIDING;
-        return true;
-    }
+        if(event.id() == GAME_MOUSE_CLICK){
+            double mouse_x = event.get_property<double>("x");
+            double mouse_y = event.get_property<double>("y");
 
-    if(event.id() == GAME_EVENT_SLIDE_RELEASED && m_state == SLIDING){
-        m_state = RUNNING;
-        return true;
+            for(int i=0;i<=3;i++){
+                int min_x = m_buttons_x[i], max_x = min_x + 270;
+                int min_y = m_buttons_y[i], max_y = min_y + 70;
+
+                if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
+                    switch(i){
+                        case 0:
+                            m_state = SELECTING;
+                            break;
+                        case 1:
+                            m_background[0] = resources::get_texture(m_current_level + "/opcoes.png");
+                            break;
+                        case 2:
+                            exit(1);
+                            break;
+                        case 3:
+                            m_background[0] = resources::get_texture(m_current_level + "/creditos.png");
+                            break;
+                        default:
+                            break;
+                    }
+
+                    return true;
+                }
+            }
+        }
+    }
+    else{
+        if(event.id() == GAME_EVENT_JUMP && m_state == RUNNING){
+            m_y_speed = -0.5;
+            m_state = JUMPING;
+            return true;
+        }
+
+        if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING){
+            m_state = SLIDING;
+            return true;
+        }
+
+        if(event.id() == GAME_EVENT_SLIDE_RELEASED && m_state == SLIDING){
+            m_state = RUNNING;
+            return true;
+        }
     }
 
     return true;
@@ -226,7 +281,12 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     canvas->clear();
     canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
 
-    if(m_current_level != "menu"){
+    if(m_current_level == "menu"){
+        for(int i=0;i<4;i++){
+            canvas->draw(m_buttons[i].get(), m_buttons_x[i], m_buttons_y[i]);
+        }
+    }
+    else{
         canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
         canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 

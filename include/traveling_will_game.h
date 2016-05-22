@@ -16,12 +16,13 @@ namespace ijengine
 {
     namespace game_event
     {
-        const unsigned MOVEMENT = GameEvent::assign_id();
-        const unsigned MOTION = GameEvent::assign_id();
         const unsigned GAME_EVENT_JUMP =            1 << 4;
         const unsigned GAME_EVENT_SLIDE_PRESSED =   1 << 5;
         const unsigned GAME_EVENT_SLIDE_RELEASED =  1 << 6;
         const unsigned GAME_EVENT_MENU_SELECT =     1 << 7;
+        const unsigned GAME_MOUSE_CLICK =           1 << 8;
+        const unsigned GAME_MOUSE_MOVEMENT =        1 << 9;
+        const unsigned GAME_MOUSE_MOTION =          1 << 10;
     }
 }
 
@@ -35,7 +36,16 @@ class TravelingWillGame {
     private:
         class Translator : public EventsTranslator {
             bool translate(GameEvent& to, const MouseEvent& from){
-                return false;
+                to.set_timestamp(from.timestamp());
+                to.set_property<double>("x", from.x());
+                to.set_property<double>("y", from.y());
+
+                if (from.state() == MouseEvent::MOTION)
+                    to.set_id(game_event::GAME_MOUSE_MOTION);
+                else
+                    to.set_id(game_event::GAME_MOUSE_CLICK);
+
+                return true;
             }
 
             bool translate(GameEvent& to, const SystemEvent& from){
