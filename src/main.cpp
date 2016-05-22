@@ -12,7 +12,7 @@ using namespace std;
 int main(){
 
     try {
-        TravelingWillGame game("Traveling Will", 854, 480);
+        TravelingWillGame game("Traveling Will", 852, 480);
         game.run("menu");
     }
     catch (Exception ex){
