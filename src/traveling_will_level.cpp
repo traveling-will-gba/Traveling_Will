@@ -17,12 +17,12 @@ static const int GAME_EVENT_SLIDE_PRESSED =     1 << 5;
 static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
 static const int GAME_EVENT_MENU_SELECT =       1 << 7;
 static const int NUMBER_OF_SCREENS =            12;
-static const int WILL_HEIGHT =                  45;
-static const int WILL_WIDTH =                   57;
+static const int WILL_HEIGHT =                  77;
+static const int WILL_WIDTH =                   78;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
-    : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_y_speed(0), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING){
+    : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
+    m_y_speed(0), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -70,7 +70,8 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             }
 
             m_boss = resources::get_texture(m_current_level + "/perdeu.png");
-            m_x_speed = 4000/19000.0;
+            m_x_speed = 4/19.0;
+            m_sprite_speed = 1/170.0;
         }
 
         event::register_listener(this);
@@ -150,6 +151,9 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_camera_x -= 852;
     }
 
+    if(sprite_counter > 5){
+        sprite_counter -= 5;
+    }
 
     //printf("%.2f x %.2f\n", m_will_y, m_will_floor);
     if(m_will_y + (now - m_start) * m_y_speed > m_will_floor + 20){
@@ -174,6 +178,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         }
     }
 
+    sprite_counter += (now - m_start) * m_sprite_speed;
     m_camera_x += (now - m_start) * m_x_speed;
     m_reverse_camera_x += (now - m_start) * m_x_speed;
     m_will_y += (now - m_start) * m_y_speed;
@@ -220,7 +225,8 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         //}
 
         //printf("will height = %.2f\n", m_will_y);
-        canvas->draw(m_will.get(), m_will_x, m_will_y);
+        printf("sc = %.2f e dist = %.3f\n", sprite_counter, WILL_WIDTH* (int)sprite_counter);
+        canvas->draw(m_will.get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT), m_will_x, m_will_y);
         //canvas->draw(m_boss.get(), m_boss_x - m_camera_x*2, m_boss_y);
 
         if(m_state == GAME_OVER){

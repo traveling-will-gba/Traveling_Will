@@ -34,6 +34,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         bool m_done;
         string m_next;
         int m_start, current_image, change, v[200], level_image_height[200], n_screens;
+        double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_will_x, m_will_y, m_will_floor;
         double m_boss_x, m_boss_y;
