@@ -151,16 +151,16 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
 
-    printf("%.2f x %.2f\n", m_will_y, m_will_floor);
-    if(m_will_y + (now - m_start) * m_y_speed > m_will_floor + 45){
+    //printf("%.2f x %.2f\n", m_will_y, m_will_floor);
+    if(m_will_y + (now - m_start) * m_y_speed > m_will_floor + WILL_HEIGHT){
         m_state = GAME_OVER;
         m_y_speed = 0;
         m_x_speed = 0;
     }
 
     if(m_will_y < m_will_floor && m_state != JUMPING){
-        printf("Tá de boa\n");
-        m_y_speed = 1;
+        //printf("Tá de boa\n");
+        m_y_speed = 1/300.0 * 0.5;
         m_state = JUMPING;
     }
 
@@ -191,15 +191,19 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
         canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
-        //printf("----------\n");
+        printf("----------\n");
         int aux = 3, height;
         for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
         	//printf("%d, %d, %d\n", 852 - i, aux - change, change);
         	if(aux - change >= 0){
                 height = level_image_height[aux - change];
                 if(852 - i >= 50 && 852 - i <= 107){
-                    m_will_floor = 480 - height - WILL_HEIGHT;
+                    printf("%.2f x %.2f\n",480.0 - height - WILL_HEIGHT, m_will_floor);
+                    m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
                     printf("Entrou %.2f\n", m_will_y);
+                }
+                if(852 - i == 50){
+                    m_will_floor = 480.0 - height - WILL_HEIGHT;
                 }
                 //printf("height = %d\n", height);
         		canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
@@ -213,7 +217,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         //	canvas->draw(m_level[i].get(), m_reverse_camera_x - 142*(12 - i), m_will_y);
         //}
 
-        printf("will height = %.2f\n", m_will_y);
+        //printf("will height = %.2f\n", m_will_y);
         canvas->draw(m_will.get(), m_will_x, m_will_y);
         //canvas->draw(m_boss.get(), m_boss_x - m_camera_x*2, m_boss_y);
 
