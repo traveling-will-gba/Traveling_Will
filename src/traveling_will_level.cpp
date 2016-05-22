@@ -158,7 +158,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_x_speed = 0;
     }
 
-    if(m_will_y < m_will_floor){
+    if(m_will_y < m_will_floor && m_state != JUMPING){
         printf("Tá de boa\n");
         m_y_speed = 1;
         m_state = JUMPING;
