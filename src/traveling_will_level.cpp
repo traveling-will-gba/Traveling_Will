@@ -182,8 +182,6 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_state = GAME_OVER;
     }
 
-    if(m_will_collectable != -100 && 0) exit(0);
-    printf("EITA: %.2f >= %.2f && %.2f <", m_will_x + WILL_WIDTH, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
     if(m_current_level != "menu" && m_will_y + (now - m_start) * m_y_speed >= m_will_collectable && m_will_y + (now - m_start) * m_y_speed <= m_will_collectable + COLLECTABLE_SIZE){
         turn_off_collectable = true;
     }
@@ -244,38 +242,34 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
                     m_will_floor = 480.0 - height - WILL_HEIGHT;
                 }
 
+				
+				if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
+					if(collectable[it]){
+						m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
 
-                if(collectable[it]){
-                    printf("valor = %d >= %.2f, %d <= %.2f = %d\n", 852 - i + 86, m_will_x, 852 - i + 56, m_will_x + WILL_WIDTH, 852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH);
-                    if(turn_off_collectable){
-                        collectable[it] = turn_off_collectable = false;
-                        printf("Coletou\n");
-                        
-                    }
-                    if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
-                        m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
-                        printf("AGORA SIM %.2f\n", m_will_collectable);
-                    }else{
-                        printf("AINDA NAO-------------------------------------------\n");
-                    }
-                }else{
-                    m_will_collectable = -100;
-                }
-                printf("m_will_collectable = %.2f, m_will_x = %.2f\n", m_will_collectable, m_will_x);
+						if(turn_off_collectable){
+							collectable[it] = turn_off_collectable = false;
+							//printf("Coletou\n");
+						}   
+					}else{
+						m_will_collectable = -100;
+					}   
+				}	
 
-               
+				printf("m_will_collectable = %.2f, m_will_x = %.2f\n", m_will_collectable, m_will_x);
 
-                //printf("height = %d\n", height);
-        		canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
-                if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i, 480 - enemy_height[it]);
-                if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
-                //printf("v = %d\n", height);
-            }
-        	aux++;
-        }
-        //printf("%.2f e %.2f\n", m_will_y, m_will_floor);
-        
-        //Sets GAME OVER if it ran out of platforms
+
+				//printf("height = %d\n", height);
+				canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
+				if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i, 480 - enemy_height[it]);
+				if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
+				//printf("v = %d\n", height);
+			}
+			aux++;
+		}
+		//printf("%.2f e %.2f\n", m_will_y, m_will_floor);
+
+		//Sets GAME OVER if it ran out of platforms
         if(finished) m_state = GAME_OVER;
         //for(int i = change; i < 8 + change; ++i){
         //	printf("Desenhou %d em %.2f,%.2f\n", i, m_reverse_camera_x - 142*(8 - i), m_will_y);
