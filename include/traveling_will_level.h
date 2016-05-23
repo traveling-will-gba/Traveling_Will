@@ -8,10 +8,14 @@
 #include <ijengine/events_translator.h>
 #include <ijengine/game_events_listener.h>
 
+#include <vector>
+
 using std::string;
 using std::shared_ptr;
 
 using namespace ijengine;
+
+class Button;
 
 class TravelingWillLevel : public Level, public GameEventsListener {
     public:
@@ -46,11 +50,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         string m_current_level, m_audio, level_image_path[20];
         State m_state;
         shared_ptr<Texture> m_background[3], m_level[20], m_enemy[4], m_collectable, m_will[20], m_boss;
-
-        // menu
-        double m_buttons_x[5], m_buttons_y[5];
-        shared_ptr<Texture> m_buttons[5];
-        int clicked_button;
+        vector< Button* > m_buttons;
 };
 
 #endif
