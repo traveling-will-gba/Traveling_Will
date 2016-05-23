@@ -2,8 +2,8 @@
 
 #include <ijengine/canvas.h>
 
-Button::Button(int b_id, string level, double b_x, double b_y, string img, double b_w, double b_h) :
-    m_id(b_id), m_able_draw(1), m_img(img), m_level(level), m_x(b_x), m_y(b_y), m_img_h(b_h), m_img_w(b_w){
+Button::Button(int b_id, string level, double b_x, double b_y, string img, double b_w, double b_h, int able_draw) :
+    m_id(b_id), m_able_draw(able_draw), m_img(img), m_level(level), m_x(b_x), m_y(b_y), m_img_h(b_h), m_img_w(b_w){
     
     m_texture = resources::get_texture(level + "/" + img);
 }

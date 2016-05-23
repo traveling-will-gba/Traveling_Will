@@ -13,7 +13,7 @@ using std::string;
 
 class Button : public GameObject {
     public:
-        Button(int b_id, string level, double b_x, double b_y, string img, double b_w, double b_h);
+        Button(int b_id, string level, double b_x, double b_y, string img, double b_w, double b_h, int able_draw);
         ~Button();
         double w();
         double h();
