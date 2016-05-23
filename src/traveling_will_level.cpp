@@ -1,4 +1,5 @@
 #include "traveling_will_level.h"
+#include "button.h"
 
 #include <ijengine/canvas.h>
 #include <ijengine/engine.h>
@@ -8,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 using namespace ijengine;
@@ -23,32 +25,33 @@ static const int NUMBER_OF_SCREENS =            12;
 static const int WILL_HEIGHT =                  45;
 static const int WILL_WIDTH =                   57;
 static const int COLLECTABLE_SIZE =             WILL_HEIGHT + 30;
+static const int BACK_BUTTON =                  0;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_y_speed(0), m_will_collectable(-100), n_collectables(0), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
+    m_y_speed(0), m_will_collectable(-100), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
 
         if(m_current_level == "menu"){
             m_camera_y = 0;
-            printf("[%s]\n", (m_current_level + "/menu-empty.png").c_str());
-            m_background[0] = resources::get_texture(m_current_level + "/menu-empty.png");
+            m_background[0] = resources::get_texture(m_current_level + "/menu-tela.png");
 
-            m_buttons[0] = resources::get_texture(m_current_level + "/button1.png");
-            m_buttons_x[0] = 260;
-            m_buttons_y[0] = 200;
+            m_buttons.push_back(new Button(0, m_current_level, 20, 400, "voltar-botao.png", 144, 40, 0));
+            m_buttons.push_back(new Button(1, m_current_level, 260, 280, "opcoes-botao.png", 270, 70, 1));
+            m_buttons.push_back(new Button(2, m_current_level, 260, 360, "sair-botao.png", 270, 70, 1));
+            m_buttons.push_back(new Button(3, m_current_level, 700, 400, "creditos-botao.png", 144, 40, 1));
+            m_buttons.push_back(new Button(4, m_current_level, 260, 200, "novo-jogo-botao.png", 270, 70, 1));
+            m_buttons.push_back(new Button(5, m_current_level + "/opcoes", 260, 200, "volume-botao.png", 144, 40, 0));
+            m_buttons.push_back(new Button(6, m_current_level + "/opcoes", 260, 280, "tela-cheia-botao.png", 144, 40, 0));
+            m_buttons.push_back(new Button(7, m_current_level + "/fases", 80, 210, "fase-1.png", 200, 150, 0));
+            m_buttons.push_back(new Button(8, m_current_level + "/fases", 320, 210, "fase-2.png", 200, 150, 0));
+            m_buttons.push_back(new Button(9, m_current_level + "/fases", 560, 210, "fase-3.png", 200, 150, 0));
 
-            for(int i=1;i<3;i++){
-                m_buttons[i] = resources::get_texture(m_current_level + "/button" + to_string(i+1) + ".png");
-                m_buttons_x[i] = 260;
-                m_buttons_y[i] = m_buttons_y[i-1] + 80;
+            for(auto btn : m_buttons){
+                add_child(btn);
             }
-
-            m_buttons[3] = resources::get_texture(m_current_level + "/button4.png");
-            m_buttons_x[3] = 700;
-            m_buttons_y[3] = 400;
         }
         else if(m_current_level == "1"){
             //Sets level information
@@ -93,7 +96,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
                     level_design >> collectable_height[i];
                 }
                 printf("platform_height[%d] = %d\n", i, platform_height[i]);
-           	}
+            }
             level_design.close();
 
             //Sets initial will height based on level design
@@ -107,14 +110,14 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             }
 
             m_boss = resources::get_texture(m_current_level + "/perdeu.png");
-            
+
             //Set camera and sprite speeds
             m_x_speed = 4/19.0;
             m_sprite_speed = 1/170.0;
         }
 
         event::register_listener(this);
-}
+    }
 
 TravelingWillLevel::~TravelingWillLevel(){
     event::unregister_listener(this);
@@ -134,36 +137,88 @@ string TravelingWillLevel::audio() const{
 
 bool TravelingWillLevel::on_event(const GameEvent& event){
     if(m_current_level == "menu"){
-        if(event.id() == GAME_EVENT_MENU_SELECT && m_state == NOTHING){
-            m_state = SELECTING;
-            return true;
-        }
-
         if(event.id() == GAME_EVENT_SLIDE_PRESSED){
             printf("PRA BAIXO\n");
+            return true;
         }
 
         if(event.id() == GAME_MOUSE_CLICK){
             double mouse_x = event.get_property<double>("x");
             double mouse_y = event.get_property<double>("y");
 
-            for(int i=0;i<=3;i++){
-                int min_x = m_buttons_x[i], max_x = min_x + 270;
-                int min_y = m_buttons_y[i], max_y = min_y + 70;
+            for(auto btn : m_buttons){
+                if(btn->able_to_draw() == 0) continue;
+
+                int min_x = btn->x(), max_x = min_x + btn->w();
+                int min_y = btn->y(), max_y = min_y + btn->h();
 
                 if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
-                    switch(i){
-                        case 0:
-                            m_state = SELECTING;
+                    switch(btn->id()){
+                        case BACK_BUTTON:
+                            m_background[0] = resources::get_texture(m_current_level + "/menu-tela.png");
+                            for(auto btn : m_buttons){
+                                if(btn->level() == "menu" && btn->id() != BACK_BUTTON)
+                                    btn->set_able_to_draw(1);
+                                else
+                                    btn->set_able_to_draw(0);
+                            }
                             break;
                         case 1:
-                            m_background[0] = resources::get_texture(m_current_level + "/opcoes.png");
+                            m_background[0] = resources::get_texture(m_current_level + "/opcoes-tela.png");
+
+                            for(auto btn : m_buttons){
+                                if(btn->level() == "menu")
+                                    btn->set_able_to_draw(0);
+                                else if(btn->level() == m_current_level + "/opcoes")
+                                    btn->set_able_to_draw(1);
+
+                                if(btn->id() == BACK_BUTTON && btn->able_to_draw() == 0)
+                                    btn->set_able_to_draw(1);
+                            }
                             break;
                         case 2:
                             exit(1);
                             break;
                         case 3:
-                            m_background[0] = resources::get_texture(m_current_level + "/creditos.png");
+                            m_background[0] = resources::get_texture(m_current_level + "/creditos-tela.png");
+                            for(auto btn : m_buttons){
+                                if(btn->level() == "menu")
+                                    btn->set_able_to_draw(0);
+                                else if(btn->level() == m_current_level + "/creditos")
+                                    btn->set_able_to_draw(1);
+
+                                if(btn->id() == BACK_BUTTON && btn->able_to_draw() == 0)
+                                    btn->set_able_to_draw(1); 
+                            }
+                            break;
+                        case 4:
+                            m_background[0] = resources::get_texture(m_current_level + "/fases-tela.png");
+
+                            for(auto btn : m_buttons){
+                                if(btn->level() == "menu")
+                                    btn->set_able_to_draw(0);
+                                else if(btn->level() == m_current_level + "/fases")
+                                    btn->set_able_to_draw(1);
+
+                                if(btn->id() == BACK_BUTTON && btn->able_to_draw() == 0)
+                                    btn->set_able_to_draw(1);
+                            }
+                            // m_state = SELECTING;
+                            break;
+                        case 5:
+                            printf("VOLUME\n");
+                            break;
+                        case 6:
+                            printf("TELA CHEIA\n");
+                            break;
+                        case 7:
+                            m_state = SELECTING;
+                            break;
+                        case 8:
+                            printf("FASE 2\n");
+                            break;
+                        case 9:
+                            printf("FASE 3\n");
                             break;
                         default:
                             break;
@@ -171,7 +226,9 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
 
                     return true;
                 }
+
             }
+
         }
     }
     else{
@@ -179,7 +236,7 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
             m_y_speed = -0.5;
             m_state = JUMPING;
             return true;
-        }
+        }   
 
         if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING){
             m_state = SLIDING;
@@ -202,12 +259,12 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     //printf("ms: %d ",now);
 
     /*
-    if(m_state == NOTHING) printf("NOTHING\n");
-    if(m_state == RUNNING) printf("RUNNING\n");
-    if(m_state == JUMPING) printf("JUMPING\n");
-    if(m_state == SELECTING) printf("SELECTING\n");
-    if(m_state == SLIDING) printf("SLIDING\n");
-	*/
+       if(m_state == NOTHING) printf("NOTHING\n");
+       if(m_state == RUNNING) printf("RUNNING\n");
+       if(m_state == JUMPING) printf("JUMPING\n");
+       if(m_state == SELECTING) printf("SELECTING\n");
+       if(m_state == SLIDING) printf("SLIDING\n");
+     */
 
     if(m_state == SELECTING){
         m_state = RUNNING;
@@ -216,10 +273,10 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
     //Reset value of reverse camera for each part of the level
     if(m_reverse_camera_x > 142 && m_current_level == "1"){
-    	//printf("m_r_c = %.2f\n", m_reverse_camera_x);
-    	m_reverse_camera_x -= 142;
-    	//printf("change = %d\n", change);
-    	++change;
+        //printf("m_r_c = %.2f\n", m_reverse_camera_x);
+        m_reverse_camera_x -= 142;
+        //printf("change = %d\n", change);
+        ++change;
     }
 
     //Reset background camera
@@ -237,16 +294,8 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_state = GAME_OVER;
     }
 
-    printf("m_will_y = %f x %f (%d) (%d)\n", m_will_y, m_will_collectable, n_collectables, turn_off_collectable);
-    //printf("TEMPO %d (%d): %.2f >= %.2f && %.2f <= %.2f\n", now, n_collectables, m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
     if(m_current_level != "menu" && m_will_y + (now - m_start) * m_y_speed >= m_will_collectable && m_will_y + (now - m_start) * m_y_speed <= m_will_collectable + COLLECTABLE_SIZE){
-        printf("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n");
-        ++n_collectables;
-        printf("EITAAAAA: %.2f >= %.2f && %.2f <= %.2f\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
-        
-        //if(n_collectables == 2) exit(0);
         turn_off_collectable = true;
-        m_will_collectable = -10000000;
     }
 
     //Start jump if Will is at the end of a cliff
@@ -281,12 +330,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     canvas->clear();
     canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
 
-    if(m_current_level == "menu"){
-        for(int i=0;i<4;i++){
-            canvas->draw(m_buttons[i].get(), m_buttons_x[i], m_buttons_y[i]);
-        }
-    }
-    else{
+    if(m_current_level != "menu"){
         canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
         canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
@@ -297,7 +341,8 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         //Draws each of the seven parts of the screen
         for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
             //printf("%d, %d, %d\n", 852 - i, aux - change, change);
-        	it = aux - change;
+            it = aux - change;
+
             if(it >= 0){
                 finished = false;
                 height = platform_height[it];
@@ -305,45 +350,37 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
                     //printf("%.2f x %.2f\n",480.0 - height - WILL_HEIGHT, m_will_floor);
                     m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
                     //printf("Entrou %.2f\n", m_will_y);
-                    if(turn_off_collectable){
-                        collectable[it] = 0;
-                        turn_off_collectable = false;
-                        //printf("Coletou\n");
-                    }
-                    if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
-                        if(collectable[it]){
-                            m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
-                            printf("%f %f\n", collectable_height[it], WILL_HEIGHT);
-                            //exit(0);   
-                        }else{
-                            m_will_collectable = -1000000000;
-                        }   
-                    }else{
-                        m_will_collectable = -1000000000;
-                    }
-
                 }
-                if(852 - i >= m_will_x && 852 - i <= m_will_x + 30){
+                if(852 - i == m_will_x){
                     m_will_floor = 480.0 - height - WILL_HEIGHT;
                 }
 
-				
-					
+                if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
+                    if(collectable[it]){
+                        m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
 
-				//printf("m_will_collectable = %.2f, m_will_x = %.2f\n", m_will_collectable, m_will_x);
+                        if(turn_off_collectable){
+                            collectable[it] = turn_off_collectable = false;
+                            //printf("Coletou\n");
+                        }   
+                    }else{
+                        m_will_collectable = -100;
+                    }   
+                } 
 
+                printf("m_will_collectable = %.2f, m_will_x = %.2f\n", m_will_collectable, m_will_x);
 
-				//printf("height = %d\n", height);
-				canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
-				if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i, 480 - enemy_height[it]);
-				if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
-				//printf("v = %d\n", height);
-			}
-			aux++;
-		}
-		//printf("%.2f e %.2f\n", m_will_y, m_will_floor);
+                //printf("height = %d\n", height);
+                canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
+                if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i, 480 - enemy_height[it]);
+                if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
+                //printf("v = %d\n", height);
+            }
+            aux++;
+        }
+        //printf("%.2f e %.2f\n", m_will_y, m_will_floor);
 
-		//Sets GAME OVER if it ran out of platforms
+        //Sets GAME OVER if it ran out of platforms
         if(finished) m_state = GAME_OVER;
         //for(int i = change; i < 8 + change; ++i){
         //	printf("Desenhou %d em %.2f,%.2f\n", i, m_reverse_camera_x - 142*(8 - i), m_will_y);
@@ -351,9 +388,15 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         //}
 
         //printf("will height = %.2f\n", m_will_y);
+
         //Draw Will based on its position
         //printf("sc = %.2f e dist = %.3f\n", sprite_counter, WILL_WIDTH* (int)sprite_counter);
-        //printf("Drawing Will with state=%d, width=%d, ,sprite_counter=%f, x=%f, y=%f\n", m_state, WILL_WIDTH* (int) sprite_counter, sprite_counter, m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
+        printf("Drawing Will with state=%d, width=%d, ,sprite_counter=%f, x=%f, y=%f\n", m_state, WILL_WIDTH* (int) sprite_counter, sprite_counter, m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
+        canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
+
+        //Draw Will based on its position
+        //printf("sc = %.2f e dist = %.3f\n", sprite_counter, WILL_WIDTH* (int)sprite_counter);
+        printf("Drawing Will with state=%d, width=%d, ,sprite_counter=%f, x=%f, y=%f\n", m_state, WILL_WIDTH* (int) sprite_counter, sprite_counter, m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
         canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
         //canvas->draw(m_boss.get(), m_boss_x - m_camera_x*2, m_boss_y);
 
