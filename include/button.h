@@ -19,14 +19,17 @@ class Button : public GameObject {
         double h();
         double x();
         double y();
+        string level();
         int id();
+        int able_to_draw();
+        void set_able_to_draw(int num);
 
     protected:
         void update_self(unsigned now, unsigned last);
         void draw_self(Canvas *canvas, unsigned now, unsigned last);        
 
     private:
-        int m_id;
+        int m_id, m_able_draw;
         string m_img, m_action, m_level;
         double m_x, m_y, m_img_h, m_img_w;
         shared_ptr<Texture> m_texture;
