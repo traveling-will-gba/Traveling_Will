@@ -29,7 +29,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
     private:
-        typedef enum { RUNNING, JUMPING, SLIDING, SELECTING, NOTHING, GAME_OVER } State;
+        typedef enum { RUNNING, JUMPING, SLIDING, SELECTING, NOTHING, FALLING, GAME_OVER } State;
         int m_r, m_g, m_b;
         bool m_done;
         string m_next;
@@ -43,7 +43,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         double m_x_speed, m_y_speed;
         string m_current_level, m_audio, level_image_path[20];
         State m_state;
-        shared_ptr<Texture> m_background[3], m_level[20], m_enemy[4], m_collectable, m_will[6], m_boss;
+        shared_ptr<Texture> m_background[3], m_level[20], m_enemy[4], m_collectable, m_will[20], m_boss;
 };
 
 #endif

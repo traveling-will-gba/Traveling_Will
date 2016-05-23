@@ -44,9 +44,11 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_background[1] = resources::get_texture(m_current_level + "/background_floresta_1.png");
             m_background[2] = resources::get_texture(m_current_level + "/background_floresta_2.png");
 
-            m_will[RUNNING] = m_will[SELECTING] = m_will[NOTHING] = m_will[GAME_OVER] = resources::get_texture(m_current_level + "/will.png");
-            m_will[JUMPING] = resources::get_texture(m_current_level + "/will-jump.png");
-            m_will[SLIDING] = resources::get_texture(m_current_level + "/will-slide.png");
+            m_will[RUNNING] = m_will[SELECTING] = m_will[NOTHING] = resources::get_texture(m_current_level + "/will-running.png");
+            m_will[JUMPING] = resources::get_texture(m_current_level + "/will-jumping.png");
+            m_will[SLIDING] = resources::get_texture(m_current_level + "/will-sliding.png");
+            m_will[FALLING] = resources::get_texture(m_current_level + "/will-falling.png");
+            m_will[GAME_OVER] = resources::get_texture(m_current_level + "/will-gameover.png");
 
             m_enemy[0] = resources::get_texture(m_current_level + "/enemy1.png");
             m_enemy[1] = resources::get_texture(m_current_level + "/enemy2.png");
@@ -180,19 +182,29 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
     //Start jump if Will is at the end of a cliff
-    if(m_will_y < m_will_floor && m_state != JUMPING){
+    if(m_will_y < m_will_floor && m_state != JUMPING && m_state != FALLING){
         //printf("Tá de boa\n");
         m_y_speed = 1/300.0 * 0.5;
-        m_state = JUMPING;
+        m_state = FALLING;
     }
 
     //Calculate jump speed and stop jump if hits the ground
-    if(m_state == JUMPING){
+    if(m_state == JUMPING || m_state == FALLING){
+        m_y_speed += (now - m_start)/300.0 * 0.5;
+        if(m_y_speed >= 0.001) m_state = FALLING;
+
+        if(m_will_y + (now - m_start) * m_y_speed > m_will_floor){
+            m_will_y = m_will_floor;
+            m_y_speed = 0;
+            m_state = RUNNING;
+        }
+    }
+
+    if(m_state == FALLING){
         m_y_speed += (now - m_start)/300.0 * 0.5;
 
         if(m_will_y + (now - m_start) * m_y_speed > m_will_floor){
             m_will_y = m_will_floor;
-            m_boss_y = 190;
             m_y_speed = 0;
             m_state = RUNNING;
         }
@@ -215,7 +227,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
         canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
-        printf("----------\n");
+        //printf("----------\n");
         int aux = n_screens - 7, height, it;
         bool finished = true;
 
@@ -227,9 +239,9 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
                 finished = false;
                 height = platform_height[it];
                 if(852 - i >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
-                    printf("%.2f x %.2f\n",480.0 - height - WILL_HEIGHT, m_will_floor);
+                    //printf("%.2f x %.2f\n",480.0 - height - WILL_HEIGHT, m_will_floor);
                     m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
-                    printf("Entrou %.2f\n", m_will_y);
+                    //printf("Entrou %.2f\n", m_will_y);
                 }
                 if(852 - i == m_will_x){
                     m_will_floor = 480.0 - height - WILL_HEIGHT;
@@ -242,7 +254,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
             }
         	aux++;
         }
-        printf("%.2f e %.2f\n", m_will_y, m_will_floor);
+        //printf("%.2f e %.2f\n", m_will_y, m_will_floor);
         
         //Sets GAME OVER if it ran out of platforms
         if(finished) m_state = GAME_OVER;
@@ -253,7 +265,8 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 
         //printf("will height = %.2f\n", m_will_y);
         //Draw Will based on its position
-        printf("sc = %.2f e dist = %.3f\n", sprite_counter, WILL_WIDTH* (int)sprite_counter);
+        //printf("sc = %.2f e dist = %.3f\n", sprite_counter, WILL_WIDTH* (int)sprite_counter);
+        printf("Drawing Will with state=%d, width=%d, ,sprite_counter=%f, x=%f, y=%f\n", m_state, WILL_WIDTH* (int) sprite_counter, sprite_counter, m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
         canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
         //canvas->draw(m_boss.get(), m_boss_x - m_camera_x*2, m_boss_y);
 
