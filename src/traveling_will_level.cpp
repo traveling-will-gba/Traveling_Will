@@ -19,10 +19,11 @@ static const int GAME_EVENT_MENU_SELECT =       1 << 7;
 static const int NUMBER_OF_SCREENS =            12;
 static const int WILL_HEIGHT =                  45;
 static const int WILL_WIDTH =                   57;
+static const int COLLECTABLE_SIZE =             WILL_HEIGHT + 30;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_y_speed(0), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
+    m_y_speed(0), m_will_collectable(-100), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -60,7 +61,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             printf("[%s]\n", ("res/" + m_current_level + "/level_design.txt").c_str());
             if(not level_design.is_open()){
                 printf("Deu ruim\n");
-                exit(0);
+                //exit(0);
             }
             level_design >> n_screens;
             for(int i = n_screens - 1; i >= 0; --i){
@@ -181,6 +182,12 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_state = GAME_OVER;
     }
 
+    if(m_will_collectable != -100 && 0) exit(0);
+    printf("EITA: %.2f >= %.2f && %.2f <", m_will_x + WILL_WIDTH, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
+    if(m_current_level != "menu" && m_will_y + (now - m_start) * m_y_speed >= m_will_collectable && m_will_y + (now - m_start) * m_y_speed <= m_will_collectable + COLLECTABLE_SIZE){
+        turn_off_collectable = true;
+    }
+
     //Start jump if Will is at the end of a cliff
     if(m_will_y < m_will_floor && m_state != JUMPING && m_state != FALLING){
         //printf("Tá de boa\n");
@@ -192,16 +199,6 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_state == JUMPING || m_state == FALLING){
         m_y_speed += (now - m_start)/300.0 * 0.5;
         if(m_y_speed >= 0.001) m_state = FALLING;
-
-        if(m_will_y + (now - m_start) * m_y_speed > m_will_floor){
-            m_will_y = m_will_floor;
-            m_y_speed = 0;
-            m_state = RUNNING;
-        }
-    }
-
-    if(m_state == FALLING){
-        m_y_speed += (now - m_start)/300.0 * 0.5;
 
         if(m_will_y + (now - m_start) * m_y_speed > m_will_floor){
             m_will_y = m_will_floor;
@@ -246,10 +243,32 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
                 if(852 - i == m_will_x){
                     m_will_floor = 480.0 - height - WILL_HEIGHT;
                 }
+
+
+                if(collectable[it]){
+                    printf("valor = %d >= %.2f, %d <= %.2f = %d\n", 852 - i + 86, m_will_x, 852 - i + 56, m_will_x + WILL_WIDTH, 852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH);
+                    if(turn_off_collectable){
+                        collectable[it] = turn_off_collectable = false;
+                        printf("Coletou\n");
+                        
+                    }
+                    if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
+                        m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
+                        printf("AGORA SIM %.2f\n", m_will_collectable);
+                    }else{
+                        printf("AINDA NAO-------------------------------------------\n");
+                    }
+                }else{
+                    m_will_collectable = -100;
+                }
+                printf("m_will_collectable = %.2f, m_will_x = %.2f\n", m_will_collectable, m_will_x);
+
+               
+
                 //printf("height = %d\n", height);
         		canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
                 if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i, 480 - enemy_height[it]);
-                if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i, 480 - collectable_height[it]);
+                if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
                 //printf("v = %d\n", height);
             }
         	aux++;

@@ -31,14 +31,14 @@ class TravelingWillLevel : public Level, public GameEventsListener {
     private:
         typedef enum { RUNNING, JUMPING, SLIDING, SELECTING, NOTHING, FALLING, GAME_OVER } State;
         int m_r, m_g, m_b;
-        bool m_done;
+        bool m_done, turn_off_collectable;
         string m_next;
         int m_start, current_image, change, v[200], platform_height[200], n_screens;
         int collectable_height[200], enemy_height[200], collectable[200], enemy[200];
         int enemy_type[200];
         double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
-        double m_will_x, m_will_y, m_will_floor;
+        double m_will_x, m_will_y, m_will_floor, m_will_collectable;
         double m_boss_x, m_boss_y;
         double m_x_speed, m_y_speed;
         string m_current_level, m_audio, level_image_path[20];
