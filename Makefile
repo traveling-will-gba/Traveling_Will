@@ -36,6 +36,9 @@ $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDES) $(OBJ) -o $@ $(LIBS)
 	@echo Done.
 
+run:
+	$(TARGET)
+
 clean:
 	@echo Cleaning...
 	@find . -name *.o -exec rm {} \;

@@ -23,7 +23,7 @@ static const int COLLECTABLE_SIZE =             WILL_HEIGHT + 30;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_y_speed(0), m_will_collectable(-100), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
+    m_y_speed(0), m_will_collectable(-100), n_collectables(0), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -182,8 +182,16 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_state = GAME_OVER;
     }
 
+    printf("m_will_y = %f x %f (%d) (%d)\n", m_will_y, m_will_collectable, n_collectables, turn_off_collectable);
+    //printf("TEMPO %d (%d): %.2f >= %.2f && %.2f <= %.2f\n", now, n_collectables, m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
     if(m_current_level != "menu" && m_will_y + (now - m_start) * m_y_speed >= m_will_collectable && m_will_y + (now - m_start) * m_y_speed <= m_will_collectable + COLLECTABLE_SIZE){
+        printf("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n");
+        ++n_collectables;
+        printf("EITAAAAA: %.2f >= %.2f && %.2f <= %.2f\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
+        
+        //if(n_collectables == 2) exit(0);
         turn_off_collectable = true;
+        m_will_collectable = -10000000;
     }
 
     //Start jump if Will is at the end of a cliff
@@ -237,26 +245,32 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
                     //printf("%.2f x %.2f\n",480.0 - height - WILL_HEIGHT, m_will_floor);
                     m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
                     //printf("Entrou %.2f\n", m_will_y);
+                    if(turn_off_collectable){
+                        collectable[it] = 0;
+                        turn_off_collectable = false;
+                        //printf("Coletou\n");
+                    }
+                    if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
+                        if(collectable[it]){
+                            m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
+                            printf("%f %f\n", collectable_height[it], WILL_HEIGHT);
+                            //exit(0);   
+                        }else{
+                            m_will_collectable = -1000000000;
+                        }   
+                    }else{
+                        m_will_collectable = -1000000000;
+                    }
+
                 }
-                if(852 - i == m_will_x){
+                if(852 - i >= m_will_x && 852 - i <= m_will_x + 30){
                     m_will_floor = 480.0 - height - WILL_HEIGHT;
                 }
 
 				
-				if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
-					if(collectable[it]){
-						m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
+					
 
-						if(turn_off_collectable){
-							collectable[it] = turn_off_collectable = false;
-							//printf("Coletou\n");
-						}   
-					}else{
-						m_will_collectable = -100;
-					}   
-				}	
-
-				printf("m_will_collectable = %.2f, m_will_x = %.2f\n", m_will_collectable, m_will_x);
+				//printf("m_will_collectable = %.2f, m_will_x = %.2f\n", m_will_collectable, m_will_x);
 
 
 				//printf("height = %d\n", height);
@@ -279,7 +293,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         //printf("will height = %.2f\n", m_will_y);
         //Draw Will based on its position
         //printf("sc = %.2f e dist = %.3f\n", sprite_counter, WILL_WIDTH* (int)sprite_counter);
-        printf("Drawing Will with state=%d, width=%d, ,sprite_counter=%f, x=%f, y=%f\n", m_state, WILL_WIDTH* (int) sprite_counter, sprite_counter, m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
+        //printf("Drawing Will with state=%d, width=%d, ,sprite_counter=%f, x=%f, y=%f\n", m_state, WILL_WIDTH* (int) sprite_counter, sprite_counter, m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
         canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
         //canvas->draw(m_boss.get(), m_boss_x - m_camera_x*2, m_boss_y);
 
