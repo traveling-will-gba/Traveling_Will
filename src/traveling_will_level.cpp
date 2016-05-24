@@ -25,11 +25,13 @@ static const int NUMBER_OF_SCREENS =            12;
 static const int WILL_HEIGHT =                  45;
 static const int WILL_WIDTH =                   57;
 static const int COLLECTABLE_SIZE =             WILL_HEIGHT + 30;
+static const int ENEMY_SIZE =                   WILL_HEIGHT + 45;
 static const int BACK_BUTTON =                  0;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_y_speed(0), m_will_collectable(-100), n_collectables(0), collectable_it(-10000000), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
+    m_y_speed(0), m_will_collectable(-100), n_collectables(0), collectable_it(-10000000),m_will_enemy(-100), n_enemies(0), enemy_it(-10000000), m_will_enemy_type(-1),
+    change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -80,8 +82,8 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             fstream level_design("res/" + m_current_level + "/level_design.txt");
             printf("[%s]\n", ("res/" + m_current_level + "/level_design.txt").c_str());
             if(not level_design.is_open()){
-                printf("Deu ruim\n");
-                //exit(0);
+                printf("Level design txt not available\n");
+                exit(0);
             }
             level_design >> n_screens;
             for(int i = n_screens - 1; i >= 0; --i){
@@ -105,7 +107,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 
             //Get platforms textures
             for(int i = 1; i < 9; ++i){
-                printf("Deu bom em %d [%s]\n", i,(m_current_level  + "/" + to_string(i*50) + ".png").c_str());
                 m_level[i] = resources::get_texture(m_current_level + "/" + to_string(i*50) + ".png");
             }
 
@@ -264,14 +265,6 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
     //printf("ms: %d ",now);
 
-/*
-    if(m_state == NOTHING) printf("NOTHING\n");
-    if(m_state == RUNNING) printf("RUNNING\n");
-    if(m_state == JUMPING) printf("JUMPING\n");
-    if(m_state == SELECTING) printf("SELECTING\n");
-    if(m_state == SLIDING) printf("SLIDING\n");
-*/
-
     if(m_state == SELECTING){
         m_state = RUNNING;
         m_done = true;
@@ -279,9 +272,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
     //Reset value of reverse camera for each part of the level
     if(m_reverse_camera_x > 142 && m_current_level == "1"){
-        //printf("m_r_c = %.2f\n", m_reverse_camera_x);
         m_reverse_camera_x -= 142;
-        //printf("change = %d\n", change);
         ++change;
     }
 
@@ -300,21 +291,8 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_state = GAME_OVER;
     }
 
-    printf("Comparacao: %.2f >= %.2f && %.2f <= %.2f (%d)\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE, n_collectables);
-    //printf("TEMPO %d (%d): %.2f >= %.2f && %.2f <= %.2f\n", now, n_collectables, m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
-    if(m_current_level != "menu" && m_will_y >= m_will_collectable && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
-        printf("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n");
-        ++n_collectables;
-        printf("EITAAAAA: %.2f >= %.2f && %.2f <= %.2f\n", m_will_y, m_will_collectable, m_will_y + 15*(m_state == SLIDING ? 1 : 0), m_will_collectable + COLLECTABLE_SIZE);
-        //getchar();
-        //if(n_collectables == 2) exit(0);
-        collectable[collectable_it] = 0;
-        m_will_collectable = -10000000;
-    }
-
     //Start jump if Will is at the end of a cliff
-    if(m_will_y < m_will_floor && m_state != JUMPING && m_state != FALLING){
-        //printf("Tá de boa\n");
+    if(m_will_y < m_will_floor && m_state != JUMPING && m_state != FALLING && m_state != GAME_OVER){
         m_y_speed = 1/300.0 * 0.5;
         m_state = FALLING;
     }
@@ -336,50 +314,76 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
     int aux_it = 0;
     for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
-            //printf("%d, %d, %d\n", 852 - i, aux - change, change);
-            it = aux - change;
-            level_it[aux_it++] = max(it, 0);
+        it = aux - change;
+        level_it[aux_it++] = max(it, 0);
 
-            if(it >= 0){
-                finished = false;
-                height = platform_height[it];
-                if(852 - i >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
-                    //printf("%.2f x %.2f\n",480.0 - height - WILL_HEIGHT, m_will_floor);
-                    m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
+        if(it >= 0){
+            finished = false;
+            height = platform_height[it];
+            if(852 - i >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
+                m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
 
-                    if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
-                        printf("ANALISANDO.....\n");
-                        if(collectable[it]){
-                            collectable_it = it;
-                            m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
-                            printf("%f %f\n", collectable_height[it], WILL_HEIGHT);
-                            //exit(0);   
-                        }else{
-                            m_will_collectable = -1000000000;
-                        }
+                if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
+                    if(collectable[it]){
+                        collectable_it = it;
+                        m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
+                        printf("%f %f\n", collectable_height[it], WILL_HEIGHT);
                     }else{
                         m_will_collectable = -1000000000;
                     }
+                }else{
+                    m_will_collectable = -1000000000;
                 }
 
-                if(852 - i >= m_will_x && 852 - i <= m_will_x + 30){
-                    m_will_floor = 480.0 - height - WILL_HEIGHT;
+                if(852 - i + 97 >= m_will_x && 852 - i + 48 <= m_will_x + WILL_WIDTH){
+                    if(enemy[it]){
+                        enemy_it = it;
+                        m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
+                        m_will_enemy_type = enemy_type[it];
+                        printf("%f %f\n", enemy_height[it], WILL_HEIGHT);
+                    }else{
+                        m_will_enemy = -1000000000;
+                        m_will_enemy_type = -1;
+                    }
+                }else{
+                    m_will_enemy = -1000000000;
+                    m_will_enemy_type = -1;
                 }
             }
-            aux++;
-        }
 
-        if(finished) m_state = GAME_OVER;
-
-        if(m_state == GAME_OVER){
-            m_y_speed = 0;
-            m_x_speed = 0;
+            if(852 - i >= m_will_x && 852 - i <= m_will_x + 30){
+                m_will_floor = 480.0 - height - WILL_HEIGHT;
+            }
         }
+        aux++;
+    }
+
+    printf("Comparacao: %.2f >= %.2f && %.2f <= %.2f (%d)\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE, n_collectables);
+    if(m_current_level != "menu" && m_will_y >= m_will_collectable && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
+        ++n_collectables;
+        
+        collectable[collectable_it] = 0;
+        m_will_collectable = -10000000;
+    }
+
+    if(m_current_level != "menu" && m_will_y >= m_will_enemy && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
+        if(m_will_enemy_type == 0){
+            m_state = GAME_OVER;
+        }else{
+            enemy[enemy_it] = 0;
+            m_will_enemy = -10000000;
+            m_will_enemy_type = -1;
+        }
+    }
+
+    if(finished) m_state = GAME_OVER;
+
+    if(m_state == GAME_OVER){
+        m_y_speed = 0;
+        m_x_speed = 0;
+    }
 
     m_start = now;
-
-
-
 }
 
 void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
@@ -396,9 +400,8 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
             it = level_it[aux++];
             height = platform_height[it];
             canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
-            if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i, 480 - enemy_height[it]);
+            if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i + 48, 480 - enemy_height[it]);
             if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
-            //printf("v = %d\n", height);
         }
 
         canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
