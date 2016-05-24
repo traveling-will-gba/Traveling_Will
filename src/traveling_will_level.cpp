@@ -305,10 +305,10 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
     printf("Comparacao: %.2f >= %.2f && %.2f <= %.2f (%d)\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE, n_collectables);
     //printf("TEMPO %d (%d): %.2f >= %.2f && %.2f <= %.2f\n", now, n_collectables, m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
-    if(m_current_level != "menu" && m_will_y >= m_will_collectable && m_will_y <= m_will_collectable + COLLECTABLE_SIZE){
+    if(m_current_level != "menu" && m_will_y >= m_will_collectable && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
         printf("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n");
         ++n_collectables;
-        printf("EITAAAAA: %.2f >= %.2f && %.2f <= %.2f\n", m_will_y, m_will_collectable, m_will_y, m_will_collectable + COLLECTABLE_SIZE);
+        printf("EITAAAAA: %.2f >= %.2f && %.2f <= %.2f\n", m_will_y, m_will_collectable, m_will_y + 15*(m_state == SLIDING ? 1 : 0), m_will_collectable + COLLECTABLE_SIZE);
         //getchar();
         //if(n_collectables == 2) exit(0);
         collectable[collectable_it] = 0;
