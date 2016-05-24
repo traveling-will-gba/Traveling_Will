@@ -96,8 +96,8 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_boss = resources::get_texture(m_current_level + "/perdeu.png");
             
             //Set camera and sprite speeds
-            m_x_speed = 4/19.0;
-            m_sprite_speed = 1/170.0;
+            m_x_speed = 0;
+            m_sprite_speed = 0;
         }
 
         event::register_listener(this);
@@ -151,8 +151,13 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 	if(not level_started){
 		cutscene_counter += m_cutscene_speed;
 
-		if(cutscene_counter >= 3.9)
+		if(cutscene_counter >= 3.9){
 			level_started = true;
+
+			//Set camera and sprite speeds
+            m_x_speed = 4/19.0;
+            m_sprite_speed = 1/170.0;
+		}
 	}
 
     //printf("ms: %d ",now);
