@@ -22,7 +22,7 @@ static const int WILL_WIDTH =                   57;
 static const int COLLECTABLE_SIZE =             WILL_HEIGHT + 30;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
-    : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480), m_y_speed(0), m_will_collectable(-100), n_collectables(0), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0), level_started(false), level_finished(false), cutscene_counter(1), m_cutscene_speed(1/3000.0) {
+    : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480), m_y_speed(0), m_will_collectable(-100), n_collectables(0), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0), level_started(false), level_finished(false), start_cutscene_counter(1), final_cutscene_counter(1), m_cutscene_speed(1/300.0) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -51,8 +51,11 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_will[GAME_OVER] = resources::get_texture(m_current_level + "/will-gameover.png");
 
 			for(int i=1; i<=4; i++){
-				m_cutscene[i] = resources::get_texture(m_current_level + "/cutscene-" + to_string(i) + ".png");
-				printf("{%s}\n", (m_current_level + "/cutscene-" + to_string(i) + ".png").c_str());
+				m_start_cutscene[i] = resources::get_texture(m_current_level + "/start_cutscene-" + to_string(i) + ".png");
+			}
+
+			for(int i=1; i<=4; i++){
+				m_final_cutscene[i] = resources::get_texture(m_current_level + "/final_cutscene-" + to_string(i) + ".png");
 			}
 
             m_enemy[0] = resources::get_texture(m_current_level + "/enemy1.png");
@@ -149,14 +152,25 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_start = now;
 
 	if(not level_started){
-		cutscene_counter += m_cutscene_speed;
+		start_cutscene_counter += m_cutscene_speed;
 
-		if(cutscene_counter >= 3.9){
+		if(start_cutscene_counter >= 4.9){
 			level_started = true;
 
 			//Set camera and sprite speeds
             m_x_speed = 4/19.0;
             m_sprite_speed = 1/170.0;
+		}
+	}
+
+	if(level_finished){
+		m_x_speed = 0;
+		m_sprite_speed = 0;
+
+		final_cutscene_counter += m_cutscene_speed;
+
+		if(final_cutscene_counter >= 4.9){
+			exit(0);
 		}
 	}
 
@@ -244,7 +258,12 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 
     if(m_current_level != "menu"){
 		if(not level_started){
-			canvas->draw(m_cutscene[(int)cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
+			canvas->draw(m_start_cutscene[(int)start_cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
+			return;
+		}
+
+		if(level_finished){
+			canvas->draw(m_final_cutscene[(int)final_cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
 			return;
 		}
 

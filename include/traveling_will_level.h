@@ -38,7 +38,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         double collectable_height[200], enemy_height[200];
         int collectable[200], enemy[200];
         int enemy_type[200];
-        double cutscene_counter, m_cutscene_speed;
+        double start_cutscene_counter, final_cutscene_counter, m_cutscene_speed;
         double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_will_x, m_will_y, m_will_floor, m_will_collectable;
@@ -46,7 +46,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         double m_x_speed, m_y_speed;
         string m_current_level, m_audio, level_image_path[20];
         State m_state;
-        shared_ptr<Texture> m_background[3], m_level[20], m_enemy[4], m_collectable, m_will[20], m_cutscene[30], m_boss;
+        shared_ptr<Texture> m_background[3], m_level[20], m_enemy[4], m_collectable, m_will[20], m_start_cutscene[30], m_final_cutscene[30], m_boss;
 };
 
 #endif
