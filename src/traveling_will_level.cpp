@@ -21,6 +21,7 @@ static const int GAME_EVENT_MENU_SELECT =       1 << 7;
 static const int GAME_MOUSE_CLICK =             1 << 8;
 static const int GAME_MOUSE_MOVEMENT =          1 << 9;
 static const int GAME_MOUSE_MOTION =            1 << 10;
+static const int GAME_EVENT_PUNCH =             1 << 11;
 static const int NUMBER_OF_SCREENS =            12;
 static const int WILL_HEIGHT =                  45;
 static const int WILL_WIDTH =                   57;
@@ -72,6 +73,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_will[SLIDING] = resources::get_texture(m_current_level + "/will-sliding.png");
             m_will[FALLING] = resources::get_texture(m_current_level + "/will-falling.png");
             m_will[GAME_OVER] = resources::get_texture(m_current_level + "/will-gameover.png");
+            m_will[PUNCHING]= resources::get_texture(m_current_level + "/will-punching.png");
 
             m_enemy[0] = resources::get_texture(m_current_level + "/enemy1.png");
             m_enemy[1] = resources::get_texture(m_current_level + "/enemy2.png");
@@ -233,6 +235,13 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
         }
     }
     else{
+        if(event.id() == GAME_EVENT_PUNCH && m_state != SLIDING){
+            m_is_punching = true;
+            m_punch_counter = event.timestamp();
+            printf("PUNCHING\n\n\n");
+            return true;
+        }
+
         if(event.id() == GAME_EVENT_JUMP && m_state == RUNNING){
             m_y_speed = -0.5;
             m_state = JUMPING;
@@ -250,7 +259,7 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
         }
     }
 
-    return true;
+    return false;
 }
 
 void TravelingWillLevel::update_self(unsigned now, unsigned){
@@ -287,6 +296,10 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     //Reset sprite counter
     if(sprite_counter > 5.9){
         sprite_counter -= 5.9;
+    }
+
+    if(m_is_punching && (now - m_punch_counter) > 80){
+        m_is_punching = false;
     }
 
     //Test Will colision
@@ -361,7 +374,6 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         aux++;
     }
 
-    printf("Comparacao: %.2f >= %.2f && %.2f <= %.2f (%d)\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE, n_collectables);
     if(m_current_level != "menu" && m_will_y >= m_will_collectable && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
         ++n_collectables;
         
@@ -370,7 +382,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
     if(m_current_level != "menu" && m_will_y >= m_will_enemy && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
-        if(m_will_enemy_type == 0){
+        if(m_will_enemy_type == 0 || not m_is_punching){
             m_state = GAME_OVER;
         }else{
             enemy[enemy_it] = 0;
@@ -407,7 +419,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
             if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
         }
 
-        canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
+        canvas->draw(m_will[m_is_punching ? PUNCHING : m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
 
         if(m_state == GAME_OVER){
             canvas->draw(m_boss.get(), 100, 100);
