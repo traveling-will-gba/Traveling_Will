@@ -23,6 +23,7 @@ namespace ijengine
         const unsigned GAME_MOUSE_CLICK =           1 << 8;
         const unsigned GAME_MOUSE_MOVEMENT =        1 << 9;
         const unsigned GAME_MOUSE_MOTION =          1 << 10;
+        const unsigned GAME_EVENT_PUNCH =           1 << 11;
     }
 }
 
@@ -73,6 +74,11 @@ class TravelingWillGame {
                     case KeyboardEvent::C:
                         to.set_property<string>("select", "c");
                         to.set_id(game_event::GAME_EVENT_MENU_SELECT);
+                        break;
+
+                    case KeyboardEvent::X:
+                        to.set_property<string>("punch", "x");
+                        to.set_id(game_event::GAME_EVENT_PUNCH);
                         break;
 
                     case KeyboardEvent::DOWN:
