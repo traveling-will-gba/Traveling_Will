@@ -35,7 +35,8 @@ class TravelingWillLevel : public Level, public GameEventsListener {
     private:
         typedef enum { RUNNING, JUMPING, SLIDING, SELECTING, NOTHING, FALLING, GAME_OVER } State;
         int m_r, m_g, m_b;
-        bool m_done, turn_off_collectable;
+        bool m_done;
+        int collectable_it;
         string m_next;
         int m_start, current_image, change, n_screens, n_collectables;
         double platform_height[200];
