@@ -27,9 +27,9 @@ static const int WILL_WIDTH =                   57;
 static const int COLLECTABLE_SIZE =             WILL_HEIGHT + 30;
 static const int BACK_BUTTON =                  0;
 
-TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
+TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path, int audio_duration)
     : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_y_speed(0), m_will_collectable(-100), n_collectables(0), collectable_it(-10000000), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0) {
+    m_y_speed(0), m_will_collectable(-100), n_collectables(0), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0), m_audio_duration(audio_duration), m_audio_start(0) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -253,20 +253,13 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
 }
 
 void TravelingWillLevel::update_self(unsigned now, unsigned){
-    if(m_start == -1)
+    if(m_start == -1){
         m_start = now;
+        m_audio_start = m_start;
+    }
 
-    //printf("ms: %d ",now);
-
-/*
-    if(m_state == NOTHING) printf("NOTHING\n");
-    if(m_state == RUNNING) printf("RUNNING\n");
-    if(m_state == JUMPING) printf("JUMPING\n");
-    if(m_state == SELECTING) printf("SELECTING\n");
-    if(m_state == SLIDING) printf("SLIDING\n");
-*/
-
-    if(m_state == SELECTING){
+    if(m_state == SELECTING || (m_audio_duration != -1 && (now - m_audio_start) >= m_audio_duration)){
+        printf ("FIM DA FASE\n");
         m_state = RUNNING;
         m_done = true;
     }
