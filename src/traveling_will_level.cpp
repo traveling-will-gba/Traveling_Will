@@ -238,7 +238,7 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
             return true;
         }   
 
-        if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING){
+        if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING && m_state != FALLING){
             m_state = SLIDING;
             return true;
         }
@@ -255,6 +255,12 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
 void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_start == -1)
         m_start = now;
+
+    //Update counters based on time
+    sprite_counter += (now - m_start) * m_sprite_speed;
+    m_camera_x += (now - m_start) * m_x_speed;
+    m_reverse_camera_x += (now - m_start) * m_x_speed;
+    m_will_y += (now - m_start) * m_y_speed;
 
     //printf("ms: %d ",now);
 
@@ -290,16 +296,16 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
     //Test Will colision
-    if(m_will_y + (now - m_start) * m_y_speed > m_will_floor + 20){
+    if(m_will_y > m_will_floor + 20){
         m_state = GAME_OVER;
     }
 
-    printf("Comparacao: %.2f >= %.2f && %.2f <= %.2f\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
+    printf("Comparacao: %.2f >= %.2f && %.2f <= %.2f (%d)\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE, n_collectables);
     //printf("TEMPO %d (%d): %.2f >= %.2f && %.2f <= %.2f\n", now, n_collectables, m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
-    if(m_current_level != "menu" && m_will_y + (now - m_start) * m_y_speed >= m_will_collectable && m_will_y + (now - m_start) * m_y_speed <= m_will_collectable + COLLECTABLE_SIZE){
+    if(m_current_level != "menu" && m_will_y >= m_will_collectable && m_will_y <= m_will_collectable + COLLECTABLE_SIZE){
         printf("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n");
         ++n_collectables;
-        printf("EITAAAAA: %.2f >= %.2f && %.2f <= %.2f\n", m_will_y + (now - m_start) * m_y_speed, m_will_collectable, m_will_y + (now - m_start) * m_y_speed, m_will_collectable + COLLECTABLE_SIZE);
+        printf("EITAAAAA: %.2f >= %.2f && %.2f <= %.2f\n", m_will_y, m_will_collectable, m_will_y, m_will_collectable + COLLECTABLE_SIZE);
         //getchar();
         //if(n_collectables == 2) exit(0);
         collectable[collectable_it] = 0;
@@ -325,31 +331,14 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         }
     }
 
-    //Update counters based on time
-    sprite_counter += (now - m_start) * m_sprite_speed;
-    m_camera_x += (now - m_start) * m_x_speed;
-    m_reverse_camera_x += (now - m_start) * m_x_speed;
-    m_will_y += (now - m_start) * m_y_speed;
+    int aux = n_screens - 7, height, it;
+    bool finished = true;
 
-    m_start = now;
-}
-
-void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
-    canvas->clear();
-    canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
-
-    if(m_current_level != "menu"){
-        canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
-        canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
-
-        //printf("----------\n");
-        int aux = n_screens - 7, height, it;
-        bool finished = true;
-
-        //Draws each of the seven parts of the screen
-        for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
+    int aux_it = 0;
+    for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
             //printf("%d, %d, %d\n", 852 - i, aux - change, change);
             it = aux - change;
+            level_it[aux_it++] = max(it, 0);
 
             if(it >= 0){
                 finished = false;
@@ -376,38 +365,45 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
                 if(852 - i >= m_will_x && 852 - i <= m_will_x + 30){
                     m_will_floor = 480.0 - height - WILL_HEIGHT;
                 }
-
-                //printf("m_will_collectable = %.2f, m_will_x = %.2f\n", m_will_collectable, m_will_x);
-
-
-                //printf("height = %d\n", height);
-                canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
-                if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i, 480 - enemy_height[it]);
-                if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
-                //printf("v = %d\n", height);
             }
             aux++;
         }
-        //printf("%.2f e %.2f\n", m_will_y, m_will_floor);
 
-        //Sets GAME OVER if it ran out of platforms
         if(finished) m_state = GAME_OVER;
-        //for(int i = change; i < 8 + change; ++i){
-        //  printf("Desenhou %d em %.2f,%.2f\n", i, m_reverse_camera_x - 142*(8 - i), m_will_y);
-        //  canvas->draw(m_level[i].get(), m_reverse_camera_x - 142*(12 - i), m_will_y);
-        //}
 
-        //printf("will height = %.2f\n", m_will_y);
-        //Draw Will based on its position
-        //printf("sc = %.2f e dist = %.3f\n", sprite_counter, WILL_WIDTH* (int)sprite_counter);
-        //printf("Drawing Will with state=%d, width=%d, ,sprite_counter=%f, x=%f, y=%f\n", m_state, WILL_WIDTH* (int) sprite_counter, sprite_counter, m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
-        canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
-        //canvas->draw(m_boss.get(), m_boss_x - m_camera_x*2, m_boss_y);
-
-        //Stop cameras and shows message if it's GAME OVER
         if(m_state == GAME_OVER){
             m_y_speed = 0;
             m_x_speed = 0;
+        }
+
+    m_start = now;
+
+
+
+}
+
+void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
+    canvas->clear();
+    canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+
+    if(m_current_level != "menu"){
+        canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
+        canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+
+        //Draws each of the seven parts of the screen
+        int aux = 0, it, height;
+        for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
+            it = level_it[aux++];
+            height = platform_height[it];
+            canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
+            if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i, 480 - enemy_height[it]);
+            if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
+            //printf("v = %d\n", height);
+        }
+
+        canvas->draw(m_will[m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
+
+        if(m_state == GAME_OVER){
             canvas->draw(m_boss.get(), 100, 100);
         }
     }

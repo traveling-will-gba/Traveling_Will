@@ -42,7 +42,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         double platform_height[200];
         double collectable_height[200], enemy_height[200];
         int collectable[200], enemy[200];
-        int enemy_type[200];
+        int enemy_type[200], level_it[200];
         double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_will_x, m_will_y, m_will_floor, m_will_collectable;
