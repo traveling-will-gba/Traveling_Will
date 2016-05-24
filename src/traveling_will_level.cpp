@@ -283,7 +283,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         return;
     }
 
-    if(m_start == -1)
+    if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
     }
@@ -294,7 +294,12 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     m_reverse_camera_x += (now - m_start) * m_x_speed;
     m_will_y += (now - m_start) * m_y_speed;
 
-    //printf("ms: %d ",now);
+    //Checking if music has ended
+    if(m_audio_duration != -1 && (now - m_audio_start) >= m_audio_duration){
+        printf ("FIM DA FASE\n");
+        m_state = RUNNING;
+        m_done = true;
+    }
 
     if(m_audio_duration != -1 && (now - m_audio_start) >= m_audio_duration){
         printf ("FIM DA FASE\n");
