@@ -39,6 +39,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 
         if(m_current_level == "menu"){
             m_camera_y = 0;
+
             m_background[0] = resources::get_texture(m_current_level + "/menu-tela.png");
 
             m_buttons.push_back(new Button(0, m_current_level, 20, 400, "voltar-botao.png", 144, 40, 0));
@@ -46,6 +47,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_buttons.push_back(new Button(2, m_current_level, 260, 360, "sair-botao.png", 270, 70, 1));
             m_buttons.push_back(new Button(3, m_current_level, 700, 400, "creditos-botao.png", 144, 40, 1));
             m_buttons.push_back(new Button(4, m_current_level, 260, 200, "novo-jogo-botao.png", 270, 70, 1));
+
             m_buttons.push_back(new Button(5, m_current_level + "/opcoes", 260, 200, "volume-botao.png", 144, 40, 0));
             m_buttons.push_back(new Button(6, m_current_level + "/opcoes", 260, 280, "tela-cheia-botao.png", 144, 40, 0));
             m_buttons.push_back(new Button(7, m_current_level + "/fases", 80, 210, "fase-1.png", 200, 150, 0));
@@ -88,6 +90,16 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
                 exit(0);
             }
             level_design >> n_screens;
+
+            platform_height = new double[n_screens + 1];
+            collectable_height = new double[n_screens + 1];
+            enemy_height = new double[n_screens + 1];
+
+            collectable = new int[n_screens + 1];
+            enemy = new int[n_screens + 1];
+            enemy_type = new int[n_screens + 1];
+            level_it = new int[n_screens + 1];
+
             for(int i = n_screens - 1; i >= 0; --i){
                 level_design >> platform_height[i];
                 level_design >> enemy[i];
@@ -263,6 +275,13 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
 }
 
 void TravelingWillLevel::update_self(unsigned now, unsigned){
+    if(m_current_level == "menu"){
+        if(m_state == SELECTING){
+            m_state = RUNNING;
+            m_done = true;
+        }
+        return;
+    }
     if(m_start == -1)
         m_start = now;
 
@@ -273,11 +292,6 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     m_will_y += (now - m_start) * m_y_speed;
 
     //printf("ms: %d ",now);
-
-    if(m_state == SELECTING){
-        m_state = RUNNING;
-        m_done = true;
-    }
 
     //Reset value of reverse camera for each part of the level
     if(m_reverse_camera_x > 142 && m_current_level == "1"){
@@ -371,14 +385,14 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         aux++;
     }
 
-    if(m_current_level != "menu" && m_will_y >= m_will_collectable && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
+    if(m_will_y >= m_will_collectable && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
         ++n_collectables;
         
         collectable[collectable_it] = 0;
         m_will_collectable = -10000000;
     }
 
-    if(m_current_level != "menu" && m_will_y >= m_will_enemy && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
+    if(m_will_y >= m_will_enemy && m_will_y + 15*(m_state == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
         if(m_will_enemy_type == 0 || not m_is_punching){
             m_state = GAME_OVER;
         }else{
