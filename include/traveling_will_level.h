@@ -39,7 +39,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         int *enemy_type, *level_it;
         int *collectable, *enemy, m_will_enemy_type;
         int collectable_it, enemy_it, m_punch_counter;
-        int m_r, m_g, m_b, m_audio_duration, m_audio_start;
+        int m_r, m_g, m_b, m_audio_duration, m_audio_start, m_audio_counter;
         int m_start, current_image, change, n_screens, n_collectables, n_enemies;
         double *platform_height;
         double start_cutscene_counter, final_cutscene_counter, m_cutscene_speed;
@@ -54,7 +54,9 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         State m_state;
 
         shared_ptr<Texture> m_background[3], m_level[20], m_enemy[4], m_collectable, m_will[20], m_start_cutscene[30], m_final_cutscene[30], m_boss;
+        shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar;
         vector< Button* > m_buttons;
+
 };
 
 #endif

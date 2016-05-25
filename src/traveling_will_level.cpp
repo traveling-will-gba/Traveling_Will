@@ -32,10 +32,10 @@ static const int ENEMY_SIZE =                   WILL_HEIGHT + ENEMY_DIMENSION;
 static const int BACK_BUTTON =                  0;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path, int audio_duration)
-    :  m_done(false), m_will_enemy_type(-1), collectable_it(-10000000), enemy_it(-10000000), m_r(r), m_g(g), m_b(b), m_audio_duration(audio_duration),
-    m_audio_start(0), m_start(-1), change(0), n_collectables(0), n_enemies(0), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0),
-    m_reverse_camera_x(1), m_reverse_camera_y(480), m_will_collectable(-100), m_will_enemy(-100), m_next(next_level), m_current_level(current_level),
-    m_audio(audio_path), m_state(NOTHING), level_started(false), level_finished(false), start_cutscene_counter(1), final_cutscene_counter(1), m_cutscene_speed(1/80.0) {
+    :  m_done(false), level_started(false), level_finished(false), m_will_enemy_type(-1), collectable_it(-10000000), enemy_it(-10000000), m_r(r), m_g(g), m_b(b),
+    m_audio_duration(audio_duration), m_audio_start(0), m_audio_counter(0), m_start(-1), change(0), n_collectables(0), n_enemies(0), start_cutscene_counter(1),
+    final_cutscene_counter(1), m_cutscene_speed(1/80.0), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
+    m_will_collectable(-100), m_will_enemy(-100), m_next(next_level), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -92,6 +92,11 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_enemy[1] = resources::get_texture(m_current_level + "/enemy2.png");
 
             m_collectable = resources::get_texture(m_current_level + "/collectable.png");
+
+            m_progress_bar[0] = resources::get_texture("whole-progress-bar.png");
+            m_progress_bar[1] = resources::get_texture("progress-bar.png");
+            m_progress_bar[2] = resources::get_texture("begin-progress-bar.png");
+            m_will_progress_bar = resources::get_texture("tiny-will-progress-bar.png");
 
             //Read level design from txt
             fstream level_design("res/" + m_current_level + "/level_design.txt");
@@ -328,9 +333,10 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     m_camera_x += (now - m_start) * m_x_speed;
     m_reverse_camera_x += (now - m_start) * m_x_speed;
     m_will_y += (now - m_start) * m_y_speed;
+    m_audio_counter = now - m_audio_start;
 
     //Checking if music has ended
-    if(m_audio_duration != -1 && (int)(now - m_audio_start) >= m_audio_duration){
+    if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
         printf ("FIM DA FASE\n");
         m_state = RUNNING;
         m_done = true;
@@ -487,6 +493,13 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         }
 
         canvas->draw(m_will[m_is_punching ? PUNCHING : m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
+
+        double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
+
+        canvas->draw(m_progress_bar[0].get(), Rectangle(0, 0, 800, 19), 26, 18);
+        canvas->draw(m_progress_bar[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
+        canvas->draw(m_progress_bar[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
+        canvas->draw(m_will_progress_bar.get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
 
         if(m_state == GAME_OVER){
             canvas->draw(m_boss.get(), 100, 100);
