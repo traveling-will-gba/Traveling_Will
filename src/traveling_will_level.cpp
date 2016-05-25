@@ -60,9 +60,11 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             for(auto btn : m_buttons){
                 add_child(btn);
             }
+
+			m_start = -1;
         }
         else if(m_current_level == "cutscene-intro"){
-            m_cutscene_speed = 1/240.0;
+            m_cutscene_speed = 1/300.0;
 
             for(int i=1; i<=9; i++){
                 m_start_cutscene[i] = resources::get_texture(m_current_level + "/start_cutscene-" + to_string(i) + ".png");
@@ -266,8 +268,8 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
 
         }
     }
-    else{
-        if(event.id() == GAME_EVENT_PUNCH && m_state != SLIDING){
+    else if(m_state != GAME_OVER){
+        if(event.id() == GAME_EVENT_PUNCH && m_state != SLIDING && event.timestamp() - m_punch_counter > 230){
             m_is_punching = true;
             m_punch_counter = event.timestamp();
             printf("PUNCHING\n\n\n");
@@ -305,12 +307,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
     // if(not level_started){
     if(m_current_level == "cutscene-intro"){
-        start_cutscene_counter += m_cutscene_speed;
-
-        printf("now = %d\n", now - m_start);
-
-        // if(start_cutscene_counter >= 9.9){
-        if(now - m_start > 28000){
+        if((now - m_start) >= 28000){
             m_done = true;
         }
 
@@ -366,6 +363,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
     if(m_is_punching && (now - m_punch_counter) > 80){
+		m_punch_counter = now;
         m_is_punching = false;
     }
 
@@ -471,7 +469,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     m_start = now;
 }
 
-void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
+void TravelingWillLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
 
     if(m_current_level == "menu"){
         canvas->clear();
@@ -480,8 +478,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 
     else if(m_current_level == "cutscene-intro"){
         canvas->clear();
-        printf("start_cutscene_counter = %.2f\n", start_cutscene_counter);
-        canvas->draw(m_start_cutscene[(int)start_cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
+        canvas->draw(m_start_cutscene[1 + (now - m_start) / 3200].get(), Rectangle(0, 0, 852, 480), 0, 0);
     }
 
     else if(m_current_level == "1"){
