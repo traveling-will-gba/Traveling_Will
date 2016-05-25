@@ -54,7 +54,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         State m_state;
 
         shared_ptr<Texture> m_background[3], m_level[20], m_enemy[4], m_collectable, m_will[20], m_start_cutscene[30], m_final_cutscene[30], m_boss;
-        shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar;
+        shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar, m_number, m_collectable_icon;
         vector< Button* > m_buttons;
 
 };

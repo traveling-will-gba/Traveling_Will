@@ -92,6 +92,9 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_enemy[1] = resources::get_texture(m_current_level + "/enemy2.png");
 
             m_collectable = resources::get_texture(m_current_level + "/collectable.png");
+			m_collectable_icon = resources::get_texture(m_current_level + "/collectable_icon.png");
+
+			m_number = resources::get_texture(m_current_level + "/numbers.png");
 
             m_progress_bar[0] = resources::get_texture("whole-progress-bar.png");
             m_progress_bar[1] = resources::get_texture("progress-bar.png");
@@ -500,6 +503,16 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         canvas->draw(m_progress_bar[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
         canvas->draw(m_progress_bar[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
         canvas->draw(m_will_progress_bar.get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
+
+        canvas->draw(m_collectable_icon.get(), 705, 425);
+
+		aux = n_collectables;
+		int x_digit = 805;
+		do{
+            canvas->draw(m_number.get(), Rectangle(23 * (aux % 10), 0, 23, 36), x_digit, 435);
+			aux /= 10;
+			x_digit -= 25;
+		}while(aux);
 
         if(m_state == GAME_OVER){
             canvas->draw(m_boss.get(), 100, 100);
