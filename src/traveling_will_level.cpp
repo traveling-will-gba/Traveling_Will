@@ -72,7 +72,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
         }
         else if(m_current_level == "1"){
             //Sets level information
-            m_x_speed = 4/19.0;
+            m_x_speed = 5/19.0;
             m_sprite_speed = 1/170.0;
             m_state = RUNNING;
             m_camera_y = 0;
@@ -157,7 +157,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 		else if(m_current_level == "cutscene-end"){
             m_cutscene_speed = 1/300.0;
 
-            for(int i=1; i<=9; i++){
+            for(int i=1; i<=3; i++){
                 m_end_cutscene[i] = resources::get_texture(m_current_level + "/end_cutscene-" + to_string(i) + ".png");
             }
         }
@@ -346,7 +346,12 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         return;
     }
 
-    if(m_current_level == "cutscene-intro" || m_current_level == "cutscene-end"){
+    if(m_start == -1){
+        m_start = now;
+        m_audio_start = m_start;
+    }
+
+    if(m_current_level == "cutscene-intro"){
         if((now - m_start) >= 28000){
             m_done = true;
         }
@@ -354,12 +359,15 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         return;
     }
 
-	final_cutscene_counter += (now - m_start) * m_cutscene_speed;
+    if(m_current_level == "cutscene-end"){
+        if((now - m_start) >= 9000){
+            m_done = true;
+        }
 
-    if(m_start == -1){
-        m_start = now;
-        m_audio_start = m_start;
+        return;
     }
+
+	final_cutscene_counter += (now - m_start) * m_cutscene_speed;
 
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
@@ -422,7 +430,6 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
     int aux = n_screens - 7, height, it;
-    bool finished = true;
 
     int aux_it = 0;
     for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
@@ -430,7 +437,6 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         level_it[aux_it++] = max(it, 0);
 
         if(it >= 0){
-            finished = false;
             height = platform_height[it];
             if(852 - i >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
                 m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
@@ -490,11 +496,11 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         }
     }
 
-    if(finished) m_state = GAME_OVER;
-
     if(m_state == GAME_OVER){
         m_y_speed = 0;
         m_x_speed = 0;
+        m_next = m_current_level;
+        m_done = true;
     }
 
     m_start = now;
