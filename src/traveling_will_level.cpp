@@ -25,8 +25,10 @@ static const int GAME_EVENT_PUNCH =             1 << 11;
 static const int NUMBER_OF_SCREENS =            12;
 static const int WILL_HEIGHT =                  45;
 static const int WILL_WIDTH =                   57;
-static const int COLLECTABLE_SIZE =             WILL_HEIGHT + 30;
-static const int ENEMY_SIZE =                   WILL_HEIGHT + 45;
+static const int COLLECTABLE_DIMENSION =        34;
+static const int COLLECTABLE_SIZE =             WILL_HEIGHT + COLLECTABLE_DIMENSION;
+static const int ENEMY_DIMENSION =              45;
+static const int ENEMY_SIZE =                   WILL_HEIGHT + ENEMY_DIMENSION;
 static const int BACK_BUTTON =                  0;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path, int audio_duration)
@@ -394,7 +396,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
             if(852 - i + 142 >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
 
-                if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
+                if(852 - i + 56 + COLLECTABLE_DIMENSION >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
                     if(collectable[it]){
                         collectable_it = it;
                         m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
@@ -406,7 +408,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
                     m_will_collectable = -1000000000;
                 }
 
-                if(852 - i + 93 >= m_will_x && 852 - i + 48 <= m_will_x + WILL_WIDTH){
+                if(852 - i + 48 + ENEMY_DIMENSION >= m_will_x && 852 - i + 48 <= m_will_x + WILL_WIDTH){
                     if(enemy[it]){
                         enemy_it = it;
                         m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
@@ -480,8 +482,8 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
             it = level_it[aux++];
             height = platform_height[it];
             canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
-            if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(45 * (int) sprite_counter, 0, 45, 45), 852 - i + 48, 480 - enemy_height[it]);
-            if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(30 * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
+            if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(ENEMY_DIMENSION * (int) sprite_counter, 0, 45, 45), 852 - i + 48, 480 - enemy_height[it]);
+            if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(COLLECTABLE_DIMENSION * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
         }
 
         canvas->draw(m_will[m_is_punching ? PUNCHING : m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
