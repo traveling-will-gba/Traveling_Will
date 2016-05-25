@@ -307,7 +307,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
 	if(not level_started){
-		start_cutscene_counter += m_cutscene_speed;
+		start_cutscene_counter += (now - m_start) * m_cutscene_speed;
 
 		if(start_cutscene_counter >= 9.9){
 			level_started = true;
@@ -322,7 +322,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 		m_x_speed = 0;
 		m_sprite_speed = 0;
 
-		final_cutscene_counter += m_cutscene_speed;
+		final_cutscene_counter += (now - m_start) * m_cutscene_speed;
 
 		if(final_cutscene_counter >= 4.9){
 			exit(0);
@@ -354,8 +354,8 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
     //Reset background camera
-    if(m_camera_x > 852){
-        m_camera_x -= 852;
+    if(m_camera_x > 1704){
+        m_camera_x -= 1704;
     }
 
     //Reset sprite counter
@@ -484,6 +484,7 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 			return;
 		}
 
+        printf("m_camera_x/2 = %f\n", m_camera_x/2);
         canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
         canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
