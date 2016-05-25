@@ -3,7 +3,7 @@
 
 TravelingWillLevel * TravelingWillLevelFactory::make_level(const string& level_id){
     if(level_id == "menu")
-        return new TravelingWillLevel(255, 0, 0, "menu", "cutscene-intro", "res/menu/beat.wav", -1);
+        return new TravelingWillLevel(255, 0, 0, "menu", "cutscene-intro", "res/menu/menu.mp3", -1);
 	else if(level_id == "cutscene-intro")
       return new TravelingWillLevel(255, 0, 0, "cutscene-intro", "1", "res/cutscene-intro/cutscene-intro.mp3", 28000);
     else if(level_id == "1")
