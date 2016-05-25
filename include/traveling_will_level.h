@@ -19,7 +19,7 @@ class Button;
 
 class TravelingWillLevel : public Level, public GameEventsListener {
     public:
-        TravelingWillLevel(int r, int g, int b, const string& current_level, const string& next_level = "", const string audio_path = "");
+        TravelingWillLevel(int r, int g, int b, const string& current_level, const string& next_level = "", const string audio_path = "", int audio_duration = -1);
         ~TravelingWillLevel();
 
         bool done() const;
@@ -52,6 +52,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         State m_state;
         shared_ptr<Texture> m_background[3], m_level[20], m_enemy[4], m_collectable, m_will[20], m_boss;
         vector< Button* > m_buttons;
+        int m_audio_duration, m_audio_start;
 };
 
 #endif
