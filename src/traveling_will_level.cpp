@@ -22,7 +22,7 @@ static const int WILL_WIDTH =                   57;
 static const int COLLECTABLE_SIZE =             WILL_HEIGHT + 30;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path)
-    : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480), m_y_speed(0), m_will_collectable(-100), n_collectables(0), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0), level_started(false), level_finished(false), start_cutscene_counter(1), final_cutscene_counter(1), m_cutscene_speed(1/300.0) {
+    : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480), m_y_speed(0), m_will_collectable(-100), n_collectables(0), turn_off_collectable(false), change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0), level_started(false), level_finished(false), start_cutscene_counter(1), final_cutscene_counter(1), m_cutscene_speed(1/80.0) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -50,7 +50,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_will[FALLING] = resources::get_texture(m_current_level + "/will-falling.png");
             m_will[GAME_OVER] = resources::get_texture(m_current_level + "/will-gameover.png");
 
-			for(int i=1; i<=4; i++){
+			for(int i=1; i<=9; i++){
 				m_start_cutscene[i] = resources::get_texture(m_current_level + "/start_cutscene-" + to_string(i) + ".png");
 			}
 
@@ -154,7 +154,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 	if(not level_started){
 		start_cutscene_counter += m_cutscene_speed;
 
-		if(start_cutscene_counter >= 4.9){
+		if(start_cutscene_counter >= 9.9){
 			level_started = true;
 
 			//Set camera and sprite speeds
