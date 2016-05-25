@@ -336,7 +336,9 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     m_camera_x += (now - m_start) * m_x_speed;
     m_reverse_camera_x += (now - m_start) * m_x_speed;
     m_will_y += (now - m_start) * m_y_speed;
-    m_audio_counter = now - m_audio_start;
+
+	if(m_state != GAME_OVER && not level_finished)
+	    m_audio_counter = now - m_audio_start;
 
     //Checking if music has ended
     if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
