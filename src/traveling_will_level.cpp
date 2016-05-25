@@ -40,6 +40,8 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
 
+        m_buttons.clear();
+
         if(m_current_level == "menu"){
             m_camera_y = 0;
 
@@ -57,10 +59,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_buttons.push_back(new Button(8, m_current_level + "/fases", 320, 210, "fase-2.png", 200, 150, 0));
             m_buttons.push_back(new Button(9, m_current_level + "/fases", 560, 210, "fase-3.png", 200, 150, 0));
 
-            for(auto btn : m_buttons){
-                add_child(btn);
-            }
-
 			m_start = -1;
         }
         else if(m_current_level == "cutscene-intro"){
@@ -69,6 +67,8 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             for(int i=1; i<=9; i++){
                 m_start_cutscene[i] = resources::get_texture(m_current_level + "/start_cutscene-" + to_string(i) + ".png");
             }
+
+            m_buttons.push_back(new Button(0, m_current_level, 700, 410, "pular-botao.png", 142, 50, 1));
         }
         else if(m_current_level == "1"){
             //Sets level information
@@ -160,6 +160,10 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             for(int i=1; i<=9; i++){
                 m_end_cutscene[i] = resources::get_texture(m_current_level + "/end_cutscene-" + to_string(i) + ".png");
             }
+        }
+
+        for(auto btn : m_buttons){
+            add_child(btn);
         }
 
         event::register_listener(this);
@@ -276,6 +280,35 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
 
         }
     }
+
+    else if(m_current_level == "cutscene-intro"){
+        if(event.id() == GAME_MOUSE_CLICK){
+            double mouse_x = event.get_property<double>("x");
+            double mouse_y = event.get_property<double>("y");
+
+            for(auto btn : m_buttons){
+                if(btn->able_to_draw() == 0) continue;
+
+                int min_x = btn->x(), max_x = min_x + btn->w();
+                int min_y = btn->y(), max_y = min_y + btn->h();
+
+                if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
+                    switch(btn->id()){
+                        case 0:
+                            m_done = true;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    return true;
+                }
+
+            }
+
+        }
+    }
+
     else if(m_state != GAME_OVER){
         if(event.id() == GAME_EVENT_PUNCH && m_state != SLIDING && event.timestamp() - m_punch_counter > 230){
             m_is_punching = true;
