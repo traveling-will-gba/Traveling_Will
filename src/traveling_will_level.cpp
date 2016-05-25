@@ -390,6 +390,9 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
             height = platform_height[it];
             if(852 - i >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
                 m_will_floor = min(480.0 - height - WILL_HEIGHT, m_will_floor);
+            }
+
+            if(852 - i + 142 >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
 
                 if(852 - i + 86 >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
                     if(collectable[it]){
@@ -403,7 +406,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
                     m_will_collectable = -1000000000;
                 }
 
-                if(852 - i + 97 >= m_will_x && 852 - i + 48 <= m_will_x + WILL_WIDTH){
+                if(852 - i + 93 >= m_will_x && 852 - i + 48 <= m_will_x + WILL_WIDTH){
                     if(enemy[it]){
                         enemy_it = it;
                         m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
