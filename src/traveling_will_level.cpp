@@ -1,4 +1,4 @@
-    #include "traveling_will_level.h"
+#include "traveling_will_level.h"
 #include "button.h"
 
 #include <ijengine/canvas.h>
@@ -152,6 +152,14 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             }
 
             m_boss = resources::get_texture(m_current_level + "/perdeu.png");
+			m_start = -1;
+        }
+		else if(m_current_level == "cutscene-end"){
+            m_cutscene_speed = 1/300.0;
+
+            for(int i=1; i<=9; i++){
+                m_end_cutscene[i] = resources::get_texture(m_current_level + "/end_cutscene-" + to_string(i) + ".png");
+            }
         }
 
         event::register_listener(this);
@@ -305,8 +313,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         return;
     }
 
-    // if(not level_started){
-    if(m_current_level == "cutscene-intro"){
+    if(m_current_level == "cutscene-intro" || m_current_level == "cutscene-end"){
         if((now - m_start) >= 28000){
             m_done = true;
         }
@@ -314,16 +321,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         return;
     }
 
-    // if(level_finished){
-    //  m_x_speed = 0;
-    //  m_sprite_speed = 0;
-
-		final_cutscene_counter += (now - m_start) * m_cutscene_speed;
-
-    //  if(final_cutscene_counter >= 4.9){
-    //      exit(0);
-    //  }
-    // }
+	final_cutscene_counter += (now - m_start) * m_cutscene_speed;
 
     if(m_start == -1){
         m_start = now;
@@ -481,17 +479,17 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
         canvas->draw(m_start_cutscene[1 + (now - m_start) / 3200].get(), Rectangle(0, 0, 852, 480), 0, 0);
     }
 
-    else if(m_current_level == "1"){
-        // FIXME
-        // if(level_finished){
-        // 	canvas->draw(m_final_cutscene[(int)final_cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
-        // 	return;
-        // }
+	else if(m_current_level == "cutscene-end"){
         canvas->clear();
-        canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+        canvas->draw(m_end_cutscene[1 + (now - m_start) / 3200].get(), Rectangle(0, 0, 852, 480), 0, 0);
+    }
 
-        canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
-        canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+    else if(m_current_level == "1"){
+		canvas->clear();
+		canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+
+		canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
+		canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
         //Draws each of the seven parts of the screen
         int aux = 0, it, height;
