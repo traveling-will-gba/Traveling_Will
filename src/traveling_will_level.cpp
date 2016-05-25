@@ -34,7 +34,7 @@ static const int BACK_BUTTON =                  0;
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path, int audio_duration)
     :  m_done(false), level_started(false), level_finished(false), m_will_enemy_type(-1), collectable_it(-10000000), enemy_it(-10000000), m_r(r), m_g(g), m_b(b),
     m_audio_duration(audio_duration), m_audio_start(0), m_audio_counter(0), m_start(-1), change(0), n_collectables(0), n_enemies(0), start_cutscene_counter(1),
-    final_cutscene_counter(1), m_cutscene_speed(1/80.0), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
+    final_cutscene_counter(1), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
     m_will_collectable(-100), m_will_enemy(-100), m_next(next_level), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
@@ -61,8 +61,17 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
                 add_child(btn);
             }
         }
+        else if(m_current_level == "cutscene-intro"){
+            m_cutscene_speed = 1/240.0;
+
+            for(int i=1; i<=9; i++){
+                m_start_cutscene[i] = resources::get_texture(m_current_level + "/start_cutscene-" + to_string(i) + ".png");
+            }
+        }
         else if(m_current_level == "1"){
             //Sets level information
+            m_x_speed = 4/19.0;
+            m_sprite_speed = 1/170.0;
             m_state = RUNNING;
             m_camera_y = 0;
             change = 0;
@@ -80,13 +89,10 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_will[GAME_OVER] = resources::get_texture(m_current_level + "/will-gameover.png");
             m_will[PUNCHING]= resources::get_texture(m_current_level + "/will-punching.png");
 
-			for(int i=1; i<=9; i++){
-				m_start_cutscene[i] = resources::get_texture(m_current_level + "/start_cutscene-" + to_string(i) + ".png");
-			}
-
-			for(int i=1; i<=4; i++){
-				m_final_cutscene[i] = resources::get_texture(m_current_level + "/final_cutscene-" + to_string(i) + ".png");
-			}
+            // FIXME
+            // for(int i=1; i<=4; i++){
+            // 	m_final_cutscene[i] = resources::get_texture(m_current_level + "/final_cutscene-" + to_string(i) + ".png");
+            // }
 
             m_enemy[0] = resources::get_texture(m_current_level + "/enemy1.png");
             m_enemy[1] = resources::get_texture(m_current_level + "/enemy2.png");
@@ -144,10 +150,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             }
 
             m_boss = resources::get_texture(m_current_level + "/perdeu.png");
-
-            //Set camera and sprite speeds
-            m_x_speed = 0;
-            m_sprite_speed = 0;
         }
 
         event::register_listener(this);
@@ -301,35 +303,35 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         return;
     }
 
+    // if(not level_started){
+    if(m_current_level == "cutscene-intro"){
+        start_cutscene_counter += m_cutscene_speed;
+
+        printf("now = %d\n", now - m_start);
+
+        // if(start_cutscene_counter >= 9.9){
+        if(now - m_start > 28000){
+            m_done = true;
+        }
+
+        return;
+    }
+
+    // if(level_finished){
+    //  m_x_speed = 0;
+    //  m_sprite_speed = 0;
+
+    //  final_cutscene_counter += m_cutscene_speed;
+
+    //  if(final_cutscene_counter >= 4.9){
+    //      exit(0);
+    //  }
+    // }
+
     if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
     }
-
-	if(not level_started){
-		start_cutscene_counter += m_cutscene_speed;
-
-		if(start_cutscene_counter >= 9.9){
-			level_started = true;
-
-			//Set camera and sprite speeds
-            m_x_speed = 4/19.0;
-            m_sprite_speed = 1/170.0;
-		}
-	}
-
-	if(level_finished){
-		m_x_speed = 0;
-		m_sprite_speed = 0;
-
-		final_cutscene_counter += m_cutscene_speed;
-
-		if(final_cutscene_counter >= 4.9){
-			exit(0);
-		}
-	}
-
-    //printf("ms: %d ",now);
 
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
@@ -470,20 +472,27 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 }
 
 void TravelingWillLevel::draw_self(Canvas *canvas, unsigned, unsigned){
-    canvas->clear();
-    canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
 
-    if(m_current_level != "menu"){
-		if(not level_started){
-			canvas->draw(m_start_cutscene[(int)start_cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
-			return;
-		}
+    if(m_current_level == "menu"){
+        canvas->clear();
+        canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+    }
 
-		if(level_finished){
-			canvas->draw(m_final_cutscene[(int)final_cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
-			return;
-		}
+    else if(m_current_level == "cutscene-intro"){
+        canvas->clear();
+        printf("start_cutscene_counter = %.2f\n", start_cutscene_counter);
+        canvas->draw(m_start_cutscene[(int)start_cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
+    }
 
+    else if(m_current_level == "1"){
+        // FIXME
+        // if(level_finished){
+        // 	canvas->draw(m_final_cutscene[(int)final_cutscene_counter].get(), Rectangle(0, 0, 852, 480), 0, 0);
+        // 	return;
+        // }
+
+        canvas->clear();
+        canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
         canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
         canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
