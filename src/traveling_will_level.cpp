@@ -30,9 +30,10 @@ static const int ENEMY_SIZE =                   WILL_HEIGHT + 45;
 static const int BACK_BUTTON =                  0;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path, int audio_duration)
-    : m_r(r), m_g(g), m_b(b), m_done(false), m_next(next_level), m_sprite_speed(0), m_start(-1), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_y_speed(0), m_will_collectable(-100), n_collectables(0), collectable_it(-10000000), m_will_enemy(-100), n_enemies(0), enemy_it(-10000000), m_will_enemy_type(-1),
-    change(0), m_current_level(current_level), m_audio(audio_path), m_state(NOTHING), sprite_counter(0), m_audio_duration(audio_duration), m_audio_start(0) {
+    :  m_done(false), m_will_enemy_type(-1), collectable_it(-10000000), enemy_it(-10000000), m_r(r), m_g(g), m_b(b), m_audio_duration(audio_duration),
+    m_audio_start(0), m_start(-1), change(0), n_collectables(0), n_enemies(0), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0),
+    m_reverse_camera_x(1), m_reverse_camera_y(480), m_will_collectable(-100), m_will_enemy(-100), m_next(next_level), m_current_level(current_level),
+    m_audio(audio_path), m_state(NOTHING) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
@@ -111,7 +112,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
                 if(collectable[i]){
                     level_design >> collectable_height[i];
                 }
-                printf("platform_height[%d] = %d\n", i, platform_height[i]);
+                printf("platform_height[%d] = %.2f\n", i, platform_height[i]);
             }
             level_design.close();
 
@@ -171,24 +172,24 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
                     switch(btn->id()){
                         case BACK_BUTTON:
                             m_background[0] = resources::get_texture(m_current_level + "/menu-tela.png");
-                            for(auto btn : m_buttons){
-                                if(btn->level() == "menu" && btn->id() != BACK_BUTTON)
-                                    btn->set_able_to_draw(1);
+                            for(auto button : m_buttons){
+                                if(button->level() == "menu" && button->id() != BACK_BUTTON)
+                                    button->set_able_to_draw(1);
                                 else
-                                    btn->set_able_to_draw(0);
+                                    button->set_able_to_draw(0);
                             }
                             break;
                         case 1:
                             m_background[0] = resources::get_texture(m_current_level + "/opcoes-tela.png");
 
-                            for(auto btn : m_buttons){
-                                if(btn->level() == "menu")
-                                    btn->set_able_to_draw(0);
-                                else if(btn->level() == m_current_level + "/opcoes")
-                                    btn->set_able_to_draw(1);
+                            for(auto button : m_buttons){
+                                if(button->level() == "menu")
+                                    button->set_able_to_draw(0);
+                                else if(button->level() == m_current_level + "/opcoes")
+                                    button->set_able_to_draw(1);
 
-                                if(btn->id() == BACK_BUTTON && btn->able_to_draw() == 0)
-                                    btn->set_able_to_draw(1);
+                                if(button->id() == BACK_BUTTON && button->able_to_draw() == 0)
+                                    button->set_able_to_draw(1);
                             }
                             break;
                         case 2:
@@ -196,29 +197,28 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
                             break;
                         case 3:
                             m_background[0] = resources::get_texture(m_current_level + "/creditos-tela.png");
-                            for(auto btn : m_buttons){
-                                if(btn->level() == "menu")
-                                    btn->set_able_to_draw(0);
-                                else if(btn->level() == m_current_level + "/creditos")
-                                    btn->set_able_to_draw(1);
+                            for(auto button : m_buttons){
+                                if(button->level() == "menu")
+                                    button->set_able_to_draw(0);
+                                else if(button->level() == m_current_level + "/creditos")
+                                    button->set_able_to_draw(1);
 
-                                if(btn->id() == BACK_BUTTON && btn->able_to_draw() == 0)
-                                    btn->set_able_to_draw(1); 
+                                if(button->id() == BACK_BUTTON && button->able_to_draw() == 0)
+                                    button->set_able_to_draw(1); 
                             }
                             break;
                         case 4:
                             m_background[0] = resources::get_texture(m_current_level + "/fases-tela.png");
 
-                            for(auto btn : m_buttons){
-                                if(btn->level() == "menu")
-                                    btn->set_able_to_draw(0);
-                                else if(btn->level() == m_current_level + "/fases")
-                                    btn->set_able_to_draw(1);
+                            for(auto button : m_buttons){
+                                if(button->level() == "menu")
+                                    button->set_able_to_draw(0);
+                                else if(button->level() == m_current_level + "/fases")
+                                    button->set_able_to_draw(1);
 
-                                if(btn->id() == BACK_BUTTON && btn->able_to_draw() == 0)
-                                    btn->set_able_to_draw(1);
+                                if(button->id() == BACK_BUTTON && button->able_to_draw() == 0)
+                                    button->set_able_to_draw(1);
                             }
-                            // m_state = SELECTING;
                             break;
                         case 5:
                             printf("VOLUME\n");
@@ -295,7 +295,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     m_will_y += (now - m_start) * m_y_speed;
 
     //Checking if music has ended
-    if(m_audio_duration != -1 && (now - m_audio_start) >= m_audio_duration){
+    if(m_audio_duration != -1 && (int)(now - m_audio_start) >= m_audio_duration){
         printf ("FIM DA FASE\n");
         m_state = RUNNING;
         m_done = true;
@@ -362,7 +362,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
                     if(collectable[it]){
                         collectable_it = it;
                         m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
-                        printf("%f %f\n", collectable_height[it], WILL_HEIGHT);
+                        printf("%f %d\n", collectable_height[it], WILL_HEIGHT);
                     }else{
                         m_will_collectable = -1000000000;
                     }
@@ -375,7 +375,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
                         enemy_it = it;
                         m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
                         m_will_enemy_type = enemy_type[it];
-                        printf("%f %f\n", enemy_height[it], WILL_HEIGHT);
+                        printf("%f %d\n", enemy_height[it], WILL_HEIGHT);
                     }else{
                         m_will_enemy = -1000000000;
                         m_will_enemy_type = -1;
