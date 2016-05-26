@@ -60,6 +60,10 @@ class TravelingWillGame {
                 return false;
             }
 
+            virtual bool translate(GameEvent&, const JoystickEvent&){
+                return false;
+            }
+
             virtual bool translate(GameEvent& to, const KeyboardEvent& from){
                 to.set_timestamp(from.timestamp());
 
