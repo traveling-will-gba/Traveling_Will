@@ -16,7 +16,7 @@ using std::shared_ptr;
 using namespace ijengine;
 
 class Button;
-class Player;
+class Will;
 
 class TravelingWillLevel : public Level, public GameEventsListener {
     public:
@@ -50,6 +50,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         double sprite_counter, m_sprite_speed;
         double *collectable_height, *enemy_height;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
+        double m_will_collectable, m_will_enemy, m_floor;
         string m_next, m_current_level, m_audio;
         State m_state;
 
@@ -57,11 +58,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar, m_number, m_collectable_icon;
         vector< Button* > m_buttons;
 
-        double m_floor;
-        double m_will_x, m_will_y, m_will_collectable, m_will_enemy;
-        shared_ptr<Texture> m_will[20];
-
-        Player * m_will_player;
+        Will * m_will;
         bool is_selected;
 };
 

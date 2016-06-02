@@ -1,6 +1,6 @@
 #include "traveling_will_level.h"
 #include "button.h"
-#include "player.h"
+#include "will.h"
 
 #include <ijengine/canvas.h>
 #include <ijengine/engine.h>
@@ -38,7 +38,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
     final_cutscene_counter(1), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
     m_will_collectable(-100), m_will_enemy(-100), m_next(next_level), m_current_level(current_level), m_audio(audio_path), is_selected(false) {
 
-        printf("Entrou no construtor\n");
         printf("current_level: [%s]\n", m_current_level.c_str());
         printf("Audio of level [%s]\n", m_audio.c_str());
 
@@ -75,7 +74,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             //Sets level information
             m_x_speed = 5/19.0;
             m_sprite_speed = 1/170.0;
-            // m_state = RUNNING;
             m_camera_y = 0;
             change = 0;
             m_boss_x = 690;
@@ -105,6 +103,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
                 printf("Level design txt not available\n");
                 exit(0);
             }
+
             level_design >> n_screens;
 
             platform_height = new double[n_screens + 1];
@@ -132,8 +131,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 
             level_design.close();
 
-            m_will_player = new Player(50, 480 - platform_height[n_screens - 1] - WILL_HEIGHT);
-
             m_floor = 480 - platform_height[n_screens - 1] - WILL_HEIGHT;
 
             //Get platforms textures
@@ -142,9 +139,11 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             }
 
             m_boss = resources::get_texture(m_current_level + "/perdeu.png");
-            m_start = -1;
 
-            add_child(m_will_player);
+            m_will = new Will(50, 480 - platform_height[n_screens - 1] - WILL_HEIGHT);
+            add_child(m_will);
+
+            m_start = -1;
         }
         else if(m_current_level == "cutscene-end"){
             m_cutscene_speed = 1/300.0;
@@ -158,9 +157,8 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             add_child(btn);
         }
 
-        event::register_listener(this);
 
-        printf("Saiu do construtor\n");
+        event::register_listener(this);
     }
 
 TravelingWillLevel::~TravelingWillLevel(){
@@ -182,7 +180,6 @@ string TravelingWillLevel::audio() const{
 bool TravelingWillLevel::on_event(const GameEvent& event){
     if(m_current_level == "menu"){
         if(event.id() == GAME_EVENT_SLIDE_PRESSED){
-            printf("PRA BAIXO\n");
             return true;
         }
 
@@ -257,7 +254,6 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
                         case 7:
                             // FIXME
                             is_selected = true;
-                            // m_state = SELECTING;
                             break;
                         case 8:
                             // FIXME
@@ -309,57 +305,16 @@ bool TravelingWillLevel::on_event(const GameEvent& event){
         }
     }
 
-    // else if(m_will_player->state() != GAME_OVER){
-    //     if(event.id() == GAME_EVENT_PUNCH && m_will_player->state() != SLIDING && event.timestamp() - m_punch_counter > 230){
-    //         m_is_punching = true;
-    //         m_punch_counter = event.timestamp();
-    //         printf("PUNCHING\n\n\n");
-    //         return true;
-    //     }
-
-    //     if(event.id() == GAME_EVENT_JUMP && m_will_player->state() == RUNNING){
-    //         m_y_speed = -0.5;
-    //         m_will_player->set_state(JUMPING);
-    //         // m_state = JUMPING;
-    //         return true;
-    //     }
-
-    //     if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_will_player->state() != JUMPING && m_will_player->state() != FALLING){
-    //         m_will_player->set_state(SLIDING);
-    //         // m_state = SLIDING;
-    //         return true;
-    //     }
-
-    //     if(event.id() == GAME_EVENT_SLIDE_RELEASED && m_will_player->state() == SLIDING){
-    //         m_will_player->set_state(RUNNING);
-    //         // m_state = RUNNING;
-    //         return true;
-    //     }
-    // }
-
     return false;
 }
 
 void TravelingWillLevel::update_self(unsigned now, unsigned){
     if(m_current_level == "menu"){
-        printf("Entrou no if do menu\n");
-        printf("%d\n",SELECTING);
         if(is_selected){
-            printf("Entrou no if do selecting\n");
-            // m_will_player->set_state(RUNNING);
-            // m_state = RUNNING;
             m_done = true;
         }
-        else{
-            printf("rodou\n");
-        }
-        printf("Saiu do if do menu\n");
-        return;
-    }
 
-    if(m_start == -1){
-        m_start = now;
-        m_audio_start = m_start;
+        return;
     }
 
     if(m_current_level == "cutscene-intro"){
@@ -378,22 +333,24 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         return;
     }
 
+    if(m_start == -1){
+        m_start = now;
+        m_audio_start = m_start;
+    }
+
     final_cutscene_counter += (now - m_start) * m_cutscene_speed;
 
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
     m_camera_x += (now - m_start) * m_x_speed;
     m_reverse_camera_x += (now - m_start) * m_x_speed;
-    m_will_player->set_y(m_will_player->y() + (now - m_start) * m_y_speed);
 
-    if(m_will_player->state() != GAME_OVER && not level_finished)
+    if(m_will->state() != GAME_OVER && not level_finished)
         m_audio_counter = now - m_audio_start;
 
     //Checking if music has ended
     if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
-        printf ("FIM DA FASE\n");
-        m_will_player->set_state(RUNNING);
-        // m_state = RUNNING;
+        m_will->set_state(RUNNING);
         m_done = true;
     }
 
@@ -408,39 +365,31 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_camera_x -= 1704;
     }
 
-    //Reset sprite counter
+    // Reset sprite counter
     if(sprite_counter > 5.9){
         sprite_counter -= 5.9;
     }
 
-    if(m_is_punching && (now - m_punch_counter) > 80){
-        m_punch_counter = now;
-        m_is_punching = false;
-    }
-
     //Test Will colision
-    if(m_will_player->y() > m_floor + 20){
-        m_will_player->set_state(GAME_OVER);
-        m_state = GAME_OVER;
+    if(m_will->y() > m_floor + 20){
+        m_will->set_state(GAME_OVER);
     }
 
     //Start jump if Will is at the end of a cliff
-    if(m_will_player->y() < m_floor && m_will_player->state() != JUMPING && m_will_player->state() != FALLING && m_will_player->state() != GAME_OVER){
-        m_y_speed = 1/300.0 * 0.5;
-        m_will_player->set_state(FALLING);
-        // m_state = FALLING;
+    if(m_will->y() < m_floor && m_will->state() != JUMPING && m_will->state() != FALLING && m_will->state() != GAME_OVER){
+        m_will->set_y_speed(1/300.0 * 0.5);
+        m_will->set_state(FALLING);
     }
 
     //Calculate jump speed and stop jump if hits the ground
-    if(m_will_player->state() == JUMPING || m_will_player->state() == FALLING){
-        m_y_speed += (now - m_start)/300.0 * 0.5;
-        if(m_y_speed >= 0.001) m_will_player->set_state(FALLING);
+    if(m_will->state() == JUMPING || m_will->state() == FALLING){
+        m_will->set_y_speed(m_will->speed() + ((now - m_start)/300.0 * 0.5));
+        if(m_will->speed() >= 0.001) m_will->set_state(FALLING);
 
-        if(m_will_player->y() + (now - m_start) * m_y_speed > m_floor){
-            // m_will_player->y() = m_floor;
-            m_will_player->set_y(m_floor);
-            m_y_speed = 0;
-            m_will_player->set_state(RUNNING);
+        if(m_will->y() + (now - m_start) * m_will->speed() > m_floor){
+            m_will->set_y(m_floor);
+            m_will->set_y_speed(0);
+            m_will->set_state(RUNNING);
         }
     }
 
@@ -453,13 +402,13 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
 
         if(it >= 0){
             height = platform_height[it];
-            if(852 - i >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
+            if(852 - i >= m_will->x() && 852 - i <= m_will->x() + WILL_WIDTH){
                 m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
             }
 
-            if(852 - i + 142 >= m_will_x && 852 - i <= m_will_x + WILL_WIDTH){
+            if(852 - i + 142 >= m_will->x() && 852 - i <= m_will->x() + WILL_WIDTH){
 
-                if(852 - i + 56 + COLLECTABLE_DIMENSION >= m_will_x && 852 - i + 56 <= m_will_x + WILL_WIDTH){
+                if(852 - i + 56 + COLLECTABLE_DIMENSION >= m_will->x() && 852 - i + 56 <= m_will->x() + WILL_WIDTH){
                     if(collectable[it]){
                         collectable_it = it;
                         m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
@@ -471,7 +420,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
                     m_will_collectable = -1000000000;
                 }
 
-                if(852 - i + 48 + ENEMY_DIMENSION >= m_will_x && 852 - i + 48 <= m_will_x + WILL_WIDTH){
+                if(852 - i + 48 + ENEMY_DIMENSION >= m_will->x() && 852 - i + 48 <= m_will->x() + WILL_WIDTH){
                     if(enemy[it]){
                         enemy_it = it;
                         m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
@@ -487,23 +436,23 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
                 }
             }
 
-            if(852 - i >= m_will_x && 852 - i <= m_will_x + 30){
+            if(852 - i >= m_will->x() && 852 - i <= m_will->x() + 30){
                 m_floor = 480.0 - height - WILL_HEIGHT;
             }
         }
         aux++;
     }
 
-    if(m_will_player->y() >= m_will_collectable && m_will_player->y() + 15*(m_will_player->state() == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
+    if(m_will->y() >= m_will_collectable && m_will->y() + 15*(m_will->state() == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
         ++n_collectables;
 
         collectable[collectable_it] = 0;
         m_will_collectable = -10000000;
     }
 
-    if(m_will_player->y() >= m_will_enemy && m_will_player->y() + 15*(m_will_player->state() == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
+    if(m_will->y() >= m_will_enemy && m_will->y() + 15*(m_will->state() == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
         if(m_will_enemy_type == 0 || not m_is_punching){
-            m_will_player->set_state(GAME_OVER);
+            m_will->set_state(GAME_OVER);
         }else{
             enemy[enemy_it] = 0;
             m_will_enemy = -10000000;
@@ -511,7 +460,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         }
     }
 
-    if(m_will_player->state() == GAME_OVER){
+    if(m_will->state() == GAME_OVER){
         m_y_speed = 0;
         m_x_speed = 0;
         m_next = m_current_level;
@@ -553,12 +502,6 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
             if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(ENEMY_DIMENSION * (int) sprite_counter, 0, 45, 45), 852 - i + 48, 480 - enemy_height[it]);
             if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(COLLECTABLE_DIMENSION * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
         }
-
-        // DONT FORGET
-        // canvas->draw(m_will[m_is_punching ? PUNCHING : m_state].get(),
-        //              Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT - 15*(m_state == SLIDING ? 1 : 0)),
-        //              m_will_x,
-        //              m_will_player->y() + 15*(m_state == SLIDING ? 1 : 0));
 
         double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
 
