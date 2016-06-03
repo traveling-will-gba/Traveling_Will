@@ -7,6 +7,7 @@
 #include <ijengine/texture.h>
 #include <ijengine/events_translator.h>
 #include <ijengine/game_events_listener.h>
+#include <ijengine/game_object.h>
 
 #include <vector>
 
@@ -17,15 +18,19 @@ using namespace ijengine;
 
 class Button;
 
-class TravelingWillLevel : public Level, public GameEventsListener {
+class TravelingWillLevel : public Level, public GameEventsListener{
 	public:
 		~TravelingWillLevel(){}
 
-		virtual bool on_event(const GameEvent& event) = 0;
+	protected:		
+		typedef enum { RUNNING, JUMPING, SLIDING, SELECTING, NOTHING, FALLING, GAME_OVER, PUNCHING } State;
 
-	protected:
-		virtual void update_self(unsigned now, unsigned last) = 0;
-		virtual void draw_self(Canvas *canvas, unsigned now, unsigned last) = 0;
+		State m_state;
+		int m_audio_counter;
+		bool m_done;
+		string m_current_level, m_audio, m_next;
+		shared_ptr<Texture> m_background[3];
+		vector< Button* > m_buttons;
 };
 
 #endif

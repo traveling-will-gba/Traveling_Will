@@ -1,5 +1,4 @@
 #include "traveling_will_playable_level.h"
-#include "button.h"
 
 #include <ijengine/canvas.h>
 #include <ijengine/engine.h>
@@ -33,11 +32,16 @@ static const int BACK_BUTTON =                  0;
 
 TravelingWillPlayableLevel::TravelingWillPlayableLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path, 
 int audio_duration) : 
-	m_done(false), level_started(false), level_finished(false), m_will_enemy_type(-1), collectable_it(-10000000), enemy_it(-10000000), m_r(r), m_g(g), m_b(b),
+	level_started(false), level_finished(false), m_will_enemy_type(-1), collectable_it(-10000000), enemy_it(-10000000), m_r(r), m_g(g), m_b(b),
 	m_audio_duration(audio_duration), m_audio_start(0), m_audio_counter(0), m_start(-1), change(0), n_collectables(0), n_enemies(0), m_y_speed(0), 
 	sprite_counter(0), m_sprite_speed(1/170.0), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480), m_will_collectable(-100), m_will_enemy(-100), 
-	m_next(next_level), m_current_level(current_level), m_audio(audio_path), m_state(RUNNING), m_x_speed(5/19.0), m_camera_y(0), m_will_x(50), m_boss_x(690),
-	m_boss_y(190), m_number(resources::get_texture("numbers.png")){
+	m_x_speed(5/19.0), m_camera_y(0), m_will_x(50), m_boss_x(690), m_boss_y(190), m_number(resources::get_texture("numbers.png")){
+
+	m_current_level = current_level;
+	m_audio = audio_path;
+	m_next = next_level;
+	m_done = false;
+	m_state = RUNNING;
 
 	m_progress_bar[0] = resources::get_texture("whole-progress-bar.png");
 	m_progress_bar[1] = resources::get_texture("progress-bar.png"); 
@@ -130,7 +134,6 @@ string TravelingWillPlayableLevel::audio() const{
 
 bool TravelingWillPlayableLevel::on_event(const GameEvent &event){
 	if(m_state != GAME_OVER){
-		printf("here\n");
 		if(event.id() == GAME_EVENT_PUNCH && m_state != SLIDING && event.timestamp() - m_punch_counter > 230){
             m_is_punching = true;
             m_punch_counter = event.timestamp();
@@ -300,53 +303,51 @@ void TravelingWillPlayableLevel::update_self(unsigned now, unsigned){
 }
 
 void TravelingWillPlayableLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
-	if(m_current_level == "1"){
-		canvas->clear();
-		canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+	canvas->clear();
+	canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
 
-		canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
-		canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+	canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
+	canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
-		//Draws each of the seven parts of the screen
-		int aux = 0, it, height;
-		for(int i = (int)m_reverse_camera_x; i <= 994; i += 142){
-			it = level_it[aux++];
-			height = platform_height[it];
-			canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
+	//Draws each of the seven parts of the screen
+	int aux = 0, it, height;
+	for(int i = (int)m_reverse_camera_x; i <= 994; i += 142){
+		it = level_it[aux++];
+		height = platform_height[it];
+		canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
 
-			if(enemy[it]){
-				canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(ENEMY_DIMENSION * (int) sprite_counter, 0, 45, 45), 852 - i + 48, 480 - 
-				enemy_height[it]);
-			}
-
-			if(collectable[it]){
-				canvas->draw(m_collectable.get(), Rectangle(COLLECTABLE_DIMENSION * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - 
-				collectable_height[it]);
-			}
+		if(enemy[it]){
+			canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(ENEMY_DIMENSION * (int) sprite_counter, 0, 45, 45), 852 - i + 48, 480 - 
+					enemy_height[it]);
 		}
 
-		canvas->draw(m_will[m_is_punching ? PUNCHING : m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT 
-		- 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
-
-		double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
-
-		canvas->draw(m_progress_bar[0].get(), Rectangle(0, 0, 800, 19), 26, 18);
-		canvas->draw(m_progress_bar[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
-		canvas->draw(m_progress_bar[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
-		canvas->draw(m_will_progress_bar.get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
-
-		canvas->draw(m_collectable_icon.get(), 705, 425);
-
-		aux = n_collectables;
-		int x_digit = 805;
-		do{
-			canvas->draw(m_number.get(), Rectangle(23 * (aux % 10), 0, 23, 36), x_digit, 435);
-			aux /= 10;
-			x_digit -= 25;
-		}while(aux);
-
-		if(m_state == GAME_OVER){
-			canvas->draw(m_boss.get(), 100, 100);
+		if(collectable[it]){
+			canvas->draw(m_collectable.get(), Rectangle(COLLECTABLE_DIMENSION * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - 
+					collectable_height[it]);
 		}
+	}
+
+	canvas->draw(m_will[m_is_punching ? PUNCHING : m_state].get(), Rectangle(WILL_WIDTH* (int) sprite_counter, 0, WILL_WIDTH, WILL_HEIGHT 
+				- 15*(m_state == SLIDING ? 1 : 0)), m_will_x, m_will_y + 15*(m_state == SLIDING ? 1 : 0));
+
+	double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
+
+	canvas->draw(m_progress_bar[0].get(), Rectangle(0, 0, 800, 19), 26, 18);
+	canvas->draw(m_progress_bar[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
+	canvas->draw(m_progress_bar[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
+	canvas->draw(m_will_progress_bar.get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
+
+	canvas->draw(m_collectable_icon.get(), 705, 425);
+
+	aux = n_collectables;
+	int x_digit = 805;
+	do{
+		canvas->draw(m_number.get(), Rectangle(23 * (aux % 10), 0, 23, 36), x_digit, 435);
+		aux /= 10;
+		x_digit -= 25;
+	}while(aux);
+
+	if(m_state == GAME_OVER){
+		canvas->draw(m_boss.get(), 100, 100);
 	}
 }

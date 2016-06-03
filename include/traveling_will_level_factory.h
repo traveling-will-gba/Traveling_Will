@@ -3,14 +3,14 @@
 
 #include <ijengine/level_factory.h>
 
-#include "traveling_will_level.h"
+#include "menu.h"
 
 using namespace ijengine;
 
 class TravelingWillLevelFactory : public LevelFactory {
-public:
-    TravelingWillLevel * make_level(const string& level_id);
-    void release(Level *level);
+	public:
+		TravelingWillLevel *make_level(const string& level_id);
+		void release(Level *level);
 };
 
 #endif
