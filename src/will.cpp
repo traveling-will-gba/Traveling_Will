@@ -114,6 +114,8 @@ void Will::update_self(unsigned now, unsigned){
         m_is_punching = false;
     }
 
+    
+
     m_start = now;
 }
 

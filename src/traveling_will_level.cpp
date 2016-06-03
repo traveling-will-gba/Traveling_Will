@@ -26,14 +26,15 @@ static const int GAME_EVENT_PUNCH =             1 << 11;
 static const int NUMBER_OF_SCREENS =            12;
 static const int WILL_HEIGHT =                  45;
 static const int WILL_WIDTH =                   57;
-static const int COLLECTABLE_DIMENSION =        34;
+static const int COLLECTABLE_DIMENSION =        30;
 static const int COLLECTABLE_SIZE =             WILL_HEIGHT + COLLECTABLE_DIMENSION;
 static const int ENEMY_DIMENSION =              45;
 static const int ENEMY_SIZE =                   WILL_HEIGHT + ENEMY_DIMENSION;
 static const int BACK_BUTTON =                  0;
+static const int INVALID =                      -10000000;
 
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path, int audio_duration)
-    :  m_done(false), level_started(false), level_finished(false), m_will_enemy_type(-1), collectable_it(-10000000), enemy_it(-10000000), m_r(r), m_g(g), m_b(b),
+    :  m_done(false), level_started(false), level_finished(false), m_will_enemy_type(-1), collectable_it(INVALID), enemy_it(INVALID), m_r(r), m_g(g), m_b(b),
     m_audio_duration(audio_duration), m_audio_start(0), m_audio_counter(0), m_start(-1), change(0), n_collectables(0), n_enemies(0), start_cutscene_counter(1),
     final_cutscene_counter(1), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
     m_will_collectable(-100), m_will_enemy(-100), m_next(next_level), m_current_level(current_level), m_audio(audio_path), is_selected(false) {
@@ -370,103 +371,11 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         sprite_counter -= 5.9;
     }
 
-    //Test Will colision
-    if((int) m_will->y() > (int) m_floor){
-        m_will->set_state(GAME_OVER);
-    }
+    do_collisions(now);
 
-    //Start jump if Will is at the end of a cliff
-    if(m_will->y() < m_floor && m_will->state() != JUMPING && m_will->state() != FALLING && m_will->state() != GAME_OVER){
-        m_will->set_y_speed(1/300.0 * 0.5);
-        m_will->set_state(FALLING);
-    }
+    update_platforms_position();
 
-    //Calculate jump speed and stop jump if hits the ground
-    if(m_will->state() == JUMPING || m_will->state() == FALLING){
-        m_will->set_y_speed(m_will->speed() + ((now - m_start)/300.0 * 0.5));
-        if(m_will->speed() >= 0.001) m_will->set_state(FALLING);
-
-        if(m_will->y() + (now - m_start) * m_will->speed() > m_floor){
-            m_will->set_y(m_floor);
-            m_will->set_y_speed(0);
-            m_will->set_state(RUNNING);
-        }
-    }
-
-    int aux = n_screens - 7, height, it;
-
-    int aux_it = 0;
-    for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
-        it = aux - change;
-        level_it[aux_it++] = max(it, 0);
-
-        if(it >= 0){
-            height = platform_height[it];
-            if(852 - i >= m_will->x() && 852 - i <= m_will->x() + WILL_WIDTH){
-                m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
-            }
-
-            if(852 - i + 142 >= m_will->x() && 852 - i <= m_will->x() + WILL_WIDTH){
-
-                if(852 - i + 56 + COLLECTABLE_DIMENSION >= m_will->x() && 852 - i + 56 <= m_will->x() + WILL_WIDTH){
-                    if(collectable[it]){
-                        collectable_it = it;
-                        m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
-                        printf("%f %d\n", collectable_height[it], WILL_HEIGHT);
-                    }else{
-                        m_will_collectable = -1000000000;
-                    }
-                }else{
-                    m_will_collectable = -1000000000;
-                }
-
-                if(852 - i + 48 + ENEMY_DIMENSION >= m_will->x() && 852 - i + 48 <= m_will->x() + WILL_WIDTH){
-                    if(enemy[it]){
-                        enemy_it = it;
-                        m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
-                        m_will_enemy_type = enemy_type[it];
-                        printf("%f %d\n", enemy_height[it], WILL_HEIGHT);
-                    }else{
-                        m_will_enemy = -1000000000;
-                        m_will_enemy_type = -1;
-                    }
-                }else{
-                    m_will_enemy = -1000000000;
-                    m_will_enemy_type = -1;
-                }
-            }
-
-            if(852 - i >= m_will->x() && 852 - i <= m_will->x() + 30){
-                m_floor = 480.0 - height - WILL_HEIGHT;
-            }
-        }
-        aux++;
-    }
-
-    if(m_will->y() >= m_will_collectable && m_will->y() + 15*(m_will->state() == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
-        ++n_collectables;
-
-        collectable[collectable_it] = 0;
-        m_will_collectable = -10000000;
-    }
-
-    if(m_will->y() >= m_will_enemy && m_will->y() + 15*(m_will->state() == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
-        if(m_will_enemy_type == 0 || not m_is_punching){
-            m_will->set_state(GAME_OVER);
-        }else{
-            enemy[enemy_it] = 0;
-            m_will_enemy = -10000000;
-            m_will_enemy_type = -1;
-        }
-    }
-
-    if(m_will->state() == GAME_OVER){
-        m_y_speed = 0;
-        m_x_speed = 0;
-        m_next = m_current_level;
-        remove_child(m_will);
-        m_done = true;
-    }
+    check_game_over();
 
     m_start = now;
 }
@@ -524,5 +433,110 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
         if(m_state == GAME_OVER){
             canvas->draw(m_boss.get(), 100, 100);
         }
+    }
+}
+
+void TravelingWillLevel::do_collisions(unsigned now){
+    //Test Will colision
+    if((int) m_will->y() > (int) m_floor){
+        m_will->set_state(GAME_OVER);
+    }
+
+    //Start jump if Will is at the end of a cliff
+    if(m_will->y() < m_floor && m_will->state() != JUMPING && m_will->state() != FALLING && m_will->state() != GAME_OVER){
+        m_will->set_y_speed(1/300.0 * 0.5);
+        m_will->set_state(FALLING);
+    }
+
+    //Calculate jump speed and stop jump if hits the ground
+    if(m_will->state() == JUMPING || m_will->state() == FALLING){
+        m_will->set_y_speed(m_will->speed() + ((now - m_start)/300.0 * 0.5));
+        if(m_will->speed() >= 0.001) m_will->set_state(FALLING);
+
+        if(m_will->y() + (now - m_start) * m_will->speed() > m_floor){
+            m_will->set_y(m_floor);
+            m_will->set_y_speed(0);
+            m_will->set_state(RUNNING);
+        }
+    }
+
+    if(m_will->y() >= m_will_collectable && m_will->y() + 15*(m_will->state() == SLIDING ? 1 : 0) <= m_will_collectable + COLLECTABLE_SIZE){
+        ++n_collectables;
+
+        collectable[collectable_it] = 0;
+        m_will_collectable = INVALID;
+    }
+
+    if(m_will->y() >= m_will_enemy && m_will->y() + 15*(m_will->state() == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
+        if(m_will_enemy_type == 0 || not m_is_punching){
+            m_will->set_state(GAME_OVER);
+        }else{
+            enemy[enemy_it] = 0;
+            m_will_enemy = INVALID;
+            m_will_enemy_type = -1;
+        }
+    }
+
+}
+
+void TravelingWillLevel::check_game_over(){
+    if(m_will->state() == GAME_OVER){
+        m_y_speed = 0;
+        m_x_speed = 0;
+        m_next = m_current_level;
+        remove_child(m_will);
+        m_done = true;
+    }
+}
+
+void TravelingWillLevel::update_platforms_position(){
+    int aux = n_screens - 7, height, it;
+
+    int aux_it = 0;
+    for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
+        it = aux - change;
+        level_it[aux_it++] = max(it, 0);
+
+        if(it >= 0){
+            height = platform_height[it];
+            if(852 - i >= m_will->x() && 852 - i <= m_will->x() + WILL_WIDTH){
+                m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
+            }
+
+            if(852 - i + 142 >= m_will->x() && 852 - i <= m_will->x() + WILL_WIDTH){
+
+                if(852 - i + 56 + COLLECTABLE_DIMENSION >= m_will->x() && 852 - i + 56 <= m_will->x() + WILL_WIDTH){
+                    if(collectable[it]){
+                        collectable_it = it;
+                        m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
+                        printf("%f %d\n", collectable_height[it], WILL_HEIGHT);
+                    }else{
+                        m_will_collectable = INVALID;
+                    }
+                }else{
+                    m_will_collectable = INVALID;
+                }
+
+                if(852 - i + 48 + ENEMY_DIMENSION >= m_will->x() && 852 - i + 48 <= m_will->x() + WILL_WIDTH){
+                    if(enemy[it]){
+                        enemy_it = it;
+                        m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
+                        m_will_enemy_type = enemy_type[it];
+                        printf("%f %d\n", enemy_height[it], WILL_HEIGHT);
+                    }else{
+                        m_will_enemy = INVALID;
+                        m_will_enemy_type = -1;
+                    }
+                }else{
+                    m_will_enemy = INVALID;
+                    m_will_enemy_type = -1;
+                }
+            }
+
+            if(852 - i >= m_will->x() && 852 - i <= m_will->x() + 30){
+                m_floor = 480.0 - height - WILL_HEIGHT;
+            }
+        }
+        aux++;
     }
 }
