@@ -4,6 +4,7 @@
 #include <ijengine/level_factory.h>
 
 #include "menu.h"
+#include "cutscene.h"
 
 using namespace ijengine;
 

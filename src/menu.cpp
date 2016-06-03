@@ -13,30 +13,13 @@
 using namespace std;
 using namespace ijengine;
 
-static const int GAME_EVENT_JUMP =              1 << 4;
-static const int GAME_EVENT_SLIDE_PRESSED =     1 << 5;
-static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
-static const int GAME_EVENT_MENU_SELECT =       1 << 7;
-static const int GAME_MOUSE_CLICK =             1 << 8;
-static const int GAME_MOUSE_MOVEMENT =          1 << 9;
-static const int GAME_MOUSE_MOTION =            1 << 10;
-static const int GAME_EVENT_PUNCH =             1 << 11;
-static const int NUMBER_OF_SCREENS =            12;
-static const int WILL_HEIGHT =                  45;
-static const int WILL_WIDTH =                   57;
-static const int COLLECTABLE_DIMENSION =        34;
-static const int COLLECTABLE_SIZE =             WILL_HEIGHT + COLLECTABLE_DIMENSION;
-static const int ENEMY_DIMENSION =              45;
-static const int ENEMY_SIZE =                   WILL_HEIGHT + ENEMY_DIMENSION;
-static const int BACK_BUTTON =                  0;
-
-Menu::Menu(const string &current_level, const string& next_level, const string audio_path, 
-int audio_duration){
+Menu::Menu(const string &current_level, const string& next_level, const string audio_path, int audio_duration){
 	m_current_level = current_level;
 	m_audio = audio_path;
 	m_next = next_level;
 	m_done = false;
 	m_state = NOTHING;
+	m_start = -1;
 
 	m_background[0] = resources::get_texture(m_current_level + "/menu-tela.png");
 
@@ -57,7 +40,7 @@ int audio_duration){
 	}
 
 	event::register_listener(this);
-	}
+}
 
 Menu::~Menu(){
 	event::unregister_listener(this);
@@ -77,7 +60,6 @@ string Menu::audio() const{
 
 bool Menu::on_event(const GameEvent& event){
 	if(event.id() == GAME_EVENT_SLIDE_PRESSED){
-		printf("PRA BAIXO\n");
 		return true;
 	}
 

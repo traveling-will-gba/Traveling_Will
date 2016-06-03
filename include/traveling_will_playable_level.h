@@ -12,7 +12,7 @@ class Button;
 
 class TravelingWillPlayableLevel : public TravelingWillLevel{
     public:
-        TravelingWillPlayableLevel(int r, int g, int b, const string& current_level, const string& next_level = "", const string audio_path = "", 
+        TravelingWillPlayableLevel(const string& current_level, const string& next_level = "", const string audio_path = "", 
 		int audio_duration = -1);
         ~TravelingWillPlayableLevel();
 
@@ -32,8 +32,8 @@ class TravelingWillPlayableLevel : public TravelingWillLevel{
         int *enemy_type, *level_it;
         int *collectable, *enemy, m_will_enemy_type;
         int collectable_it, enemy_it, m_punch_counter;
-        int m_r, m_g, m_b, m_audio_duration, m_audio_start, m_audio_counter;
-        int m_start, current_image, change, n_screens, n_collectables, n_enemies;
+        int m_audio_duration, m_audio_counter;
+        int current_image, change, n_screens, n_collectables, n_enemies;
         double *platform_height;
         double start_cutscene_counter, final_cutscene_counter, m_cutscene_speed;
 
