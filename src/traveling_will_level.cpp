@@ -36,7 +36,7 @@ static const int INVALID =                      -10000000;
 TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &current_level, const string& next_level, const string audio_path, int audio_duration)
     :  m_done(false), level_started(false), level_finished(false), m_will_enemy_type(-1), collectable_it(INVALID), enemy_it(INVALID), m_r(r), m_g(g), m_b(b),
     m_audio_duration(audio_duration), m_audio_start(0), m_audio_counter(0), m_start(-1), change(0), n_collectables(0), n_enemies(0), start_cutscene_counter(1),
-    final_cutscene_counter(1), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
+    final_cutscene_counter(1), m_y_speed(0), sprite_counter(0), m_sprite_speed(0), m_camera_x(0), m_reverse_camera_x(-1), m_reverse_camera_y(480),
     m_will_collectable(-100), m_will_enemy(-100), m_next(next_level), m_current_level(current_level), m_audio(audio_path), is_selected(false) {
 
         printf("current_level: [%s]\n", m_current_level.c_str());
@@ -107,16 +107,24 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             level_design >> n_screens;
 
             // platforms = new Platform[n_screens + 1];
-            platform_height = new double[n_screens + 1];
-            collectable_height = new double[n_screens + 1];
-            enemy_height = new double[n_screens + 1];
+            // platform_height.resize = new double[n_screens + 1];
+            // collectable_height = new double[n_screens + 1];
+            // enemy_height = new double[n_screens + 1];
 
-            collectable = new int[n_screens + 1];
-            enemy = new int[n_screens + 1];
-            enemy_type = new int[n_screens + 1];
-            level_it = new int[n_screens + 1];
+            // collectable = new int[n_screens + 1];
+            // enemy = new int[n_screens + 1];
+            // enemy_type = new int[n_screens + 1];
+            // level_it = new int[n_screens + 1];
 
-            for(int i = n_screens - 1; i >= 0; --i){
+            platform_height.resize(n_screens + 1);
+            collectable_height.resize(n_screens + 1);
+            enemy_height.resize(n_screens + 1);
+
+            collectable.resize(n_screens + 1);
+            enemy.resize(n_screens + 1);
+            enemy_type.resize(n_screens + 1);
+
+            for(int i = 0; i < n_screens; ++i){
                 // int p_h;
                 // level_design >> p_h;
                 // platforms[i].set_height(p_h);
@@ -137,7 +145,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             level_design.close();
 
             // m_floor = 480 - platforms[n_screens - 1].height - WILL_HEIGHT;
-            m_floor = 480 - platform_height[n_screens - 1] - WILL_HEIGHT;
+            m_floor = 480 - platform_height[0] - WILL_HEIGHT;
 
             //Get platforms textures
             for(int i = 1; i < 9; ++i){
@@ -147,7 +155,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_boss = resources::get_texture(m_current_level + "/perdeu.png");
 
             // m_will = new Will(50, 480 - platforms[n_screens - 1].height - WILL_HEIGHT);
-            m_will = new Will(50, 480 - platform_height[n_screens - 1] - WILL_HEIGHT);
+            m_will = new Will(50, 480 - platform_height[0] - WILL_HEIGHT);
             add_child(m_will);
 
             m_start = -1;
@@ -356,62 +364,6 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     m_start = now;
 }
 
-void TravelingWillLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
-    if(m_current_level == "menu"){
-        canvas->clear();
-        canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
-    }
-
-    else if(m_current_level == "cutscene-intro"){
-        canvas->clear();
-        canvas->draw(m_start_cutscene[1 + (now - m_start) / 3200].get(), Rectangle(0, 0, 852, 480), 0, 0);
-    }
-
-    else if(m_current_level == "cutscene-end"){
-        canvas->clear();
-        canvas->draw(m_end_cutscene[1 + (now - m_start) / 3200].get(), Rectangle(0, 0, 852, 480), 0, 0);
-    }
-
-    else if(m_current_level == "1"){
-        canvas->clear();
-        canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
-
-        canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
-        canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
-
-        //Draws each of the seven parts of the screen
-        int aux = 0, it, height;
-        for(int i = 852 - (int)m_reverse_camera_x; i >= -142; i -= 142){
-            it = level_it[aux++];
-            height = platform_height[it];
-            canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), i, 480 - height);
-            if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(ENEMY_DIMENSION * (int) sprite_counter, 0, 45, 45), i + 48, 480 - enemy_height[it]);
-            if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(COLLECTABLE_DIMENSION * (int) sprite_counter, 0, 30, 30), i + 56, 480 - collectable_height[it]);
-        }
-
-        double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
-
-        canvas->draw(m_progress_bar[0].get(), Rectangle(0, 0, 800, 19), 26, 18);
-        canvas->draw(m_progress_bar[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
-        canvas->draw(m_progress_bar[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
-        canvas->draw(m_will_progress_bar.get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
-
-        canvas->draw(m_collectable_icon.get(), 705, 425);
-
-        aux = n_collectables;
-        int x_digit = 805;
-        do{
-            canvas->draw(m_number.get(), Rectangle(23 * (aux % 10), 0, 23, 36), x_digit, 435);
-            aux /= 10;
-            x_digit -= 25;
-        }while(aux);
-
-        if(m_state == GAME_OVER){
-            canvas->draw(m_boss.get(), 100, 100);
-        }
-    }
-}
-
 void TravelingWillLevel::do_collisions(unsigned now){
     //Test Will colision
     if(m_will->y() > m_floor + 20){
@@ -470,59 +422,53 @@ void TravelingWillLevel::check_game_over(){
 }
 
 void TravelingWillLevel::update_platforms_position(){
-    int aux = n_screens - 7, height, it;
-    int screens_it = 0;
+    
+    int height, current_x;
+    for(int i = 0; i < 7; ++i){
+        current_x = m_reverse_camera_x + 142*i;
+        height = platform_height[i];
 
-    for(int i = 852 - (int)m_reverse_camera_x; i >= -142; i -= 142){
-        it = aux - change;
-        level_it[screens_it++] = max(it, 0);
+        if(current_x >= m_will->x() && current_x <= m_will->x() + WILL_WIDTH){
+            m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
+        }
 
-        if(it >= 0){
-            height = platform_height[it];
-            if(i >= m_will->x() && i <= m_will->x() + WILL_WIDTH){
-                m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
-            }
+        if(current_x + 142 >= m_will->x() && current_x <= m_will->x() + WILL_WIDTH){
 
-            if(i + 142 >= m_will->x() && i <= m_will->x() + WILL_WIDTH){
-
-                if(i + 56 + COLLECTABLE_DIMENSION >= m_will->x() && i + 56 <= m_will->x() + WILL_WIDTH){
-                    if(collectable[it]){
-                        collectable_it = it;
-                        m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
-                        printf("%f %d\n", collectable_height[it], WILL_HEIGHT);
-                    }
-                    else{
-                        m_will_collectable = INVALID;
-                    }
+            if(current_x + 56 + COLLECTABLE_DIMENSION >= m_will->x() && current_x + 56 <= m_will->x() + WILL_WIDTH){
+                if(collectable[i]){
+                    collectable_it = i;
+                    m_will_collectable = 480.0 - collectable_height[i] - WILL_HEIGHT;
+                    printf("%f %d\n", collectable_height[i], WILL_HEIGHT);
                 }
                 else{
                     m_will_collectable = INVALID;
                 }
+            }
+            else{
+                m_will_collectable = INVALID;
+            }
 
-                if(i + 48 + ENEMY_DIMENSION >= m_will->x() && i + 48 <= m_will->x() + WILL_WIDTH){
-                    if(enemy[it]){
-                        enemy_it = it;
-                        m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
-                        m_will_enemy_type = enemy_type[it];
-                        printf("%f %d\n", enemy_height[it], WILL_HEIGHT);
-                    }
-                    else{
-                        m_will_enemy = INVALID;
-                        m_will_enemy_type = -1;
-                    }
+            if(current_x + 48 + ENEMY_DIMENSION >= m_will->x() && current_x + 48 <= m_will->x() + WILL_WIDTH){
+                if(enemy[i]){
+                    enemy_it = i;
+                    m_will_enemy = 480.0 - enemy_height[i] - WILL_HEIGHT;
+                    m_will_enemy_type = enemy_type[i];
+                    printf("%f %d\n", enemy_height[i], WILL_HEIGHT);
                 }
                 else{
                     m_will_enemy = INVALID;
                     m_will_enemy_type = -1;
                 }
             }
-
-            if(i >= m_will->x() && i <= m_will->x() + 30){
-                m_floor = 480.0 - height - WILL_HEIGHT;
+            else{
+                m_will_enemy = INVALID;
+                m_will_enemy_type = -1;
             }
         }
 
-        aux++;
+        if(current_x >= m_will->x() && current_x <= m_will->x() + 30){
+            m_floor = 480.0 - height - WILL_HEIGHT;
+        }
     }
 }
 
@@ -530,7 +476,7 @@ void TravelingWillLevel::update_counters(unsigned now){
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
     m_camera_x += (now - m_start) * m_x_speed;
-    m_reverse_camera_x += (now - m_start) * m_x_speed;
+    m_reverse_camera_x -= (now - m_start) * m_x_speed;
 
     if(m_will->state() != GAME_OVER && not level_finished)
         m_audio_counter = now - m_audio_start;
@@ -542,10 +488,14 @@ void TravelingWillLevel::update_counters(unsigned now){
     }
 
     //Reset value of reverse camera for each part of the level
-
-    if(m_reverse_camera_x > 142 && m_current_level == "1"){
-        m_reverse_camera_x -= 142;
-        ++change;
+    if(m_reverse_camera_x < -142 && m_current_level == "1"){
+        m_reverse_camera_x += 142;
+        platform_height.pop_front();
+        collectable_height.pop_front();
+        enemy_height.pop_front();
+        collectable.pop_front();
+        enemy.pop_front();
+        enemy_type.pop_front();
     }
 
     //Reset background camera
@@ -556,5 +506,62 @@ void TravelingWillLevel::update_counters(unsigned now){
     // Reset sprite counter
     if(sprite_counter > 5.9){
         sprite_counter -= 5.9;
+    }
+}
+
+void TravelingWillLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
+    if(m_current_level == "menu"){
+        canvas->clear();
+        canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+    }
+
+    else if(m_current_level == "cutscene-intro"){
+        canvas->clear();
+        canvas->draw(m_start_cutscene[1 + (now - m_start) / 3200].get(), Rectangle(0, 0, 852, 480), 0, 0);
+    }
+
+    else if(m_current_level == "cutscene-end"){
+        canvas->clear();
+        canvas->draw(m_end_cutscene[1 + (now - m_start) / 3200].get(), Rectangle(0, 0, 852, 480), 0, 0);
+    }
+
+    else if(m_current_level == "1"){
+        canvas->clear();
+        canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+
+        canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
+        canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+
+        //Draws each of the seven parts of the screen
+        int height, current_x;
+        for(int i = 0; i < 7; ++i){
+            height = platform_height[i];
+            current_x = m_reverse_camera_x+ 142*i;
+
+            canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), current_x, 480 - height);
+            if(enemy[i]) canvas->draw(m_enemy[enemy_type[i]].get(), Rectangle(ENEMY_DIMENSION * (int) sprite_counter, 0, 45, 45), current_x + 48, 480 - enemy_height[i]);
+            if(collectable[i]) canvas->draw(m_collectable.get(), Rectangle(COLLECTABLE_DIMENSION * (int) sprite_counter, 0, 30, 30), current_x + 56, 480 - collectable_height[i]);
+        }
+
+        double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
+
+        canvas->draw(m_progress_bar[0].get(), Rectangle(0, 0, 800, 19), 26, 18);
+        canvas->draw(m_progress_bar[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
+        canvas->draw(m_progress_bar[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
+        canvas->draw(m_will_progress_bar.get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
+
+        canvas->draw(m_collectable_icon.get(), 705, 425);
+
+        int x_digit = 805;
+        int aux = n_collectables;
+        do{
+            canvas->draw(m_number.get(), Rectangle(23 * (aux % 10), 0, 23, 36), x_digit, 435);
+            aux /= 10;
+            x_digit -= 25;
+        }while(aux);
+
+        if(m_state == GAME_OVER){
+            canvas->draw(m_boss.get(), 100, 100);
+        }
     }
 }

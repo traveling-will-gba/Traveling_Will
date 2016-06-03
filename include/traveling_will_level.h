@@ -8,9 +8,11 @@
 #include <ijengine/events_translator.h>
 #include <ijengine/game_events_listener.h>
 
+#include <deque>
 #include <vector>
 
 using std::string;
+using std::deque;
 using std::shared_ptr;
 
 using namespace ijengine;
@@ -36,18 +38,19 @@ class TravelingWillLevel : public Level, public GameEventsListener {
     private:
         typedef enum { RUNNING, JUMPING, SLIDING, FALLING, GAME_OVER, PUNCHING, SELECTING, NOTHING } State;
         bool m_done, m_is_punching, level_started, level_finished;
-        int *enemy_type, *level_it;
-        int *collectable, *enemy, m_will_enemy_type;
+        
+        deque<int> enemy_type, collectable, enemy;
+        deque<double> collectable_height, enemy_height, platform_height;
+        
+        int m_will_enemy_type;
         int collectable_it, enemy_it, m_punch_counter;
         int m_r, m_g, m_b, m_audio_duration, m_audio_start, m_audio_counter;
         int m_start, current_image, change, n_screens, n_collectables, n_enemies;
-        double *platform_height;
         double start_cutscene_counter, final_cutscene_counter, m_cutscene_speed;
 
         double m_boss_x, m_boss_y;
         double m_x_speed, m_y_speed;
         double sprite_counter, m_sprite_speed;
-        double *collectable_height, *enemy_height;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_will_collectable, m_will_enemy, m_floor;
         string m_next, m_current_level, m_audio;
