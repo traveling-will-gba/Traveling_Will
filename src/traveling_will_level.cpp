@@ -83,7 +83,6 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             m_background[1] = resources::get_texture(m_current_level + "/background_floresta_1.png");
             m_background[2] = resources::get_texture(m_current_level + "/background_floresta_2.png");
 
-
             m_enemy[0] = resources::get_texture(m_current_level + "/enemy1.png");
             m_enemy[1] = resources::get_texture(m_current_level + "/enemy2.png");
 
@@ -107,6 +106,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 
             level_design >> n_screens;
 
+            // platforms = new Platform[n_screens + 1];
             platform_height = new double[n_screens + 1];
             collectable_height = new double[n_screens + 1];
             enemy_height = new double[n_screens + 1];
@@ -117,6 +117,9 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
             level_it = new int[n_screens + 1];
 
             for(int i = n_screens - 1; i >= 0; --i){
+                // int p_h;
+                // level_design >> p_h;
+                // platforms[i].set_height(p_h);
                 level_design >> platform_height[i];
                 level_design >> enemy[i];
                 if(enemy[i]){
@@ -127,11 +130,13 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
                 if(collectable[i]){
                     level_design >> collectable_height[i];
                 }
+                // printf("platform_height[%d] = %.2f\n", i, platforms[i].height);
                 printf("platform_height[%d] = %.2f\n", i, platform_height[i]);
             }
 
             level_design.close();
 
+            // m_floor = 480 - platforms[n_screens - 1].height - WILL_HEIGHT;
             m_floor = 480 - platform_height[n_screens - 1] - WILL_HEIGHT;
 
             //Get platforms textures
@@ -141,6 +146,7 @@ TravelingWillLevel::TravelingWillLevel(int r, int g, int b, const string &curren
 
             m_boss = resources::get_texture(m_current_level + "/perdeu.png");
 
+            // m_will = new Will(50, 480 - platforms[n_screens - 1].height - WILL_HEIGHT);
             m_will = new Will(50, 480 - platform_height[n_screens - 1] - WILL_HEIGHT);
             add_child(m_will);
 
@@ -375,12 +381,12 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
 
         //Draws each of the seven parts of the screen
         int aux = 0, it, height;
-        for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
+        for(int i = 852 - (int)m_reverse_camera_x; i >= -142; i -= 142){
             it = level_it[aux++];
             height = platform_height[it];
-            canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), 852 - i, 480 - height);
-            if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(ENEMY_DIMENSION * (int) sprite_counter, 0, 45, 45), 852 - i + 48, 480 - enemy_height[it]);
-            if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(COLLECTABLE_DIMENSION * (int) sprite_counter, 0, 30, 30), 852 - i + 56, 480 - collectable_height[it]);
+            canvas->draw(m_level[height/50].get(), Rectangle(0, 0, 142, height), i, 480 - height);
+            if(enemy[it]) canvas->draw(m_enemy[enemy_type[it]].get(), Rectangle(ENEMY_DIMENSION * (int) sprite_counter, 0, 45, 45), i + 48, 480 - enemy_height[it]);
+            if(collectable[it]) canvas->draw(m_collectable.get(), Rectangle(COLLECTABLE_DIMENSION * (int) sprite_counter, 0, 30, 30), i + 56, 480 - collectable_height[it]);
         }
 
         double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
@@ -443,7 +449,8 @@ void TravelingWillLevel::do_collisions(unsigned now){
     if(m_will->y() >= m_will_enemy && m_will->y() + 15*(m_will->state() == SLIDING ? 1 : 0) <= m_will_enemy + ENEMY_SIZE){
         if(m_will_enemy_type == 0 || not m_is_punching){
             m_will->set_state(GAME_OVER);
-        }else{
+        }
+        else{
             enemy[enemy_it] = 0;
             m_will_enemy = INVALID;
             m_will_enemy_type = -1;
@@ -464,52 +471,57 @@ void TravelingWillLevel::check_game_over(){
 
 void TravelingWillLevel::update_platforms_position(){
     int aux = n_screens - 7, height, it;
+    int screens_it = 0;
 
-    int aux_it = 0;
-    for(int i =(int)m_reverse_camera_x; i <= 994; i += 142){
+    for(int i = 852 - (int)m_reverse_camera_x; i >= -142; i -= 142){
         it = aux - change;
-        level_it[aux_it++] = max(it, 0);
+        level_it[screens_it++] = max(it, 0);
 
         if(it >= 0){
             height = platform_height[it];
-            if(852 - i >= m_will->x() && 852 - i <= m_will->x() + WILL_WIDTH){
+            if(i >= m_will->x() && i <= m_will->x() + WILL_WIDTH){
                 m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
             }
 
-            if(852 - i + 142 >= m_will->x() && 852 - i <= m_will->x() + WILL_WIDTH){
+            if(i + 142 >= m_will->x() && i <= m_will->x() + WILL_WIDTH){
 
-                if(852 - i + 56 + COLLECTABLE_DIMENSION >= m_will->x() && 852 - i + 56 <= m_will->x() + WILL_WIDTH){
+                if(i + 56 + COLLECTABLE_DIMENSION >= m_will->x() && i + 56 <= m_will->x() + WILL_WIDTH){
                     if(collectable[it]){
                         collectable_it = it;
                         m_will_collectable = 480.0 - collectable_height[it] - WILL_HEIGHT;
                         printf("%f %d\n", collectable_height[it], WILL_HEIGHT);
-                    }else{
+                    }
+                    else{
                         m_will_collectable = INVALID;
                     }
-                }else{
+                }
+                else{
                     m_will_collectable = INVALID;
                 }
 
-                if(852 - i + 48 + ENEMY_DIMENSION >= m_will->x() && 852 - i + 48 <= m_will->x() + WILL_WIDTH){
+                if(i + 48 + ENEMY_DIMENSION >= m_will->x() && i + 48 <= m_will->x() + WILL_WIDTH){
                     if(enemy[it]){
                         enemy_it = it;
                         m_will_enemy = 480.0 - enemy_height[it] - WILL_HEIGHT;
                         m_will_enemy_type = enemy_type[it];
                         printf("%f %d\n", enemy_height[it], WILL_HEIGHT);
-                    }else{
+                    }
+                    else{
                         m_will_enemy = INVALID;
                         m_will_enemy_type = -1;
                     }
-                }else{
+                }
+                else{
                     m_will_enemy = INVALID;
                     m_will_enemy_type = -1;
                 }
             }
 
-            if(852 - i >= m_will->x() && 852 - i <= m_will->x() + 30){
+            if(i >= m_will->x() && i <= m_will->x() + 30){
                 m_floor = 480.0 - height - WILL_HEIGHT;
             }
         }
+
         aux++;
     }
 }
@@ -530,7 +542,7 @@ void TravelingWillLevel::update_counters(unsigned now){
     }
 
     //Reset value of reverse camera for each part of the level
-    if(m_reverse_camera_x > 142 && m_current_level == "1"){
+    if(m_reverse_camera_x >= 142 && m_current_level == "1"){
         m_reverse_camera_x -= 142;
         ++change;
     }
