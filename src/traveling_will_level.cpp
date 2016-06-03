@@ -371,7 +371,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
     }
 
     //Test Will colision
-    if(m_will->y() > m_floor + 20){
+    if((int) m_will->y() > (int) m_floor){
         m_will->set_state(GAME_OVER);
     }
 
@@ -464,6 +464,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_y_speed = 0;
         m_x_speed = 0;
         m_next = m_current_level;
+        remove_child(m_will);
         m_done = true;
     }
 
