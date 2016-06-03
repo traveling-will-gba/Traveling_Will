@@ -24,6 +24,7 @@ class Will : public GameObject, public GameEventsListener {
         void set_y(double will_y);
         void set_state(int will_state);
         void set_y_speed(double will_speed);
+        void update_y_speed(double speed_increment);
         int state();
         double x();
         double y();

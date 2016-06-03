@@ -53,6 +53,10 @@ void Will::set_y_speed(double will_speed){
     m_y_speed = will_speed;
 }
 
+void Will::update_y_speed(double speed_increment){
+    m_y_speed += speed_increment;
+}
+
 int Will::state(){
     return (int)m_state;
 }
@@ -114,7 +118,7 @@ void Will::update_self(unsigned now, unsigned){
         m_is_punching = false;
     }
 
-    
+
 
     m_start = now;
 }

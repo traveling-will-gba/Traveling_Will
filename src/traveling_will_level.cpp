@@ -371,9 +371,9 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         sprite_counter -= 5.9;
     }
 
-    do_collisions(now);
-
     update_platforms_position();
+
+    do_collisions(now);
 
     check_game_over();
 
@@ -438,22 +438,25 @@ void TravelingWillLevel::draw_self(Canvas *canvas, unsigned now, unsigned){
 
 void TravelingWillLevel::do_collisions(unsigned now){
     //Test Will colision
-    if((int) m_will->y() > (int) m_floor){
+    if((int) m_will->y() > (int) m_floor + 5*(m_will->state() == FALLING)){
         m_will->set_state(GAME_OVER);
     }
 
     //Start jump if Will is at the end of a cliff
     if(m_will->y() < m_floor && m_will->state() != JUMPING && m_will->state() != FALLING && m_will->state() != GAME_OVER){
-        m_will->set_y_speed(1/300.0 * 0.5);
         m_will->set_state(FALLING);
+        m_will->set_y_speed(0);
     }
 
     //Calculate jump speed and stop jump if hits the ground
     if(m_will->state() == JUMPING || m_will->state() == FALLING){
-        m_will->set_y_speed(m_will->speed() + ((now - m_start)/300.0 * 0.5));
-        if(m_will->speed() >= 0.001) m_will->set_state(FALLING);
+        m_will->update_y_speed((now - m_start)/300.0 * 0.5);
 
-        if(m_will->y() + (now - m_start) * m_will->speed() > m_floor){
+        if(m_will->speed() >= 0.001){
+            m_will->set_state(FALLING);
+        }
+
+        if(m_will->y() > m_floor){
             m_will->set_y(m_floor);
             m_will->set_y_speed(0);
             m_will->set_state(RUNNING);
