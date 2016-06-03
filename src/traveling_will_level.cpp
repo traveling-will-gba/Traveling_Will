@@ -339,37 +339,7 @@ void TravelingWillLevel::update_self(unsigned now, unsigned){
         m_audio_start = m_start;
     }
 
-    final_cutscene_counter += (now - m_start) * m_cutscene_speed;
-
-    //Update counters based on time
-    sprite_counter += (now - m_start) * m_sprite_speed;
-    m_camera_x += (now - m_start) * m_x_speed;
-    m_reverse_camera_x += (now - m_start) * m_x_speed;
-
-    if(m_will->state() != GAME_OVER && not level_finished)
-        m_audio_counter = now - m_audio_start;
-
-    //Checking if music has ended
-    if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
-        m_will->set_state(RUNNING);
-        m_done = true;
-    }
-
-    //Reset value of reverse camera for each part of the level
-    if(m_reverse_camera_x > 142 && m_current_level == "1"){
-        m_reverse_camera_x -= 142;
-        ++change;
-    }
-
-    //Reset background camera
-    if(m_camera_x > 1704){
-        m_camera_x -= 1704;
-    }
-
-    // Reset sprite counter
-    if(sprite_counter > 5.9){
-        sprite_counter -= 5.9;
-    }
+    update_counters(now);
 
     update_platforms_position();
 
@@ -541,5 +511,37 @@ void TravelingWillLevel::update_platforms_position(){
             }
         }
         aux++;
+    }
+}
+
+void TravelingWillLevel::update_counters(unsigned now){
+    //Update counters based on time
+    sprite_counter += (now - m_start) * m_sprite_speed;
+    m_camera_x += (now - m_start) * m_x_speed;
+    m_reverse_camera_x += (now - m_start) * m_x_speed;
+
+    if(m_will->state() != GAME_OVER && not level_finished)
+        m_audio_counter = now - m_audio_start;
+
+    //Checking if music has ended
+    if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
+        m_will->set_state(RUNNING);
+        m_done = true;
+    }
+
+    //Reset value of reverse camera for each part of the level
+    if(m_reverse_camera_x > 142 && m_current_level == "1"){
+        m_reverse_camera_x -= 142;
+        ++change;
+    }
+
+    //Reset background camera
+    if(m_camera_x > 1704){
+        m_camera_x -= 1704;
+    }
+
+    // Reset sprite counter
+    if(sprite_counter > 5.9){
+        sprite_counter -= 5.9;
     }
 }

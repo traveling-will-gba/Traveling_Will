@@ -61,6 +61,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
         bool is_selected;
 
         void do_collisions(unsigned now);
+        void update_counters(unsigned now);
         void check_game_over();
         void update_platforms_position();
 };
