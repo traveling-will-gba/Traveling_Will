@@ -123,32 +123,7 @@ string TravelingWillPlayableLevel::audio() const{
     return m_audio;
 }
 
-bool TravelingWillPlayableLevel::on_event(const GameEvent &event){
-	if(m_state != GAME_OVER){
-		if(event.id() == GAME_EVENT_PUNCH && m_state != SLIDING && event.timestamp() - m_punch_counter > 230){
-            m_is_punching = true;
-            m_punch_counter = event.timestamp();
-            printf("PUNCHING\n\n\n");
-            return true;
-        }
-
-        if(event.id() == GAME_EVENT_JUMP && m_state == RUNNING){
-            m_y_speed = -0.5;
-            m_state = JUMPING;
-            return true;
-        }   
-
-        if(event.id() == GAME_EVENT_SLIDE_PRESSED && m_state != JUMPING && m_state != FALLING){
-            m_state = SLIDING;
-            return true;
-        }
-
-        if(event.id() == GAME_EVENT_SLIDE_RELEASED && m_state == SLIDING){
-            m_state = RUNNING;
-            return true;
-        }
-	}
-
+bool TravelingWillPlayableLevel::on_event(const GameEvent&){
 	return false;
 }
 

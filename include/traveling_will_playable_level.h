@@ -2,14 +2,14 @@
 #define TRAVELING_WILL_PLAYABLE_LEVEL_H
 
 #include "traveling_will_level.h"
+#include "platform.h"
+#include "will.h"
+#include "button.h"
 
 using std::string;
 using std::shared_ptr;
 
 using namespace ijengine;
-
-class Will;
-class Button;
 
 class TravelingWillPlayableLevel : public TravelingWillLevel{
     public:
@@ -70,6 +70,8 @@ class TravelingWillPlayableLevel : public TravelingWillLevel{
         void update_counters(unsigned now);
         void check_game_over();
         void update_platforms_position();
+
+        Platform platforms[10];
 };
 
 #endif
