@@ -45,33 +45,30 @@ class TravelingWillPlayableLevel : public TravelingWillLevel{
         bool m_is_punching, level_started, level_finished;
         
         int m_audio_duration, m_audio_counter;
-        int n_screens;
+        int n_screens, m_punch_counter;
         int n_collectables, n_enemies;
-        int collectable_it, enemy_it;
-        int m_enemy_type;
-        int m_punch_counter;
+        int m_cur_collectable_it, m_cur_enemy_it;
         
         deque<int> enemy_type, collectable, enemy;
         deque<double> collectable_height, enemy_height, platform_height;
+        deque<Platform*> platforms;
 
         double m_x_speed, m_y_speed;
         double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
-        double m_will_x, m_will_y;
-        double m_collectable, m_enemy;
         double m_floor;
 
         Will * m_will;
+        Collectable *m_cur_collectable;
+        Enemy *m_cur_enemy;
 
-        shared_ptr<Texture>  m_level[20], m_enemy_texture[4], m_collectable_texture;
-        shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar, m_number, m_collectable_icon;
+        shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar;
+        shared_ptr<Texture> m_number, m_collectable_icon;
 
         void do_collisions(unsigned now);
         void update_counters(unsigned now);
         void check_game_over();
         void update_platforms_position();
-
-        Platform platforms[10];
 };
 
 #endif
