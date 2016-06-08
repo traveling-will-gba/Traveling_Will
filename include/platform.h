@@ -30,6 +30,7 @@ class Platform : public GameObject {
         void set_x(double px);
         void set_y(double py);
         void set_height(double ph);
+        void remove(int option);
 
     protected:
         void update_self(unsigned now, unsigned last);
@@ -40,7 +41,8 @@ class Platform : public GameObject {
         double m_x, m_y;
         double m_height, m_width;
         static const int INVALID = -10000000;
-        shared_ptr<Texture> m_sprite;
+        static const int COLLECTABLE = 0;
+        shared_ptr<Texture> m_texture;
         Enemy *m_enemy;
         Collectable *m_collectable;
 };

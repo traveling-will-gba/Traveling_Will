@@ -14,20 +14,17 @@ using namespace ijengine;
 class Collectable : public GameObject {
     public:
         Collectable();
-        Collectable(double ch, int cp);
+        Collectable(double ch);
         ~Collectable();
         double x();
         double y();
         double height();
         double width();
-        int present();
         shared_ptr<Texture> texture();
 
         void set_x(double cx);
         void set_y(double cy);
         void set_height(double ch);
-        void set_present(int cp);
-
     protected:
         void update_self(unsigned now, unsigned last);
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
@@ -37,9 +34,9 @@ class Collectable : public GameObject {
         double m_x, m_y;
         double m_height, m_width;
         double m_sprite_counter, m_sprite_speed;
-        int m_start, m_present;
+        int m_start;
         // more sprites later (i.e. disappearing)
-        shared_ptr<Texture> m_sprite;
+        shared_ptr<Texture> m_texture;
 };
 
 #endif

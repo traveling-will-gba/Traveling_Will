@@ -41,6 +41,8 @@ class TravelingWillPlayableLevel : public TravelingWillLevel{
         static const int ENEMY_DIMENSION =              45;
         static const int ENEMY_SIZE =                   WILL_HEIGHT + ENEMY_DIMENSION;
         static const int INVALID =                      -10000000;
+        static const int COLLECTABLE =                  0;
+        static const int ENEMY =                        1; 
 
         bool m_is_punching, level_started, level_finished;
         

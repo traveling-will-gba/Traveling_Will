@@ -14,7 +14,7 @@ using namespace ijengine;
 class Enemy : public GameObject {
     public:
         Enemy();
-        Enemy(double et, double eh, int ep);
+        Enemy(double et, double eh);
         ~Enemy();
         double x();
         double y();
@@ -42,7 +42,7 @@ class Enemy : public GameObject {
         double m_sprite_counter, m_sprite_speed;
         int m_start;
         // more sprites later(i.e. dying)
-        shared_ptr<Texture> m_sprite;
+        shared_ptr<Texture> m_texture;
 };
 
 #endif
