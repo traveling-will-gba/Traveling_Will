@@ -2,6 +2,7 @@
 #define WILL_H
 
 #include <ijengine/engine.h>
+#include <ijengine/collidable.h>
 #include <ijengine/canvas.h>
 #include <ijengine/texture.h>
 #include <ijengine/game_object.h>
@@ -11,7 +12,7 @@
 using std::shared_ptr;
 using namespace ijengine;
 
-class Will : public GameObject, public GameEventsListener {
+class Will : public GameObject, public GameEventsListener, public Collidable {
 
     public:
         typedef enum { RUNNING, JUMPING, SLIDING, FALLING, GAME_OVER, PUNCHING } State;
@@ -32,6 +33,14 @@ class Will : public GameObject, public GameEventsListener {
 
         bool on_event(const GameEvent& event);
 
+        bool active() const;
+        pair<double, double> direction() const;
+
+        const Rectangle& bounding_box() const;
+        const list<Rectangle>& hit_boxes() const;
+
+        void on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last);
+
     protected:
         void update_self(unsigned now, unsigned last);
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
@@ -44,6 +53,7 @@ class Will : public GameObject, public GameEventsListener {
         double m_punch_counter;
         bool m_is_punching;
         int m_start;
+        Rectangle m_bounding_box;
         shared_ptr<Texture> m_sprite[20];
 };
 

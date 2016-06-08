@@ -11,13 +11,14 @@ static const int EVENT_PUNCH =              1 << 11;
 Will::Will(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_sprite_counter = 0;
     m_state = RUNNING;
-    m_height = 45;
-    m_width = 57;
+    m_height = WILL_HEIGHT;
+    m_width = WILL_WIDTH;
     m_y_speed = 0;
     m_sprite_speed = 1/170.0;
     m_start = -1;
     m_is_punching = false;
     m_punch_counter = 0;
+    m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
 
     m_sprite[RUNNING] = resources::get_texture("will/running.png");
     m_sprite[JUMPING] = resources::get_texture("will/jumping.png");
@@ -27,10 +28,12 @@ Will::Will(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_sprite[GAME_OVER] = resources::get_texture("will/gameover.png");
 
     event::register_listener(this);
+    physics::register_object(this);
 }
 
 Will::~Will(){
     event::unregister_listener(this);
+    physics::unregister_object(this);
 }
 
 void Will::set_height(double will_h){
@@ -101,6 +104,28 @@ bool Will::on_event(const GameEvent& event){
     return false;
 }
 
+bool Will::active() const{
+    return true;
+}
+
+pair<double, double> Will::direction() const{
+    pair<double, double> p(0,0);
+    return p;
+}
+
+const Rectangle& Will::bounding_box() const{
+    return m_bounding_box;
+}
+
+const list<Rectangle>& Will::hit_boxes() const{
+    static list<Rectangle> l {m_bounding_box};
+    return l;
+}
+
+void Will::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
+    printf("Will colidiu\n");
+}
+
 void Will::update_self(unsigned now, unsigned){
     if(m_start == -1){
         m_start = now;
@@ -118,7 +143,9 @@ void Will::update_self(unsigned now, unsigned){
         m_is_punching = false;
     }
 
+    int slide_height = m_state == SLIDING ? 15 : 0;
 
+    m_bounding_box = Rectangle(m_x, m_y + slide_height, m_width, m_height - slide_height);
 
     m_start = now;
 }

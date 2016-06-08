@@ -50,7 +50,7 @@ void Platform::remove(int option){
     }
 }
 
-void Platform::update_self(unsigned now, unsigned) {
+void Platform::update_self(unsigned, unsigned) {
     if(m_enemy){
          m_enemy->set_x(m_x + 48);
     }

@@ -26,7 +26,7 @@ int audio_duration) :
     m_cur_collectable(nullptr), m_cur_enemy(nullptr),
     m_number(resources::get_texture("numbers.png")){
 
-    printf("Entrando em construtor\n");
+    //printf("Entrando em construtor\n");
 
 	m_current_level = current_level;
 	m_audio = audio_path;
@@ -51,7 +51,7 @@ int audio_duration) :
 	fstream level_design("res/" + m_current_level + "/level_design.txt");
 
 	if(not level_design.is_open()){
-		printf("Level design txt not available\n");
+		//printf("Level design txt not available\n");
 		exit(0);
 	}
 
@@ -95,7 +95,9 @@ int audio_duration) :
 
     event::register_listener(this);
 
-    printf("Saindo de construtor\n");
+    physics::set_collision_mode(physics::Mode::ONE_TO_ALL, m_will);
+
+    //printf("Saindo de construtor\n");
 }
 
 TravelingWillPlayableLevel::~TravelingWillPlayableLevel(){
@@ -115,12 +117,12 @@ string TravelingWillPlayableLevel::audio() const{
 }
 
 bool TravelingWillPlayableLevel::on_event(const GameEvent&){
-    printf("Pegou evento\n");
+    //printf("Pegou evento\n");
 	return false;
 }
 
-void TravelingWillPlayableLevel::update_self(unsigned now, unsigned){
-    printf("Entrando em update_self\n");
+void TravelingWillPlayableLevel::update_self(unsigned now, unsigned last){
+    //printf("Entrando em update_self\n");
     if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
@@ -130,16 +132,18 @@ void TravelingWillPlayableLevel::update_self(unsigned now, unsigned){
 
     update_platforms_position();
 
-    do_collisions(now);
+
+    do_collisions2(now);
+    physics::do_collisions(now, last);
 
     check_game_over();
 
     m_start = now;
-    printf("Saindo de update_self\n");
+    //printf("Saindo de update_self\n");
 }
 
-void TravelingWillPlayableLevel::do_collisions(unsigned now){
-    printf("Entrando em do_collisions\n");
+void TravelingWillPlayableLevel::do_collisions2(unsigned now){
+    //printf("Entrando em do_collisions\n");
     //Test Will colision
     if(m_will->y() > m_floor + 20){
         m_will->set_state(GAME_OVER);
@@ -168,16 +172,6 @@ void TravelingWillPlayableLevel::do_collisions(unsigned now){
 
     int slide_height = m_will->state() == SLIDING ? 15 : 0;
 
-    // check collision with collectable
-    if(m_cur_collectable){
-
-        if(m_will->y() >= m_cur_collectable->y() && m_will->y() + slide_height <= m_cur_collectable->y() + COLLECTABLE_SIZE){
-            ++n_collectables;
-            platforms[m_cur_collectable_it]->remove(COLLECTABLE);
-            m_cur_collectable = nullptr;
-        }
-    }
-
     // check collision with enemy
     if(m_cur_enemy){
         if(m_will->y() >= m_cur_enemy->y() && m_will->y() + slide_height <= m_cur_enemy->y() + ENEMY_SIZE){
@@ -190,11 +184,11 @@ void TravelingWillPlayableLevel::do_collisions(unsigned now){
         }
     }
 
-    printf("Saindo de do_collisions\n");
+    //printf("Saindo de do_collisions\n");
 }
 
 void TravelingWillPlayableLevel::check_game_over(){
-    printf("Entrando em check_game_over\n");
+    //printf("Entrando em check_game_over\n");
     if(m_will->state() == GAME_OVER){
         m_y_speed = 0;
         m_x_speed = 0;
@@ -202,11 +196,11 @@ void TravelingWillPlayableLevel::check_game_over(){
         remove_child(m_will);
         m_done = true;
     }
-    printf("Saindo de check_game_over\n");
+    //printf("Saindo de check_game_over\n");
 }
 
 void TravelingWillPlayableLevel::update_platforms_position(){
-    printf("Entrando em update_platforms_position\n");
+    //printf("Entrando em update_platforms_position\n");
     int height, current_x;
     for(int i = 0; i < 7; ++i){
         current_x = m_reverse_camera_x + 142*i;
@@ -218,11 +212,6 @@ void TravelingWillPlayableLevel::update_platforms_position(){
 
         // sets current enemy and collectable, if they exist
         if(current_x + 142 >= m_will->x() && current_x <= m_will->x() + WILL_WIDTH){
-            if(current_x + 56 + COLLECTABLE_DIMENSION >= m_will->x() && current_x + 56 <= m_will->x() + WILL_WIDTH){
-                m_cur_collectable = platforms[i]->collectable();
-                m_cur_collectable_it = i;
-            }
-
             if(current_x + 48 + ENEMY_DIMENSION >= m_will->x() && current_x + 48 <= m_will->x() + WILL_WIDTH){
 
                 m_cur_enemy = platforms[i]->enemy();
@@ -234,11 +223,11 @@ void TravelingWillPlayableLevel::update_platforms_position(){
             m_floor = 480.0 - height - WILL_HEIGHT;
         }
     }
-    printf("Saindo de update_platforms_position\n");
+    //printf("Saindo de update_platforms_position\n");
 }
 
 void TravelingWillPlayableLevel::update_counters(unsigned now){
-    printf("Entrando em update_counters\n");
+    //printf("Entrando em update_counters\n");
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
     m_camera_x += (now - m_start) * m_x_speed;
@@ -271,11 +260,11 @@ void TravelingWillPlayableLevel::update_counters(unsigned now){
     if(sprite_counter > 5.9){
         sprite_counter -= 5.9;
     }
-    printf("Saindo de update_counters\n");
+    //printf("Saindo de update_counters\n");
 }
 
 void TravelingWillPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
-    printf("Entrando em draw_self\n");
+    //printf("Entrando em draw_self\n");
     canvas->clear();
     canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
 
@@ -303,5 +292,5 @@ void TravelingWillPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         x_digit -= 25;
     }while(aux);
 
-    printf("Saindo de draw_self\n");
+    //printf("Saindo de draw_self\n");
 }
