@@ -12,7 +12,7 @@ Collectable::Collectable(double ch){
 }
 
 Collectable::~Collectable(){
-
+    physics::unregister_object(this);
 }
 
 double Collectable::x(){ return m_x; }

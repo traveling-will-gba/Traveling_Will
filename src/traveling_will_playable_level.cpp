@@ -132,9 +132,9 @@ void TravelingWillPlayableLevel::update_self(unsigned now, unsigned last){
 
     update_platforms_position();
 
-
-    do_collisions2(now);
     physics::do_collisions(now, last);
+
+    test_floor(now);
 
     check_game_over();
 
@@ -142,8 +142,8 @@ void TravelingWillPlayableLevel::update_self(unsigned now, unsigned last){
     //printf("Saindo de update_self\n");
 }
 
-void TravelingWillPlayableLevel::do_collisions2(unsigned now){
-    //printf("Entrando em do_collisions\n");
+void TravelingWillPlayableLevel::test_floor(unsigned now){
+    //printf("Entrando em test_floor\n");
     //Test Will colision
     if(m_will->y() > m_floor + 20){
         m_will->set_state(GAME_OVER);
@@ -170,21 +170,7 @@ void TravelingWillPlayableLevel::do_collisions2(unsigned now){
         }
     }
 
-    int slide_height = m_will->state() == SLIDING ? 15 : 0;
-
-    // check collision with enemy
-    if(m_cur_enemy){
-        if(m_will->y() >= m_cur_enemy->y() && m_will->y() + slide_height <= m_cur_enemy->y() + ENEMY_SIZE){
-            if(m_cur_enemy->type() == 0 || not m_is_punching)
-                m_will->set_state(GAME_OVER);
-            else{
-                platforms[m_cur_enemy_it]->remove(ENEMY);
-                m_cur_enemy = nullptr;
-            }
-        }
-    }
-
-    //printf("Saindo de do_collisions\n");
+    //printf("Saindo de test_floor\n");
 }
 
 void TravelingWillPlayableLevel::check_game_over(){
@@ -208,15 +194,6 @@ void TravelingWillPlayableLevel::update_platforms_position(){
 
         if(current_x >= m_will->x() && current_x <= m_will->x() + WILL_WIDTH){
             m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
-        }
-
-        // sets current enemy and collectable, if they exist
-        if(current_x + 142 >= m_will->x() && current_x <= m_will->x() + WILL_WIDTH){
-            if(current_x + 48 + ENEMY_DIMENSION >= m_will->x() && current_x + 48 <= m_will->x() + WILL_WIDTH){
-
-                m_cur_enemy = platforms[i]->enemy();
-                m_cur_enemy_it = i;
-            }
         }
 
         if(current_x >= m_will->x() && current_x <= m_will->x() + 30){

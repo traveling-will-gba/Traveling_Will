@@ -67,7 +67,7 @@ class TravelingWillPlayableLevel : public TravelingWillLevel{
         shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar;
         shared_ptr<Texture> m_number, m_collectable_icon;
 
-        void do_collisions2(unsigned now);
+        void test_floor(unsigned now);
         void update_counters(unsigned now);
         void check_game_over();
         void update_platforms_position();
