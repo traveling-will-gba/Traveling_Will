@@ -26,6 +26,7 @@ class Collectable : public GameObject, public Collidable {
         void set_x(double cx);
         void set_y(double cy);
         void set_height(double ch);
+        void register_self(int current_x);
 
         bool active() const;
         pair<double, double> direction() const;

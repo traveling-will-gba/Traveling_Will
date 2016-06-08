@@ -31,6 +31,7 @@ class Platform : public GameObject {
         void set_y(double py);
         void set_height(double ph);
         void remove(int option);
+        void register_objects(int m_x);
 
     protected:
         void update_self(unsigned now, unsigned last);

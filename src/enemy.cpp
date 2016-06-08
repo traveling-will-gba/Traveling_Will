@@ -15,8 +15,6 @@ Enemy::Enemy(double et, double eh){
     else{
         m_texture = resources::get_texture("1/enemy2.png");
     }
-
-    physics::register_object(this);
 }
 
 Enemy::~Enemy(){
@@ -34,6 +32,11 @@ void Enemy::set_x(double ex){ m_x = ex; }
 void Enemy::set_y(double ey){ m_y = ey; }
 void Enemy::set_type(int et){ m_type = et; }
 void Enemy::set_height(double eh){ m_height = eh; }
+
+void Enemy::register_self(int current_x){
+    m_bounding_box = Rectangle(current_x, m_y, m_width, m_height);
+    physics::register_object(this);
+}
 
 bool Enemy::active() const{
     return true;

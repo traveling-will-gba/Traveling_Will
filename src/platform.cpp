@@ -50,6 +50,15 @@ void Platform::remove(int option){
     }
 }
 
+void Platform::register_objects(int m_x){
+    if(m_collectable){
+        m_collectable->register_self(m_x + 56);
+    }
+    if(m_enemy){
+        m_enemy->register_self(m_x + 48);
+    }
+}
+
 void Platform::update_self(unsigned, unsigned) {
     if(m_enemy){
          m_enemy->set_x(m_x + 48);

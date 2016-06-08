@@ -81,6 +81,7 @@ int audio_duration) :
         auto p = platforms[i];
         p->set_x(i * 142);
         add_child(p);
+        p->register_objects(i * 142);
     }
 
     level_design.close();
@@ -225,6 +226,7 @@ void TravelingWillPlayableLevel::update_counters(unsigned now){
         remove_child(platforms[0]);
         platforms.pop_front();
         platforms[6]->set_x(852);
+        platforms[6]->register_objects(852);
         add_child(platforms[6]);
     }
 

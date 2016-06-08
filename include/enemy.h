@@ -28,7 +28,8 @@ class Enemy : public GameObject, public Collidable {
         void set_y(double ey);
         void set_type(int et);
         void set_height(double eh);
-        
+        void register_self(int current_x);
+
         bool active() const;
         pair<double, double> direction() const;
 
