@@ -60,6 +60,7 @@ class TravelingWillGame {
                 return false;
             }
 
+
             virtual bool translate(GameEvent&, const JoystickEvent&){
                 return false;
             }
