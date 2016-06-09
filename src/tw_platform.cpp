@@ -42,10 +42,10 @@ void TWPlatform::set_height(double ph){ m_height = ph; }
 
 void TWPlatform::remove(int option){
     if(option == COLLECTABLE){
-        remove_child(m_collectable);
+        destroy_child(m_collectable);
         m_collectable = nullptr;
     }else{
-        remove_child(m_enemy);
+        destroy_child(m_enemy);
         m_enemy = nullptr;
     }
 }

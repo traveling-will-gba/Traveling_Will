@@ -1,4 +1,5 @@
 #include "tw_enemy.h"
+#include "tw_platform.h"
 
 TWEnemy::TWEnemy(){
 
@@ -34,7 +35,8 @@ void TWEnemy::set_type(int et){ m_type = et; }
 void TWEnemy::set_height(double eh){ m_height = eh; }
 
 void TWEnemy::register_self(int current_x){
-    m_bounding_box = Rectangle(current_x, m_y, m_width, m_height);
+    m_x = current_x;
+    m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     physics::register_object(this);
 }
 
@@ -58,6 +60,8 @@ const list<Rectangle>& TWEnemy::hit_boxes() const{
 
 void TWEnemy::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
     printf("TWEnemy colidiu\n");
+    m_x = -100;
+    //((TWPlatform *) parent())->remove(1);
 }
 
 void TWEnemy::update_self(unsigned, unsigned) {

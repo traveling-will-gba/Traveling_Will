@@ -25,6 +25,7 @@ void TWCollectable::set_y(double cy) { m_y = cy; }
 void TWCollectable::set_height(double ch) { m_height = ch; }
 
 void TWCollectable::register_self(int current_x){
+    m_x = current_x;
     m_bounding_box = Rectangle(current_x, m_y, m_width, m_height);
     physics::register_object(this);
 }
@@ -49,6 +50,7 @@ const list<Rectangle>& TWCollectable::hit_boxes() const{
 
 void TWCollectable::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
     printf("TWCollectable colidiu\n");
+    m_x = -100;
 }
 
 void TWCollectable::update_self(unsigned, unsigned) {

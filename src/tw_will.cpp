@@ -93,7 +93,7 @@ const list<Rectangle>& TWWill::hit_boxes() const{
 }
 
 void TWWill::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("TWWill colidiu\n");
+    printf("TWWill colidiu em %.2f,%.2f\n", where.x(), where.y());
 }
 
 void TWWill::update_self(unsigned now, unsigned){

@@ -223,7 +223,7 @@ void TWPlayableLevel::update_counters(unsigned now){
     //Reset value of reverse camera for each part of the level
     if(m_reverse_camera_x < -142 && m_current_level == "1"){
         m_reverse_camera_x += 142;
-        remove_child(platforms[0]);
+        destroy_child(platforms[0]);
         platforms.pop_front();
         platforms[6]->set_x(852);
         platforms[6]->register_objects(852);
