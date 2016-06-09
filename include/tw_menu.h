@@ -1,20 +1,18 @@
-#ifndef MENU_H
-#define MENU_H
+#ifndef TW_MENU_H
+#define TW_MENU_H
 
-#include "traveling_will_level.h"
-#include "button.h"
+#include "tw_level.h"
+#include "tw_button.h"
 
 using std::string;
 using std::shared_ptr;
 
 using namespace ijengine;
 
-class Button;
-
-class Menu : public TravelingWillLevel{
+class TWMenu : public TWLevel{
 	public:
-		Menu(const string& current_level, const string& next_level = "", const string audio_path = "", int audio_duration = -1);
-		~Menu();
+		TWMenu(const string& current_level, const string& next_level = "", const string audio_path = "", int audio_duration = -1);
+		~TWMenu();
 
 		bool done() const;
 		string next() const;

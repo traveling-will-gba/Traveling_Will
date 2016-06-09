@@ -1,5 +1,5 @@
-#ifndef WILL_H
-#define WILL_H
+#ifndef TW_ENEMY_H
+#define TW_ENEMY_H
 
 #include <ijengine/engine.h>
 #include <ijengine/collidable.h>
@@ -12,26 +12,23 @@
 using std::shared_ptr;
 using namespace ijengine;
 
-class Will : public GameObject, public GameEventsListener, public Collidable {
-
+class TWEnemy : public GameObject, public Collidable {
     public:
-        typedef enum { RUNNING, JUMPING, SLIDING, FALLING, GAME_OVER, PUNCHING } State;
-
-        Will(double will_x, double will_y);
-        ~Will();
-
-        void set_height(double will_h);
-        void set_width(double will_w);
-        void set_y(double will_y);
-        void set_state(int will_state);
-        void set_y_speed(double will_speed);
-        void update_y_speed(double speed_increment);
-        int state();
+        TWEnemy();
+        TWEnemy(double et, double eh);
+        ~TWEnemy();
         double x();
         double y();
-        double speed();
+        double height();
+        double width();
+        int type();
+        shared_ptr<Texture> texture();
 
-        bool on_event(const GameEvent& event);
+        void set_x(double ex);
+        void set_y(double ey);
+        void set_type(int et);
+        void set_height(double eh);
+        void register_self(int current_x);
 
         bool active() const;
         pair<double, double> direction() const;
@@ -46,15 +43,15 @@ class Will : public GameObject, public GameEventsListener, public Collidable {
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
     private:
-        State m_state;
-        double m_x, m_y, m_floor, m_y_speed;
+        static const int INVALID = -10000000;
+        double m_x, m_y;
+        int m_type;
         double m_height, m_width;
         double m_sprite_counter, m_sprite_speed;
-        double m_punch_counter;
-        bool m_is_punching;
         int m_start;
         Rectangle m_bounding_box;
-        shared_ptr<Texture> m_sprite[20];
+        // more sprites later(i.e. dying)
+        shared_ptr<Texture> m_texture;
 };
 
 #endif

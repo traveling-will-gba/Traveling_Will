@@ -1,31 +1,32 @@
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#ifndef TW_PLATFORM_H
+#define TW_PLATFORM_H
 
-#include <iostream>
+#include "tw_enemy.h"
+#include "tw_collectable.h"
+
 #include <memory>
-#include "enemy.h"
-#include "collectable.h"
-#include <ijengine/game_object.h>
-#include <ijengine/rectangle.h>
+#include <iostream>
 #include <ijengine/engine.h>
+#include <ijengine/rectangle.h>
+#include <ijengine/game_object.h>
 
 using namespace ijengine;
 using namespace std;
 using std::shared_ptr;
 using std::string;
 
-class Platform : public GameObject {
+class TWPlatform : public GameObject {
     public:
-        Platform();
-        Platform(double ph, double et, double eh, int ep, double ch, int cp);
-        ~Platform();
+        TWPlatform();
+        TWPlatform(double ph, double et, double eh, int ep, double ch, int cp);
+        ~TWPlatform();
         double x();
         double y();
         double height();
         double width();
         shared_ptr<Texture> texture();
-        Collectable* collectable();
-        Enemy* enemy();
+        TWCollectable* collectable();
+        TWEnemy* enemy();
 
         void set_x(double px);
         void set_y(double py);
@@ -44,8 +45,8 @@ class Platform : public GameObject {
         static const int INVALID = -10000000;
         static const int COLLECTABLE = 0;
         shared_ptr<Texture> m_texture;
-        Enemy *m_enemy;
-        Collectable *m_collectable;
+        TWEnemy *m_enemy;
+        TWCollectable *m_collectable;
 };
 
 #endif

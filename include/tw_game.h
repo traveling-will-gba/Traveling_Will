@@ -1,5 +1,5 @@
-#ifndef TRAVELING_WILL_GAME_H
-#define TRAVELING_WILL_GAME_H
+#ifndef TW_GAME_H
+#define TW_GAME_H
 
 #include <ijengine/game.h>
 #include <ijengine/engine.h>
@@ -8,7 +8,7 @@
 #include <ijengine/keyboard_event.h>
 #include <ijengine/events_translator.h>
 
-#include "traveling_will_level_factory.h"
+#include "tw_level_factory.h"
 
 using namespace ijengine;
 
@@ -27,10 +27,10 @@ namespace ijengine
     }
 }
 
-class TravelingWillGame {
+class TWGame {
     public:
-        TravelingWillGame(const string& title, int w, int h);
-        ~TravelingWillGame();
+        TWGame(const string& title, int w, int h);
+        ~TWGame();
 
         int run(const string& level_id);
 
@@ -106,7 +106,7 @@ class TravelingWillGame {
         Game m_game;
         Engine m_engine;
         Translator m_translator;
-        TravelingWillLevelFactory m_level_factory;
+        TWLevelFactory m_level_factory;
 };
 
 #endif

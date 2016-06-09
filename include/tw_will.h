@@ -1,5 +1,5 @@
-#ifndef ENEMY_H
-#define ENEMY_H
+#ifndef TW_WILL_H
+#define TW_WILL_H
 
 #include <ijengine/engine.h>
 #include <ijengine/collidable.h>
@@ -12,23 +12,26 @@
 using std::shared_ptr;
 using namespace ijengine;
 
-class Enemy : public GameObject, public Collidable {
+class TWWill : public GameObject, public GameEventsListener, public Collidable {
+
     public:
-        Enemy();
-        Enemy(double et, double eh);
-        ~Enemy();
+        typedef enum { RUNNING, JUMPING, SLIDING, FALLING, GAME_OVER, PUNCHING } State;
+
+        TWWill(double will_x, double will_y);
+        ~TWWill();
+
+        void set_height(double will_h);
+        void set_width(double will_w);
+        void set_y(double will_y);
+        void set_state(int will_state);
+        void set_y_speed(double will_speed);
+        void update_y_speed(double speed_increment);
+        int state();
         double x();
         double y();
-        double height();
-        double width();
-        int type();
-        shared_ptr<Texture> texture();
+        double speed();
 
-        void set_x(double ex);
-        void set_y(double ey);
-        void set_type(int et);
-        void set_height(double eh);
-        void register_self(int current_x);
+        bool on_event(const GameEvent& event);
 
         bool active() const;
         pair<double, double> direction() const;
@@ -43,15 +46,15 @@ class Enemy : public GameObject, public Collidable {
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
     private:
-        static const int INVALID = -10000000;
-        double m_x, m_y;
-        int m_type;
+        State m_state;
+        double m_x, m_y, m_floor, m_y_speed;
         double m_height, m_width;
         double m_sprite_counter, m_sprite_speed;
+        double m_punch_counter;
+        bool m_is_punching;
         int m_start;
         Rectangle m_bounding_box;
-        // more sprites later(i.e. dying)
-        shared_ptr<Texture> m_texture;
+        shared_ptr<Texture> m_sprite[20];
 };
 
 #endif

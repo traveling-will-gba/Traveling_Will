@@ -1,5 +1,5 @@
-#include "traveling_will_playable_level.h"
-#include "will.h"
+#include "tw_will.h"
+#include "tw_playable_level.h"
 
 #include <ijengine/canvas.h>
 #include <ijengine/engine.h>
@@ -14,7 +14,7 @@
 using namespace std;
 using namespace ijengine;
 
-TravelingWillPlayableLevel::TravelingWillPlayableLevel(const string &current_level, const string& next_level, const string audio_path, 
+TWPlayableLevel::TWPlayableLevel(const string &current_level, const string& next_level, const string audio_path, 
 int audio_duration) : 
 	m_is_punching(false), level_started(false), level_finished(false),
     m_audio_duration(audio_duration), m_audio_counter(0),
@@ -73,7 +73,7 @@ int audio_duration) :
             level_design >> ch;
         }
 
-        auto p = new Platform(ph, et, eh, e_present, ch, c_present);
+        auto p = new TWPlatform(ph, et, eh, e_present, ch, c_present);
         platforms.push_back(p);
     }
 
@@ -89,7 +89,7 @@ int audio_duration) :
     //Sets initial will height based on level design
     m_floor = 480 - platforms[0]->height() - WILL_HEIGHT;
 
-    m_will = new Will(50, 480 - platforms[0]->height() - WILL_HEIGHT);
+    m_will = new TWWill(50, 480 - platforms[0]->height() - WILL_HEIGHT);
     add_child(m_will);
 
     m_start = -1;
@@ -101,28 +101,28 @@ int audio_duration) :
     //printf("Saindo de construtor\n");
 }
 
-TravelingWillPlayableLevel::~TravelingWillPlayableLevel(){
+TWPlayableLevel::~TWPlayableLevel(){
     event::unregister_listener(this);
 }
 
-bool TravelingWillPlayableLevel::done() const{
+bool TWPlayableLevel::done() const{
     return m_done;
 }
 
-string TravelingWillPlayableLevel::next() const{
+string TWPlayableLevel::next() const{
     return m_next;
 }
 
-string TravelingWillPlayableLevel::audio() const{
+string TWPlayableLevel::audio() const{
     return m_audio;
 }
 
-bool TravelingWillPlayableLevel::on_event(const GameEvent&){
+bool TWPlayableLevel::on_event(const GameEvent&){
     //printf("Pegou evento\n");
 	return false;
 }
 
-void TravelingWillPlayableLevel::update_self(unsigned now, unsigned last){
+void TWPlayableLevel::update_self(unsigned now, unsigned last){
     //printf("Entrando em update_self\n");
     if(m_start == -1){
         m_start = now;
@@ -143,14 +143,14 @@ void TravelingWillPlayableLevel::update_self(unsigned now, unsigned last){
     //printf("Saindo de update_self\n");
 }
 
-void TravelingWillPlayableLevel::test_floor(unsigned now){
+void TWPlayableLevel::test_floor(unsigned now){
     //printf("Entrando em test_floor\n");
-    //Test Will colision
+    //Test TWWill colision
     if(m_will->y() > m_floor + 20){
         m_will->set_state(GAME_OVER);
     }
 
-    //Start jump if Will is at the end of a cliff
+    //Start jump if TWWill is at the end of a cliff
     if(m_will->y() < m_floor && m_will->state() != JUMPING && m_will->state() != FALLING && m_will->state() != GAME_OVER){
         m_will->set_state(FALLING);
         m_will->set_y_speed(0);
@@ -174,7 +174,7 @@ void TravelingWillPlayableLevel::test_floor(unsigned now){
     //printf("Saindo de test_floor\n");
 }
 
-void TravelingWillPlayableLevel::check_game_over(){
+void TWPlayableLevel::check_game_over(){
     //printf("Entrando em check_game_over\n");
     if(m_will->state() == GAME_OVER){
         m_y_speed = 0;
@@ -186,7 +186,7 @@ void TravelingWillPlayableLevel::check_game_over(){
     //printf("Saindo de check_game_over\n");
 }
 
-void TravelingWillPlayableLevel::update_platforms_position(){
+void TWPlayableLevel::update_platforms_position(){
     //printf("Entrando em update_platforms_position\n");
     int height, current_x;
     for(int i = 0; i < 7; ++i){
@@ -204,7 +204,7 @@ void TravelingWillPlayableLevel::update_platforms_position(){
     //printf("Saindo de update_platforms_position\n");
 }
 
-void TravelingWillPlayableLevel::update_counters(unsigned now){
+void TWPlayableLevel::update_counters(unsigned now){
     //printf("Entrando em update_counters\n");
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
@@ -242,7 +242,7 @@ void TravelingWillPlayableLevel::update_counters(unsigned now){
     //printf("Saindo de update_counters\n");
 }
 
-void TravelingWillPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
+void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     //printf("Entrando em draw_self\n");
     canvas->clear();
     canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);

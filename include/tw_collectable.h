@@ -1,5 +1,5 @@
-#ifndef COLLECTABLE_H
-#define COLLECTABLE_H
+#ifndef TW_COLLECTABLE_H
+#define TW_COLLECTABLE_H
 
 #include <ijengine/engine.h>
 #include <ijengine/collidable.h>
@@ -12,11 +12,11 @@
 using std::shared_ptr;
 using namespace ijengine;
 
-class Collectable : public GameObject, public Collidable {
+class TWCollectable : public GameObject, public Collidable {
     public:
-        Collectable();
-        Collectable(double ch);
-        ~Collectable();
+        TWCollectable();
+        TWCollectable(double ch);
+        ~TWCollectable();
         double x();
         double y();
         double height();

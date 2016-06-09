@@ -1,5 +1,8 @@
-#ifndef TRAVELING_WILL_LEVEL_H
-#define TRAVELING_WILL_LEVEL_H
+#ifndef TW_LEVEL_H
+#define TW_LEVEL_H
+
+#include "tw_button.h"
+#include "tw_will.h"
 
 #include <string>
 #include <memory>
@@ -18,12 +21,9 @@ using std::shared_ptr;
 
 using namespace ijengine;
 
-class Button;
-class Will;
-
-class TravelingWillLevel : public Level, public GameEventsListener {
+class TWLevel : public Level, public GameEventsListener {
 	public:
-		~TravelingWillLevel(){}
+		~TWLevel(){}
 
 	protected:		
         static const int GAME_MOUSE_CLICK =             1 << 8;
@@ -38,7 +38,7 @@ class TravelingWillLevel : public Level, public GameEventsListener {
 		bool m_done;
 		string m_current_level, m_audio, m_next;
 		shared_ptr<Texture> m_background[3];
-		vector< Button* > m_buttons;
+		vector< TWButton* > m_buttons;
 };
 
 #endif

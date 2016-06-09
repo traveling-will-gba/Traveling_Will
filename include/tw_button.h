@@ -1,8 +1,8 @@
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef TW_BUTTON_H
+#define TW_BUTTON_H
 
-#include <iostream>
 #include <memory>
+#include <iostream>
 #include <ijengine/game_object.h>
 #include <ijengine/rectangle.h>
 #include <ijengine/engine.h>
@@ -11,10 +11,10 @@ using namespace ijengine;
 using std::shared_ptr;
 using std::string;
 
-class Button : public GameObject {
+class TWButton : public GameObject {
     public:
-        Button(int b_id, string cur_level, double b_x, double b_y, string img, double b_w, double b_h, int able_draw);
-        ~Button();
+        TWButton(int b_id, string cur_level, double b_x, double b_y, string img, double b_w, double b_h, int able_draw);
+        ~TWButton();
         double w();
         double h();
         double x();

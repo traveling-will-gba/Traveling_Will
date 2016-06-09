@@ -1,4 +1,4 @@
-#include "will.h"
+#include "tw_will.h"
 
 static const int WILL_HEIGHT =              45;
 static const int WILL_WIDTH =               57;
@@ -7,8 +7,7 @@ static const int EVENT_SLIDE_PRESSED =      1 << 5;
 static const int EVENT_SLIDE_RELEASED =     1 << 6;
 static const int EVENT_PUNCH =              1 << 11;
 
-
-Will::Will(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
+TWWill::TWWill(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_sprite_counter = 0;
     m_state = RUNNING;
     m_height = WILL_HEIGHT;
@@ -31,52 +30,23 @@ Will::Will(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     physics::register_object(this);
 }
 
-Will::~Will(){
+TWWill::~TWWill(){
     event::unregister_listener(this);
     physics::unregister_object(this);
 }
 
-void Will::set_height(double will_h){
-    m_height = will_h;
-}
+void TWWill::set_height(double will_h){ m_height = will_h; }
+void TWWill::set_width(double will_w){ m_width = will_w; }
+void TWWill::set_y(double will_y){ m_y = will_y; }
+void TWWill::set_state(int will_state){ m_state = TWWill::State(will_state); }
+void TWWill::set_y_speed(double will_speed){ m_y_speed = will_speed; }
+void TWWill::update_y_speed(double speed_increment){ m_y_speed += speed_increment; }
+int TWWill::state(){ return (int)m_state; }
+double TWWill::x(){ return m_x; }
+double TWWill::y(){ return m_y; }
+double TWWill::speed(){ return m_y_speed; }
 
-void Will::set_width(double will_w){
-    m_width = will_w;
-}
-
-void Will::set_y(double will_y){
-    m_y = will_y;
-}
-
-void Will::set_state(int will_state){
-    m_state = Will::State(will_state);
-}
-
-void Will::set_y_speed(double will_speed){
-    m_y_speed = will_speed;
-}
-
-void Will::update_y_speed(double speed_increment){
-    m_y_speed += speed_increment;
-}
-
-int Will::state(){
-    return (int)m_state;
-}
-
-double Will::x(){
-    return m_x;
-}
-
-double Will::y(){
-    return m_y;
-}
-
-double Will::speed(){
-    return m_y_speed;
-}
-
-bool Will::on_event(const GameEvent& event){
+bool TWWill::on_event(const GameEvent& event){
     if(m_state != GAME_OVER){
         if(event.id() == EVENT_PUNCH && m_state != SLIDING && event.timestamp() - m_punch_counter > 230){
             m_is_punching = true;
@@ -104,29 +74,29 @@ bool Will::on_event(const GameEvent& event){
     return false;
 }
 
-bool Will::active() const{
+bool TWWill::active() const{
     return true;
 }
 
-pair<double, double> Will::direction() const{
+pair<double, double> TWWill::direction() const{
     pair<double, double> p(0,0);
     return p;
 }
 
-const Rectangle& Will::bounding_box() const{
+const Rectangle& TWWill::bounding_box() const{
     return m_bounding_box;
 }
 
-const list<Rectangle>& Will::hit_boxes() const{
+const list<Rectangle>& TWWill::hit_boxes() const{
     static list<Rectangle> l {m_bounding_box};
     return l;
 }
 
-void Will::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("Will colidiu\n");
+void TWWill::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
+    printf("TWWill colidiu\n");
 }
 
-void Will::update_self(unsigned now, unsigned){
+void TWWill::update_self(unsigned now, unsigned){
     if(m_start == -1){
         m_start = now;
     }
@@ -150,7 +120,7 @@ void Will::update_self(unsigned now, unsigned){
     m_start = now;
 }
 
-void Will::draw_self(Canvas *canvas, unsigned, unsigned){
+void TWWill::draw_self(Canvas *canvas, unsigned, unsigned){
     int will_state = m_is_punching ? PUNCHING : m_state;
     int slide_height = m_state == SLIDING ? 15 : 0;
 

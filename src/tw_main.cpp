@@ -1,4 +1,4 @@
-#include "traveling_will_game.h"
+#include "tw_game.h"
 
 #include <iostream>
 #include <ijengine/game.h>
@@ -12,7 +12,7 @@ using namespace std;
 int main(){
 
     try {
-        TravelingWillGame game("Traveling Will", 852, 480);
+        TWGame game("Traveling Will", 852, 480);
         game.run("menu");
     }
     catch (Exception ex){

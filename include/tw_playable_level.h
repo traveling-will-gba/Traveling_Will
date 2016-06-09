@@ -1,21 +1,21 @@
-#ifndef TRAVELING_WILL_PLAYABLE_LEVEL_H
-#define TRAVELING_WILL_PLAYABLE_LEVEL_H
+#ifndef TW_PLAYABLE_LEVEL_H
+#define TW_PLAYABLE_LEVEL_H
 
-#include "traveling_will_level.h"
-#include "platform.h"
-#include "will.h"
-#include "button.h"
+#include "tw_will.h"
+#include "tw_level.h"
+#include "tw_button.h"
+#include "tw_platform.h"
 
 using std::string;
 using std::shared_ptr;
 
 using namespace ijengine;
 
-class TravelingWillPlayableLevel : public TravelingWillLevel{
+class TWPlayableLevel : public TWLevel{
     public:
-        TravelingWillPlayableLevel(const string& current_level, const string& next_level = "", const string audio_path = "", 
+        TWPlayableLevel(const string& current_level, const string& next_level = "", const string audio_path = "", 
 		int audio_duration = -1);
-        ~TravelingWillPlayableLevel();
+        ~TWPlayableLevel();
 
 		bool done() const;
 		string next() const;
@@ -53,16 +53,16 @@ class TravelingWillPlayableLevel : public TravelingWillLevel{
         
         deque<int> enemy_type, collectable, enemy;
         deque<double> collectable_height, enemy_height, platform_height;
-        deque<Platform*> platforms;
+        deque<TWPlatform *> platforms;
 
         double m_x_speed, m_y_speed;
         double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_floor;
 
-        Will * m_will;
-        Collectable *m_cur_collectable;
-        Enemy *m_cur_enemy;
+        TWWill * m_will;
+        TWCollectable *m_cur_collectable;
+        TWEnemy *m_cur_enemy;
 
         shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar;
         shared_ptr<Texture> m_number, m_collectable_icon;

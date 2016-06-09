@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "tw_menu.h"
 
 #include <ijengine/canvas.h>
 #include <ijengine/engine.h>
@@ -13,7 +13,7 @@
 using namespace std;
 using namespace ijengine;
 
-Menu::Menu(const string &current_level, const string& next_level, const string audio_path, int){
+TWMenu::TWMenu(const string &current_level, const string& next_level, const string audio_path, int){
 	m_current_level = current_level;
 	m_audio = audio_path;
 	m_next = next_level;
@@ -23,17 +23,17 @@ Menu::Menu(const string &current_level, const string& next_level, const string a
 
 	m_background[0] = resources::get_texture(m_current_level + "/menu-tela.png");
 
-	m_buttons.push_back(new Button(0, m_current_level, 20, 400, "voltar-botao.png", 144, 40, 0));
-	m_buttons.push_back(new Button(1, m_current_level, 260, 280, "opcoes-botao.png", 270, 70, 1));
-	m_buttons.push_back(new Button(2, m_current_level, 260, 360, "sair-botao.png", 270, 70, 1));
-	m_buttons.push_back(new Button(3, m_current_level, 700, 400, "creditos-botao.png", 144, 40, 1));
-	m_buttons.push_back(new Button(4, m_current_level, 260, 200, "novo-jogo-botao.png", 270, 70, 1));
+	m_buttons.push_back(new TWButton(0, m_current_level, 20, 400, "voltar-botao.png", 144, 40, 0));
+	m_buttons.push_back(new TWButton(1, m_current_level, 260, 280, "opcoes-botao.png", 270, 70, 1));
+	m_buttons.push_back(new TWButton(2, m_current_level, 260, 360, "sair-botao.png", 270, 70, 1));
+	m_buttons.push_back(new TWButton(3, m_current_level, 700, 400, "creditos-botao.png", 144, 40, 1));
+	m_buttons.push_back(new TWButton(4, m_current_level, 260, 200, "novo-jogo-botao.png", 270, 70, 1));
 
-	m_buttons.push_back(new Button(5, m_current_level + "/opcoes", 260, 200, "volume-botao.png", 144, 40, 0));
-	m_buttons.push_back(new Button(6, m_current_level + "/opcoes", 260, 280, "tela-cheia-botao.png", 144, 40, 0));
-	m_buttons.push_back(new Button(7, m_current_level + "/fases", 80, 210, "fase-1.png", 200, 150, 0));
-	m_buttons.push_back(new Button(8, m_current_level + "/fases", 320, 210, "fase-2.png", 200, 150, 0));
-	m_buttons.push_back(new Button(9, m_current_level + "/fases", 560, 210, "fase-3.png", 200, 150, 0));
+	m_buttons.push_back(new TWButton(5, m_current_level + "/opcoes", 260, 200, "volume-botao.png", 144, 40, 0));
+	m_buttons.push_back(new TWButton(6, m_current_level + "/opcoes", 260, 280, "tela-cheia-botao.png", 144, 40, 0));
+	m_buttons.push_back(new TWButton(7, m_current_level + "/fases", 80, 210, "fase-1.png", 200, 150, 0));
+	m_buttons.push_back(new TWButton(8, m_current_level + "/fases", 320, 210, "fase-2.png", 200, 150, 0));
+	m_buttons.push_back(new TWButton(9, m_current_level + "/fases", 560, 210, "fase-3.png", 200, 150, 0));
 
 	for(auto btn : m_buttons){
 		add_child(btn);
@@ -42,23 +42,23 @@ Menu::Menu(const string &current_level, const string& next_level, const string a
 	event::register_listener(this);
 }
 
-Menu::~Menu(){
+TWMenu::~TWMenu(){
 	event::unregister_listener(this);
 }
 
-bool Menu::done() const{
+bool TWMenu::done() const{
 	return m_done;
 }
 
-string Menu::next() const{
+string TWMenu::next() const{
 	return m_next;
 }
 
-string Menu::audio() const{
+string TWMenu::audio() const{
 	return m_audio;
 }
 
-bool Menu::on_event(const GameEvent& event){
+bool TWMenu::on_event(const GameEvent& event){
 	if(event.id() == GAME_MOUSE_CLICK){
 		double mouse_x = event.get_property<double>("x");
 		double mouse_y = event.get_property<double>("y");
@@ -149,14 +149,14 @@ bool Menu::on_event(const GameEvent& event){
 	return false;
 }
 
-void Menu::update_self(unsigned, unsigned){
+void TWMenu::update_self(unsigned, unsigned){
 	if(m_state == SELECTING){
 		m_state = RUNNING;
 		m_done = true;
 	}
 }
 
-void Menu::draw_self(Canvas *canvas, unsigned, unsigned){
+void TWMenu::draw_self(Canvas *canvas, unsigned, unsigned){
 	canvas->clear();
 	canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
 }
