@@ -180,7 +180,8 @@ void TWPlayableLevel::check_game_over(){
         m_y_speed = 0;
         m_x_speed = 0;
         m_next = m_current_level;
-        remove_child(m_will);
+        destroy_child(m_will);
+        m_will = nullptr;
         m_done = true;
     }
     //printf("Saindo de check_game_over\n");
