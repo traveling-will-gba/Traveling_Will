@@ -125,7 +125,7 @@ bool TWMenu::on_event(const GameEvent& event){
 						printf("VOLUME\n");
 						break;
 					case 6:
-						printf("TELA CHEIA\n");
+						video::set_full_screen(1);
 						break;
 					case 7:
 						m_state = SELECTING;
