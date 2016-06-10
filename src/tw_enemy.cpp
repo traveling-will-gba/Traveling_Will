@@ -6,6 +6,10 @@ TWEnemy::TWEnemy(){
 }
 
 TWEnemy::TWEnemy(double et, double eh){
+    m_sprite_speed = 1/170.0;
+    m_sprite_counter = 0;
+    m_start = -1;
+
     m_type = et;
     m_height = m_width = 45;
     m_y = 480 - eh;
@@ -45,7 +49,7 @@ bool TWEnemy::active() const{
 }
 
 pair<double, double> TWEnemy::direction() const{
-    pair<double, double> p(0,0);
+    pair<double, double> p(-5/19.0,0);
     return p;
 }
 
@@ -58,16 +62,31 @@ const list<Rectangle>& TWEnemy::hit_boxes() const{
     return l;
 }
 
-void TWEnemy::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("TWEnemy colidiu\n");
+void TWEnemy::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
+    printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
     m_x = -100;
+
     //((TWPlatform *) parent())->remove(1);
+    // if( TWPlatform * plat = dynamic_cast<TWPlatform *>(parent()) ){
+    //     plat->remove(1);
+    // }
 }
 
-void TWEnemy::update_self(unsigned, unsigned) {
+void TWEnemy::update_self(unsigned now, unsigned) {
+    if(m_start == -1){
+        m_start = now;
+    }
+
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
+
+    m_sprite_counter += (now - m_start) * m_sprite_speed;
+    if(m_sprite_counter > 5.9){
+        m_sprite_counter -= 5.9;
+    }
+
+    m_start = now;
 }
 void TWEnemy::draw_self(Canvas * canvas, unsigned, unsigned){
-    canvas->draw(m_texture.get(), Rectangle(m_width * 0, 0, m_width, m_height), m_x, m_y);
+    canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
 }
 

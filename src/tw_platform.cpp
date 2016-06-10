@@ -41,6 +41,7 @@ void TWPlatform::set_y(double py){  m_y = py; }
 void TWPlatform::set_height(double ph){ m_height = ph; }
 
 void TWPlatform::remove(int option){
+    printf("Vamos remover...\n");
     if(option == COLLECTABLE){
         destroy_child(m_collectable);
         m_collectable = nullptr;
@@ -48,14 +49,15 @@ void TWPlatform::remove(int option){
         destroy_child(m_enemy);
         m_enemy = nullptr;
     }
+    printf("Removeu de boa\n");
 }
 
-void TWPlatform::register_objects(int m_x){
+void TWPlatform::register_objects(int current_x){
     if(m_collectable){
-        m_collectable->register_self(m_x + 56);
+        m_collectable->register_self(current_x + 56);
     }
     if(m_enemy){
-        m_enemy->register_self(m_x + 48);
+        m_enemy->register_self(current_x + 48);
     }
 }
 

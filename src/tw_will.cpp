@@ -1,7 +1,7 @@
 #include "tw_will.h"
 
 static const int WILL_HEIGHT =              45;
-static const int WILL_WIDTH =               57;
+static const int WILL_WIDTH =               45;
 static const int EVENT_JUMP =               1 << 4;
 static const int EVENT_SLIDE_PRESSED =      1 << 5;
 static const int EVENT_SLIDE_RELEASED =     1 << 6;
@@ -9,7 +9,7 @@ static const int EVENT_PUNCH =              1 << 11;
 
 TWWill::TWWill(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_sprite_counter = 0;
-    m_state = RUNNING;
+    this->set_state(RUNNING);
     m_height = WILL_HEIGHT;
     m_width = WILL_WIDTH;
     m_y_speed = 0;
@@ -56,17 +56,17 @@ bool TWWill::on_event(const GameEvent& event){
 
         if(event.id() == EVENT_JUMP && m_state == RUNNING){
             m_y_speed = -0.5;
-            m_state = JUMPING;
+            this->set_state(JUMPING);
             return true;
         }   
 
         if(event.id() == EVENT_SLIDE_PRESSED && m_state != JUMPING && m_state != FALLING){
-            m_state = SLIDING;
+            this->set_state(SLIDING);
             return true;
         }
 
         if(event.id() == EVENT_SLIDE_RELEASED && m_state == SLIDING){
-            m_state = RUNNING;
+            this->set_state(RUNNING);
             return true;
         }
     }
@@ -92,8 +92,8 @@ const list<Rectangle>& TWWill::hit_boxes() const{
     return l;
 }
 
-void TWWill::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("TWWill colidiu em %.2f,%.2f\n", where.x(), where.y());
+void TWWill::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
+    printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
 }
 
 void TWWill::update_self(unsigned now, unsigned){

@@ -1,17 +1,24 @@
 #include "tw_collectable.h"
+#include "tw_platform.h"
 
 TWCollectable::TWCollectable(){
 
 }
 
 TWCollectable::TWCollectable(double ch){
+    m_sprite_speed = 1/170.0;
+    m_sprite_counter = 0;
+    m_start = -1;
+
     m_height = m_width = 30;
     m_y = 480 - ch;
     m_texture = resources::get_texture("1/collectable.png");
 }
 
 TWCollectable::~TWCollectable(){
+    printf("Vamos destruir collectable\n");
     physics::unregister_object(this);
+    printf("Destruiu de boa\n");
 }
 
 double TWCollectable::x(){ return m_x; }
@@ -22,7 +29,7 @@ shared_ptr<Texture> TWCollectable::texture(){ return m_texture; }
 
 void TWCollectable::set_x(double cx) { m_x = cx; }
 void TWCollectable::set_y(double cy) { m_y = cy; }
-void TWCollectable::set_height(double ch) { m_height = ch; }
+void TWCollectable::set_height(double ch) { m_height = ch; }    
 
 void TWCollectable::register_self(int current_x){
     m_x = current_x;
@@ -35,7 +42,7 @@ bool TWCollectable::active() const{
 }
 
 pair<double, double> TWCollectable::direction() const{
-    pair<double, double> p(0,0);
+    pair<double, double> p(-5/19.0,0);
     return p;
 }
 
@@ -49,14 +56,32 @@ const list<Rectangle>& TWCollectable::hit_boxes() const{
 }
 
 void TWCollectable::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("TWCollectable colidiu\n");
+    printf("TWCollectable colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
     m_x = -100;
+
+    // if( TWPlatform * plat = dynamic_cast<TWPlatform *>(parent()) ){
+    //     plat->remove(0);
+    // }
+    //((TWPlatform *) parent())->remove(0);
 }
 
-void TWCollectable::update_self(unsigned, unsigned) {
+void TWCollectable::update_self(unsigned now, unsigned) {
+    if(m_start == -1){
+        m_start = now;
+    }
+
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
+
+    m_sprite_counter += (now - m_start) * m_sprite_speed;
+    if(m_sprite_counter > 5.9){
+        m_sprite_counter -= 5.9;
+    }
+
+    m_start = now;
 }
 void TWCollectable::draw_self(Canvas* canvas, unsigned, unsigned) {
-    canvas->draw(m_texture.get(), Rectangle(m_width * 0, 0, m_width, m_height), m_x, m_y);
+    printf("Entrando no draw de collectable\n");
+    canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
+    printf("Saindo do draw de collectable\n");
 }
 
