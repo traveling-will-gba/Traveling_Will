@@ -1,11 +1,11 @@
 #include "tw_platform.h"
 
-TWPlatform::TWPlatform() : m_width(142) {
+TWPlatform::TWPlatform() : m_width(36) {
 
 }
 
 TWPlatform::TWPlatform(double ph, double et, double eh, int ep, double ch, int cp){
-    m_width = 142;
+    m_width = 36;
     m_height = ph;
     m_y = 480 - m_height;
     m_texture = resources::get_texture("1/" + to_string((int)ph) + ".png");

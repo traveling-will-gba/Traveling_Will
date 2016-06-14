@@ -77,11 +77,11 @@ int audio_duration) :
         platforms.push_back(p);
     }
 
-    for(int i = 0; i < 7; ++i){
+    for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
         auto p = platforms[i];
-        p->set_x(i * 142);
+        p->set_x(i * PLATFORM_SIZE);
         add_child(p);
-        p->register_objects(i * 142);
+        p->register_objects(i * PLATFORM_SIZE);
     }
 
     level_design.close();
@@ -190,8 +190,8 @@ void TWPlayableLevel::check_game_over(){
 void TWPlayableLevel::update_platforms_position(){
     //printf("Entrando em update_platforms_position\n");
     int height, current_x;
-    for(int i = 0; i < 7; ++i){
-        current_x = m_reverse_camera_x + 142*i;
+    for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
+        current_x = m_reverse_camera_x + PLATFORM_SIZE*i;
         height = platforms[i]->height();
 
         if(current_x >= m_will->x() && current_x <= m_will->x() + WILL_WIDTH){
@@ -222,13 +222,13 @@ void TWPlayableLevel::update_counters(unsigned now){
     }
 
     //Reset value of reverse camera for each part of the level
-    if(m_reverse_camera_x < -142 && m_current_level == "1"){
-        m_reverse_camera_x += 142;
+    if(m_reverse_camera_x < -PLATFORM_SIZE && m_current_level == "1"){
+        m_reverse_camera_x += PLATFORM_SIZE;
         destroy_child(platforms[0]);
         platforms.pop_front();
-        platforms[6]->set_x(852);
-        platforms[6]->register_objects(852);
-        add_child(platforms[6]);
+        platforms[NUMBER_OF_SECTIONS-1]->set_x(852);
+        platforms[NUMBER_OF_SECTIONS-1]->register_objects(852);
+        add_child(platforms[NUMBER_OF_SECTIONS-1]);
     }
 
     //Reset background camera
@@ -252,8 +252,8 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
     //Draws each of the seven parts of the screen
-    for(int i = 0; i < 7; ++i){
-        platforms[i]->set_x(m_reverse_camera_x + 142*i);
+    for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
+        platforms[i]->set_x(m_reverse_camera_x + PLATFORM_SIZE*i);
     }
 
     double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
