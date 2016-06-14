@@ -41,9 +41,22 @@ int audio_duration) :
 	m_progress_bar[2] = resources::get_texture("begin-progress-bar.png");
 	m_will_progress_bar = resources::get_texture("tiny-will-progress-bar.png");
 
-    m_background[0] = resources::get_texture(m_current_level + "/background_0.png");
+	if(current_level == "1"){
+		for(char i = '0'; i < '3'; i++){
+			m_background[i - '0'] = resources::get_texture(m_current_level + "/background_" + i + ".png");
+		}
+	}
+	else if(current_level == "2"){
+		for(char i = '0'; i < '4'; i++){
+			m_background[i - '0'] = resources::get_texture(m_current_level + "/background_" + i + ".png");
+		}
+	}
+
+	
+
+/*    m_background[0] = resources::get_texture(m_current_level + "/background_0.png");
     m_background[1] = resources::get_texture(m_current_level + "/background_1.png");
-    m_background[2] = resources::get_texture(m_current_level + "/background_2.png");
+    m_background[2] = resources::get_texture(m_current_level + "/background_2.png");*/
 
     m_collectable_icon = resources::get_texture(m_current_level + "/collectable_icon.png");
 
@@ -73,7 +86,7 @@ int audio_duration) :
             level_design >> ch;
         }
 
-        auto p = new TWPlatform(ph, et, eh, e_present, ch, c_present);
+        auto p = new TWPlatform(m_current_level, ph, et, eh, e_present, ch, c_present);
         platforms.push_back(p);
     }
 
@@ -231,6 +244,16 @@ void TWPlayableLevel::update_counters(unsigned now){
         add_child(platforms[6]);
     }
 
+	//Reset value of reverse camera for each part of the level
+    if(m_reverse_camera_x < -142 && m_current_level == "2"){
+        m_reverse_camera_x += 142;
+        destroy_child(platforms[0]);
+        platforms.pop_front();
+        platforms[6]->set_x(852);
+        platforms[6]->register_objects(852);
+        add_child(platforms[6]);
+    }
+
     //Reset background camera
     if(m_camera_x > 1704){
         m_camera_x -= 1704;
@@ -246,10 +269,18 @@ void TWPlayableLevel::update_counters(unsigned now){
 void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
     //printf("Entrando em draw_self\n");
     canvas->clear();
-    canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
 
-    canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
-    canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+	if(m_current_level == "1"){
+		canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+		canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
+		canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+	}
+	else if(m_current_level == "2"){
+		canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+		canvas->draw(m_background[1].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+		canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+		canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
+	}
 
     //Draws each of the seven parts of the screen
     for(int i = 0; i < 7; ++i){

@@ -18,7 +18,7 @@ using std::string;
 class TWPlatform : public GameObject {
     public:
         TWPlatform();
-        TWPlatform(double ph, double et, double eh, int ep, double ch, int cp);
+        TWPlatform(string current_level, double ph, double et, double eh, int ep, double ch, int cp);
         ~TWPlatform();
         double x();
         double y();
