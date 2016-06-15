@@ -139,8 +139,6 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
 
     test_floor(now);
 
-    check_game_over();
-
     m_start = now;
     printf("Saindo de update_self\n");
 }
@@ -150,18 +148,22 @@ void TWPlayableLevel::test_floor(unsigned now){
     //Test TWWill colision
 
     //Start jump if TWWill is at the end of a cliff
-    if(m_will->y() < m_floor && m_will->state() != JUMPING && m_will->state() != FALLING && m_will->state() != GAME_OVER){
+    if(m_will->y() < m_floor && m_will->state() != JUMPING && m_will->state() != FALLING){
         m_will->set_state(FALLING);
         m_will->set_y_speed(0);
     }
 
     //Calculate jump speed and stop jump if hits the ground
-    if(m_will->state() == JUMPING || m_will->state() == FALLING){
+    if(m_will->state() == JUMPING){
         m_will->update_y_speed((now - m_start)/300.0 * 0.5);
 
         if(m_will->speed() >= 0.001){
             m_will->set_state(FALLING);
         }
+    }
+
+    if(m_will->state() == FALLING){
+        m_will->update_y_speed((now - m_start)/300.0 * 0.5);
 
         if(m_will->y() > m_floor){
             m_will->set_y(m_floor);
@@ -173,24 +175,17 @@ void TWPlayableLevel::test_floor(unsigned now){
     printf("Saindo de test_floor\n");
 }
 
-void TWPlayableLevel::check_game_over(){
-    printf("Entrando em check_game_over\n");
-    if(m_will->state() == GAME_OVER){
-        m_y_speed = 0;
-        m_x_speed = 0;
-        destroy_child(m_will);
-        m_will = nullptr;
-        m_next = m_current_level;
-        m_done = true;
-    }
-    printf("Saindo de check_game_over\n");
-}
-
 void TWPlayableLevel::update_platforms_position(){
     printf("Entrando em update_platforms_position\n");
     int height, current_x;
-    for(int i = 0; i < 5; ++i){
-        current_x = m_reverse_camera_x + PLATFORM_SIZE*i;
+
+    for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
+        platforms[i]->set_x(m_reverse_camera_x + PLATFORM_SIZE*i);
+    }
+
+
+    for(int i = 0; i < 2; ++i){
+        current_x = platforms[i]->x();
         height = platforms[i]->height();
 
         if(current_x >= m_will->x() && current_x <= m_will->x() + WILL_WIDTH){
@@ -216,7 +211,7 @@ void TWPlayableLevel::update_counters(unsigned now){
     m_camera_x += (now - m_start) * m_x_speed;
     m_reverse_camera_x -= (now - m_start) * m_x_speed;
 
-    if(m_will->state() != GAME_OVER && not level_finished)
+    if(not level_finished)
         m_audio_counter = now - m_audio_start;
 
     //Checking if music has ended
@@ -229,11 +224,8 @@ void TWPlayableLevel::update_counters(unsigned now){
     printf("Entrando na treta\n");
     if(m_reverse_camera_x < -PLATFORM_SIZE && m_current_level == "1"){
         m_reverse_camera_x += PLATFORM_SIZE;
-        printf("Eitaaaa\n");
         destroy_child(platforms[0]);
-        printf("Eitaaaa1\n");
         platforms.pop_front();
-        printf("Eitaaaa2 %u\n", platforms.size());
         platforms[NUMBER_OF_SECTIONS-1]->set_x(852);
         platforms[NUMBER_OF_SECTIONS-1]->register_objects(852);
         add_child(platforms[NUMBER_OF_SECTIONS-1]);
@@ -259,11 +251,6 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 
     canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
     canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
-
-    //Draws each of the seven parts of the screen
-    for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
-        platforms[i]->set_x(m_reverse_camera_x + PLATFORM_SIZE*i);
-    }
 
     double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
 

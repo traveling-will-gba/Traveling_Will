@@ -70,7 +70,6 @@ class TWPlayableLevel : public TWLevel{
 
         void test_floor(unsigned now);
         void update_counters(unsigned now);
-        void check_game_over();
         void update_platforms_position();
 };
 

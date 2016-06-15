@@ -9,6 +9,7 @@ TWPlatform::TWPlatform(double ph, double et, double eh, int ep, double ch, int c
     m_height = ph;
     m_y = 480 - m_height;
     m_texture = resources::get_texture("1/platform.png");
+    m_floor = resources::get_texture("1/floor.png");
 
     if(ep){
         m_enemy = new TWEnemy(et, eh);
@@ -75,5 +76,6 @@ void TWPlatform::update_self(unsigned, unsigned) {
 
 void TWPlatform::draw_self(Canvas * canvas, unsigned, unsigned) {
     canvas->draw(m_texture.get(), Rectangle(0, 0, m_width, m_height), m_x, m_y);
+    canvas->draw(m_floor.get(), Rectangle(0, 0, m_width, 50), m_x, 430);
 }
 

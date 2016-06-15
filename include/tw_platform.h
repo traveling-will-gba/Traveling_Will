@@ -44,7 +44,7 @@ class TWPlatform : public GameObject {
         double m_height, m_width;
         static const int INVALID = -10000000;
         static const int COLLECTABLE = 0;
-        shared_ptr<Texture> m_texture;
+        shared_ptr<Texture> m_texture, m_floor;
         TWEnemy *m_enemy;
         TWCollectable *m_collectable;
 };
