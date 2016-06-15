@@ -9,13 +9,15 @@
 #include <ijengine/events_translator.h>
 #include <ijengine/game_events_listener.h>
 
+#include <string>
+
 using std::shared_ptr;
 using namespace ijengine;
 
 class TWCollectable : public GameObject, public Collidable {
     public:
         TWCollectable();
-        TWCollectable(double ch);
+        TWCollectable(std::string current_level, double ch);
         ~TWCollectable();
         double x();
         double y();

@@ -5,14 +5,14 @@ TWCollectable::TWCollectable(){
 
 }
 
-TWCollectable::TWCollectable(double ch){
+TWCollectable::TWCollectable(std::string current_level, double ch){
     m_sprite_speed = 1/170.0;
     m_sprite_counter = 0;
     m_start = -1;
 
     m_height = m_width = 30;
     m_y = 480 - ch;
-    m_texture = resources::get_texture("1/collectable.png");
+    m_texture = resources::get_texture(current_level + "/collectable.png");
 }
 
 TWCollectable::~TWCollectable(){

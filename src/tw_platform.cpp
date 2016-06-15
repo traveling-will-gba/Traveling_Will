@@ -26,7 +26,7 @@ TWPlatform::TWPlatform(string current_level, double ph, double et, double eh, in
     }
 
     if(cp){
-        m_collectable = new TWCollectable(ch);
+        m_collectable = new TWCollectable(current_level, ch);
         add_child(m_collectable);
     }else{
         m_collectable = nullptr;
@@ -82,7 +82,7 @@ void TWPlatform::update_self(unsigned, unsigned) {
 }
 
 void TWPlatform::draw_self(Canvas * canvas, unsigned, unsigned) {
-    // canvas->draw(m_texture.get(), Rectangle(0, 0, m_width, m_height), m_x, m_y);
+    canvas->draw(m_texture.get(), Rectangle(0, 0, m_width, m_height), m_x, m_y);
     canvas->draw(m_floor.get(), Rectangle(0, 0, m_width, 50), m_x, 430);
 }
 
