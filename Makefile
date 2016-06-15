@@ -39,6 +39,11 @@ $(TARGET): $(OBJ)
 run:
 	$(TARGET)
 
+crun:
+	make dist-clean
+	make -j
+	make run
+
 clean:
 	@echo Cleaning...
 	@find . -name *.o -exec rm {} \;

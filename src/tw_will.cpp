@@ -25,14 +25,15 @@ TWWill::TWWill(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_sprite[FALLING] = resources::get_texture("will/falling.png");
     m_sprite[PUNCHING] = resources::get_texture("will/punching.png");
     m_sprite[GAME_OVER] = resources::get_texture("will/gameover.png");
+    this->set_priority(10);
 
     event::register_listener(this);
     physics::register_object(this);
 }
 
 TWWill::~TWWill(){
-    event::unregister_listener(this);
     physics::unregister_object(this);
+    event::unregister_listener(this);
 }
 
 void TWWill::set_height(double will_h){ m_height = will_h; }
@@ -97,6 +98,7 @@ void TWWill::on_collision(const Collidable *, const Rectangle& where, const unsi
 }
 
 void TWWill::update_self(unsigned now, unsigned){
+    printf("Entrando em will update\n");
     if(m_start == -1){
         m_start = now;
     }
@@ -118,6 +120,7 @@ void TWWill::update_self(unsigned now, unsigned){
     m_bounding_box = Rectangle(m_x, m_y + slide_height, m_width, m_height - slide_height);
 
     m_start = now;
+    printf("Saindo de will update\n");
 }
 
 void TWWill::draw_self(Canvas *canvas, unsigned, unsigned){

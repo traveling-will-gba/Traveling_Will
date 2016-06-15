@@ -1,14 +1,14 @@
 #include "tw_platform.h"
 
-TWPlatform::TWPlatform() : m_width(36) {
+TWPlatform::TWPlatform() : m_width(142) {
 
 }
 
 TWPlatform::TWPlatform(double ph, double et, double eh, int ep, double ch, int cp){
-    m_width = 36;
+    m_width = 142;
     m_height = ph;
     m_y = 480 - m_height;
-    m_texture = resources::get_texture("1/" + to_string((int)ph) + ".png");
+    m_texture = resources::get_texture("1/platform.png");
 
     if(ep){
         m_enemy = new TWEnemy(et, eh);
@@ -23,6 +23,8 @@ TWPlatform::TWPlatform(double ph, double et, double eh, int ep, double ch, int c
     }else{
         m_collectable = nullptr;
     }
+
+    this->set_priority(4);
 }
 
 TWPlatform::~TWPlatform(){

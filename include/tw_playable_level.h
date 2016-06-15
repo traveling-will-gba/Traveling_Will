@@ -33,7 +33,7 @@ class TWPlayableLevel : public TWLevel{
         static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
         static const int GAME_EVENT_MENU_SELECT =       1 << 7;
         static const int GAME_EVENT_PUNCH =             1 << 11;
-        static const int NUMBER_OF_SECTIONS =           25;
+        static const int NUMBER_OF_SECTIONS =           7;
         static const int WILL_HEIGHT =                  45;
         static const int WILL_WIDTH =                   45;
         static const int COLLECTABLE_DIMENSION =        30;
@@ -43,7 +43,7 @@ class TWPlayableLevel : public TWLevel{
         static const int INVALID =                      -10000000;
         static const int COLLECTABLE =                  0;
         static const int ENEMY =                        1; 
-        static const int PLATFORM_SIZE =                36;
+        static const int PLATFORM_SIZE =                142;
 
         bool m_is_punching, level_started, level_finished;
         
@@ -66,7 +66,7 @@ class TWPlayableLevel : public TWLevel{
         TWEnemy *m_cur_enemy;
 
         shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar;
-        shared_ptr<Texture> m_number, m_collectable_icon;
+        shared_ptr<Texture> m_number, m_collectable_icon, m_floor_texture;
 
         void test_floor(unsigned now);
         void update_counters(unsigned now);

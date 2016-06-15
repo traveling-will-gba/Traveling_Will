@@ -80,8 +80,8 @@ void TWCollectable::update_self(unsigned now, unsigned) {
     m_start = now;
 }
 void TWCollectable::draw_self(Canvas* canvas, unsigned, unsigned) {
-    printf("Entrando no draw de collectable\n");
+    //printf("Entrando no draw de collectable\n");
     canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
-    printf("Saindo do draw de collectable\n");
+    //printf("Saindo do draw de collectable\n");
 }
 
