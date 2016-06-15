@@ -50,7 +50,7 @@ class TWPlayableLevel : public TWLevel{
         int m_audio_duration, m_audio_counter;
         int n_screens, m_punch_counter;
         int n_collectables, n_enemies;
-        int m_cur_collectable_it, m_cur_enemy_it;
+        int m_cur_collectable_it, m_cur_enemy_it, n_backgrounds;
         
         deque<int> enemy_type, collectable, enemy;
         deque<double> collectable_height, enemy_height, platform_height;

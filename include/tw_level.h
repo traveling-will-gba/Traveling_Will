@@ -37,7 +37,7 @@ class TWLevel : public Level, public GameEventsListener {
 		int m_audio_start, m_start;
 		bool m_done;
 		string m_current_level, m_audio, m_next;
-		shared_ptr<Texture> m_background[3];
+		shared_ptr<Texture> m_background[20];
 		vector< TWButton* > m_buttons;
 };
 

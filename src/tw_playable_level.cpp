@@ -6,6 +6,7 @@
 #include <ijengine/keyboard_event.h>
 
 #include <unistd.h>
+#include <cmath>
 
 #include <iostream>
 #include <fstream>
@@ -26,7 +27,7 @@ int audio_duration) :
     m_cur_collectable(nullptr), m_cur_enemy(nullptr),
     m_number(resources::get_texture("numbers.png")){
 
-    printf("Entrando em construtor\n");
+    //printf("Entrando em construtor\n");
 
 	m_current_level = current_level;
 	m_audio = audio_path;
@@ -41,19 +42,6 @@ int audio_duration) :
 	m_progress_bar[2] = resources::get_texture("begin-progress-bar.png");
 	m_will_progress_bar = resources::get_texture("tiny-will-progress-bar.png");
 
-	if(current_level == "1"){
-		for(char i = '0'; i < '3'; i++){
-			m_background[i - '0'] = resources::get_texture(m_current_level + "/background_" + i + ".png");
-		}
-	}
-	else if(current_level == "2"){
-		for(char i = '0'; i < '4'; i++){
-			m_background[i - '0'] = resources::get_texture(m_current_level + "/background_" + i + ".png");
-		}
-	}
-
-	
-
 /*    m_background[0] = resources::get_texture(m_current_level + "/background_0.png");
     m_background[1] = resources::get_texture(m_current_level + "/background_1.png");
     m_background[2] = resources::get_texture(m_current_level + "/background_2.png");*/
@@ -66,11 +54,11 @@ int audio_duration) :
 	fstream level_design("res/" + m_current_level + "/level_design.txt");
 
 	if(not level_design.is_open()){
-		printf("Level design txt not available\n");
+		//printf("Level design txt not available\n");
 		exit(0);
 	}
 
-    level_design >> n_screens;
+    level_design >> n_screens >> n_backgrounds;
 
     for(int i = 0; i < n_screens; ++i){
         int ph, e_present, c_present;
@@ -90,6 +78,10 @@ int audio_duration) :
 
         auto p = new TWPlatform(m_current_level, ph, et, eh, e_present, ch, c_present);
         platforms.push_back(p);
+    }
+
+    for(int i = 0; i < n_backgrounds; ++i){
+        m_background[i] = resources::get_texture(m_current_level + "/background_" + to_string(i) + ".png");
     }
 
     for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
@@ -113,7 +105,7 @@ int audio_duration) :
 
     physics::set_collision_mode(physics::Mode::ONE_TO_ALL, m_will);
 
-    printf("Saindo de construtor\n");
+    //printf("Saindo de construtor\n");
 }
 
 TWPlayableLevel::~TWPlayableLevel(){
@@ -133,12 +125,12 @@ string TWPlayableLevel::audio() const{
 }
 
 bool TWPlayableLevel::on_event(const GameEvent&){
-    printf("Pegou evento\n");
+    //printf("Pegou evento\n");
 	return false;
 }
 
 void TWPlayableLevel::update_self(unsigned now, unsigned last){
-    printf("Entrando em update_self\n");
+    //printf("Entrando em update_self\n");
     if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
@@ -153,11 +145,11 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
     test_floor(now);
 
     m_start = now;
-    printf("Saindo de update_self\n");
+    //printf("Saindo de update_self\n");
 }
 
 void TWPlayableLevel::test_floor(unsigned now){
-    printf("Entrando em test_floor\n");
+    //printf("Entrando em test_floor\n");
     //Test TWWill colision
 
     //Start jump if TWWill is at the end of a cliff
@@ -185,11 +177,11 @@ void TWPlayableLevel::test_floor(unsigned now){
         }
     }
 
-    printf("Saindo de test_floor\n");
+    //printf("Saindo de test_floor\n");
 }
 
 void TWPlayableLevel::update_platforms_position(){
-    printf("Entrando em update_platforms_position\n");
+    //printf("Entrando em update_platforms_position\n");
     int height, current_x;
 
     for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
@@ -214,11 +206,11 @@ void TWPlayableLevel::update_platforms_position(){
         m_floor = 430 - WILL_HEIGHT;
     }
 
-    printf("Saindo de update_platforms_position\n");
+    //printf("Saindo de update_platforms_position\n");
 }
 
 void TWPlayableLevel::update_counters(unsigned now){
-    printf("Entrando em update_counters\n");
+    //printf("Entrando em update_counters\n");
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
     m_camera_x += (now - m_start) * m_x_speed;
@@ -234,7 +226,7 @@ void TWPlayableLevel::update_counters(unsigned now){
     }
 
     //Reset value of reverse camera for each part of the level
-    printf("Entrando na treta\n");
+    //printf("Entrando na treta\n");
     if(m_reverse_camera_x < -PLATFORM_SIZE && m_current_level == "1"){
         m_reverse_camera_x += PLATFORM_SIZE;
         destroy_child(platforms[0]);
@@ -243,7 +235,7 @@ void TWPlayableLevel::update_counters(unsigned now){
         platforms[NUMBER_OF_SECTIONS-1]->register_objects(852);
         add_child(platforms[NUMBER_OF_SECTIONS-1]);
     }
-    printf("Saindo da treta\n");
+    //printf("Saindo da treta\n");
 
 	//Reset value of reverse camera for each part of the level
     if(m_reverse_camera_x < -142 && m_current_level == "2"){
@@ -255,33 +247,36 @@ void TWPlayableLevel::update_counters(unsigned now){
         add_child(platforms[6]);
     }
 
+    printf("m_camera_x = %.2f\n", m_camera_x);
+
     //Reset background camera
-    if(m_camera_x > 1704){
-        m_camera_x -= 1704;
-    }
+    // if(m_camera_x > 1704){
+    //     m_camera_x -= 1704;
+    // }
 
     // Reset sprite counter
     if(sprite_counter > 5.9){
         sprite_counter -= 5.9;
     }
-    printf("Saindo de update_counters\n");
+    //printf("Saindo de update_counters\n");
 }
 
 void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
-    printf("Entrando em draw_self\n");
+    //printf("Entrando em draw_self\n");
     canvas->clear();
 
-	if(m_current_level == "1"){
-		canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
-		canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
-		canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
-	}
-	else if(m_current_level == "2"){
-		canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
-		canvas->draw(m_background[1].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
-		canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
-		canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
-	}
+    int divisor = 1 << (n_backgrounds - 1);
+    for(int i = 0; i < n_backgrounds; ++i){
+        //if(i != 1) continue;
+        // if(i == 1 || i == 2) continue;
+        canvas->draw(m_background[i].get(), Rectangle(fmod(m_camera_x/divisor, 1704), 0, 852, 480), 0, 0);
+        //printf("divisor = %d\n", divisor);
+        divisor /= 2;
+    }
+
+	// canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+	// canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
+	// canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
     double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
 
@@ -299,5 +294,5 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         x_digit -= 25;
     }while(aux);
 
-    printf("Saindo de draw_self\n");
+    //printf("Saindo de draw_self\n");
 }
