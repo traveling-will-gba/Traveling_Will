@@ -4,12 +4,19 @@ TWPlatform::TWPlatform() : m_width(142) {
 
 }
 
-TWPlatform::TWPlatform(double ph, double et, double eh, int ep, double ch, int cp){
+//platform height
+//enemy type
+//enemy height
+//enemy present
+//collectable height
+//collectable present
+TWPlatform::TWPlatform(string current_level, double ph, double et, double eh, int ep, double ch, int cp){
     m_width = 142;
     m_height = ph;
     m_y = 480 - m_height;
-    m_texture = resources::get_texture("1/platform.png");
-    m_floor = resources::get_texture("1/floor.png");
+
+    m_texture = resources::get_texture(current_level + "/platform.png");
+    m_floor = resources::get_texture(current_level + "/floor.png");
 
     if(ep){
         m_enemy = new TWEnemy(et, eh);
