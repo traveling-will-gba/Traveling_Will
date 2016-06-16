@@ -22,6 +22,7 @@ class TWWill : public GameObject, public GameEventsListener, public Collidable {
 
         void set_height(double will_h);
         void set_width(double will_w);
+        void set_x(double will_x);
         void set_y(double will_y);
         void set_state(int will_state);
         void set_y_speed(double will_speed);

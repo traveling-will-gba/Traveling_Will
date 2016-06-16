@@ -214,11 +214,20 @@ void TWPlayableLevel::update_counters(unsigned now){
     //printf("Entrando em update_counters\n");
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
-    m_camera_x += (now - m_start) * m_x_speed;
-    m_reverse_camera_x -= (now - m_start) * m_x_speed;
 
-    if(not level_finished)
+    if(not level_finished){
         m_audio_counter = now - m_audio_start;
+    }
+
+    double percentage_level = m_audio_counter * 100.0 / m_audio_duration;
+
+    if((percentage_level >= 70)){
+        m_will->set_x(m_will->x() + 10);
+    }
+    else{
+        m_camera_x += ((now - m_start) * m_x_speed);
+        m_reverse_camera_x -= ((now - m_start) * m_x_speed);
+    }
 
     //Checking if music has ended
     if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
@@ -258,16 +267,9 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 
     int divisor = 1 << (n_backgrounds - 1);
     for(int i = 0; i < n_backgrounds; ++i){
-        //if(i != 1) continue;
-        // if(i == 1 || i == 2) continue;
         canvas->draw(m_background[i].get(), Rectangle(fmod(m_camera_x/divisor, 1704), 0, 852, 480), 0, 0);
-        //printf("divisor = %d\n", divisor);
         divisor /= 2;
     }
-
-	// canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
-	// canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
-	// canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
 
     double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
 

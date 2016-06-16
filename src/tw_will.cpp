@@ -40,6 +40,7 @@ TWWill::~TWWill(){
 
 void TWWill::set_height(double will_h){ m_height = will_h; }
 void TWWill::set_width(double will_w){ m_width = will_w; }
+void TWWill::set_x(double will_x){ m_x = will_x; }
 void TWWill::set_y(double will_y){ m_y = will_y; }
 void TWWill::set_state(int will_state){ m_state = TWWill::State(will_state); }
 void TWWill::set_y_speed(double will_speed){ m_y_speed = will_speed; }
