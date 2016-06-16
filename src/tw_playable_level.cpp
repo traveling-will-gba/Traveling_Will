@@ -228,7 +228,7 @@ void TWPlayableLevel::update_counters(unsigned now){
 
     //Reset value of reverse camera for each part of the level
     //printf("Entrando na treta\n");
-    if(m_reverse_camera_x < -PLATFORM_SIZE && m_current_level == "1"){
+    if(m_reverse_camera_x < -PLATFORM_SIZE){
         m_reverse_camera_x += PLATFORM_SIZE;
         destroy_child(platforms[0]);
         platforms.pop_front();
@@ -237,16 +237,6 @@ void TWPlayableLevel::update_counters(unsigned now){
         add_child(platforms[NUMBER_OF_SECTIONS-1]);
     }
     //printf("Saindo da treta\n");
-
-	//Reset value of reverse camera for each part of the level
-    if(m_reverse_camera_x < -142 && m_current_level == "2"){
-        m_reverse_camera_x += 142;
-        destroy_child(platforms[0]);
-        platforms.pop_front();
-        platforms[6]->set_x(852);
-        platforms[6]->register_objects(852);
-        add_child(platforms[6]);
-    }
 
     printf("m_camera_x = %.2f\n", m_camera_x);
 

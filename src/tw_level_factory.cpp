@@ -9,7 +9,9 @@ Level * TWLevelFactory::make_level(const string& level_id){
     else if(level_id == "1")
         return new TWPlayableLevel("1", "2", "res/1/fase-1.mp3", 10000);
 	else if(level_id == "2")
-        return new TWPlayableLevel("2", "cutscene-end", "res/1/fase-1.mp3", 147000);
+        return new TWPlayableLevel("2", "3", "res/1/fase-1.mp3", 10000);
+    else if(level_id == "3")
+        return new TWPlayableLevel("3", "cutscene-end", "res/1/fase-1.mp3", 147000);
 	else
         return nullptr;
 }
