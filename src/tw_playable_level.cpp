@@ -193,7 +193,8 @@ void TWPlayableLevel::update_platforms_position(){
         current_x = platforms[i]->x();
         height = platforms[i]->height();
 
-        if(current_x >= m_will->x() && current_x <= m_will->x() + WILL_WIDTH){
+        // //printf("i:%d, x: %d, m_floor: %.2f, height: %.2f \n", i, current_x, m_floor, 480.0 - height - WILL_HEIGHT);
+        if(current_x >= m_will->x() && current_x + 142 <= m_will->x() + WILL_WIDTH){
             m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
         }
 
