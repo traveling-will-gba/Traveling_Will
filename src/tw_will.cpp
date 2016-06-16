@@ -13,7 +13,7 @@ TWWill::TWWill(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_height = WILL_HEIGHT;
     m_width = WILL_WIDTH;
     m_y_speed = 0;
-    m_sprite_speed = 1/170.0;
+    m_sprite_speed = 1/85.0;
     m_start = -1;
     m_is_punching = false;
     m_punch_counter = 0;
