@@ -49,6 +49,7 @@ class TWCollectable : public GameObject, public Collidable {
         double m_sprite_counter, m_sprite_speed;
         int m_start;
         Rectangle m_bounding_box;
+        bool m_active;
         // more sprites later (i.e. disappearing)
         shared_ptr<Texture> m_texture;
 };

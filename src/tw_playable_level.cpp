@@ -278,7 +278,7 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 
     canvas->draw(m_collectable_icon.get(), 705, 25);
     int x_digit = 805;
-    int aux = n_collectables;
+    int aux = m_will->collectables();
     do{
         canvas->draw(m_number.get(), Rectangle(23 * (aux % 10), 0, 23, 36), x_digit, 35);
         aux /= 10;

@@ -30,6 +30,7 @@ class TWWill : public GameObject, public GameEventsListener, public Collidable {
         double x();
         double y();
         double speed();
+        int collectables();
 
         bool on_event(const GameEvent& event);
 
@@ -52,7 +53,7 @@ class TWWill : public GameObject, public GameEventsListener, public Collidable {
         double m_sprite_counter, m_sprite_speed;
         double m_punch_counter;
         bool m_is_punching;
-        int m_start;
+        int m_start,  m_collectables;
         Rectangle m_bounding_box;
         shared_ptr<Texture> m_sprite[20];
 };

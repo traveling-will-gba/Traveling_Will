@@ -1,4 +1,5 @@
 #include "tw_will.h"
+#include "tw_collectable.h"
 
 static const int WILL_HEIGHT =              45;
 static const int WILL_WIDTH =               45;
@@ -17,6 +18,7 @@ TWWill::TWWill(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_start = -1;
     m_is_punching = false;
     m_punch_counter = 0;
+    m_collectables = 0;
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
 
     m_sprite[RUNNING] = resources::get_texture("will/running.png");
@@ -46,7 +48,8 @@ int TWWill::state(){ return (int)m_state; }
 double TWWill::x(){ return m_x; }
 double TWWill::y(){ return m_y; }
 double TWWill::speed(){ return m_y_speed; }
-
+int TWWill::collectables(){ return m_collectables; }
+ 
 bool TWWill::on_event(const GameEvent& event){
     if(m_state != GAME_OVER){
         if(event.id() == EVENT_PUNCH && m_state != SLIDING && event.timestamp() - m_punch_counter > 230){
@@ -93,8 +96,14 @@ const list<Rectangle>& TWWill::hit_boxes() const{
     return l;
 }
 
-void TWWill::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
+void TWWill::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
     printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
+
+    if(auto p = dynamic_cast<const TWCollectable *>(who)){
+         m_collectables++;
+     } //else if(auto q = dynamic_cast<const TWEnemy *>(who)){
+    //     q->set_active(false);
+    // }
 }
 
 void TWWill::update_self(unsigned now, unsigned){
