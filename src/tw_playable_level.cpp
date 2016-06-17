@@ -213,10 +213,8 @@ void TWPlayableLevel::update_counters(unsigned now){
         m_audio_counter = now - m_audio_start;
     }
 
-    double percentage_level = m_audio_counter * 100.0 / m_audio_duration;
-
-    if((percentage_level >= 70)){
-        m_will->set_x(m_will->x() + 10);
+    if(m_audio_duration - m_audio_counter <= 2000){
+        m_will->set_x(m_will->x() + (now - m_start) * m_sprite_speed * 100);
     }
     else{
         m_camera_x += ((now - m_start) * m_x_speed);
