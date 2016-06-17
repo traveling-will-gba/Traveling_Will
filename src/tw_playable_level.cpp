@@ -24,8 +24,7 @@ int audio_duration) :
     m_x_speed(5/19.0), m_y_speed(0),
     sprite_counter(0), m_sprite_speed(1/170.0),
     m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_cur_collectable(nullptr), m_cur_enemy(nullptr),
-    m_number(resources::get_texture("numbers.png")){
+    m_cur_collectable(nullptr), m_cur_enemy(nullptr){
 
     //printf("Entrando em construtor\n");
 
@@ -37,18 +36,13 @@ int audio_duration) :
 	m_audio_start = 0;
 	m_start = -1;
 
-	m_progress_bar[0] = resources::get_texture("whole-progress-bar.png");
-	m_progress_bar[1] = resources::get_texture("progress-bar.png"); 
-	m_progress_bar[2] = resources::get_texture("begin-progress-bar.png");
-	m_will_progress_bar = resources::get_texture("tiny-will-progress-bar.png");
+    m_progress_bar = new TWProgressBar(m_current_level, m_audio_duration);
+    add_child(m_progress_bar);
 
-/*    m_background[0] = resources::get_texture(m_current_level + "/background_0.png");
-    m_background[1] = resources::get_texture(m_current_level + "/background_1.png");
-    m_background[2] = resources::get_texture(m_current_level + "/background_2.png");*/
+    m_collectable_status = new TWCollectableStatus(m_current_level);
+    add_child(m_collectable_status);
 
     m_floor_texture = resources::get_texture(m_current_level + "/floor.png");
-
-    m_collectable_icon = resources::get_texture(m_current_level + "/collectable_icon.png");
 
 	//Read level design from txt
 	fstream level_design("res/" + m_current_level + "/level_design.txt");
@@ -214,11 +208,20 @@ void TWPlayableLevel::update_counters(unsigned now){
     //printf("Entrando em update_counters\n");
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
-    m_camera_x += (now - m_start) * m_x_speed;
-    m_reverse_camera_x -= (now - m_start) * m_x_speed;
 
-    if(not level_finished)
+    if(not level_finished){
         m_audio_counter = now - m_audio_start;
+    }
+
+    double percentage_level = m_audio_counter * 100.0 / m_audio_duration;
+
+    if((percentage_level >= 70)){
+        m_will->set_x(m_will->x() + 10);
+    }
+    else{
+        m_camera_x += ((now - m_start) * m_x_speed);
+        m_reverse_camera_x -= ((now - m_start) * m_x_speed);
+    }
 
     //Checking if music has ended
     if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
@@ -249,6 +252,9 @@ void TWPlayableLevel::update_counters(unsigned now){
     if(sprite_counter > 5.9){
         sprite_counter -= 5.9;
     }
+
+    m_collectable_status->update_collectable_counter(m_will->collectables());
+    m_progress_bar->update_audio_counter(m_audio_counter);
     //printf("Saindo de update_counters\n");
 }
 
@@ -258,32 +264,9 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
 
     int divisor = 1 << (n_backgrounds - 1);
     for(int i = 0; i < n_backgrounds; ++i){
-        //if(i != 1) continue;
-        // if(i == 1 || i == 2) continue;
         canvas->draw(m_background[i].get(), Rectangle(fmod(m_camera_x/divisor, 1704), 0, 852, 480), 0, 0);
-        //printf("divisor = %d\n", divisor);
         divisor /= 2;
     }
-
-	// canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
-	// canvas->draw(m_background[1].get(), Rectangle(m_camera_x/2, m_camera_y, 852, 480), 0, 0);
-	// canvas->draw(m_background[2].get(), Rectangle(m_camera_x, m_camera_y, 852, 480), 0, 0);
-
-    double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
-
-    canvas->draw(m_progress_bar[0].get(), Rectangle(0, 0, 800, 19), 26, 18);
-    canvas->draw(m_progress_bar[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
-    canvas->draw(m_progress_bar[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
-    canvas->draw(m_will_progress_bar.get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
-
-    canvas->draw(m_collectable_icon.get(), 705, 25);
-    int x_digit = 805;
-    int aux = n_collectables;
-    do{
-        canvas->draw(m_number.get(), Rectangle(23 * (aux % 10), 0, 23, 36), x_digit, 35);
-        aux /= 10;
-        x_digit -= 25;
-    }while(aux);
 
     //printf("Saindo de draw_self\n");
 }

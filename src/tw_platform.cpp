@@ -82,7 +82,6 @@ void TWPlatform::update_self(unsigned, unsigned) {
 }
 
 void TWPlatform::draw_self(Canvas * canvas, unsigned, unsigned) {
-    printf("Drawing platform in %.2f, %.2f\n", m_x, m_y);
     canvas->draw(m_texture.get(), Rectangle(0, 0, m_width, m_height), m_x, m_y);
     canvas->draw(m_floor.get(), Rectangle(0, 0, m_width, 50), m_x, 430);
 }

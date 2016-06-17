@@ -9,7 +9,10 @@
 #include <ijengine/events_translator.h>
 #include <ijengine/game_events_listener.h>
 
+#include <list>
+
 using std::shared_ptr;
+using std::list;
 using namespace ijengine;
 
 class TWEnemy : public GameObject, public Collidable {
@@ -50,6 +53,8 @@ class TWEnemy : public GameObject, public Collidable {
         double m_sprite_counter, m_sprite_speed;
         int m_start;
         Rectangle m_bounding_box;
+        bool m_active;
+        list<Rectangle> l;
         // more sprites later(i.e. dying)
         shared_ptr<Texture> m_texture;
 };

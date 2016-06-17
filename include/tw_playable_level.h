@@ -5,6 +5,8 @@
 #include "tw_level.h"
 #include "tw_button.h"
 #include "tw_platform.h"
+#include "tw_progress_bar.h"
+#include "tw_collectable_status.h"
 
 using std::string;
 using std::shared_ptr;
@@ -64,9 +66,10 @@ class TWPlayableLevel : public TWLevel{
         TWWill * m_will;
         TWCollectable *m_cur_collectable;
         TWEnemy *m_cur_enemy;
+        TWProgressBar *m_progress_bar;
+        TWCollectableStatus *m_collectable_status;
 
-        shared_ptr<Texture> m_progress_bar[3], m_will_progress_bar;
-        shared_ptr<Texture> m_number, m_collectable_icon, m_floor_texture;
+        shared_ptr<Texture> m_floor_texture;
 
         void test_floor(unsigned now);
         void update_counters(unsigned now);

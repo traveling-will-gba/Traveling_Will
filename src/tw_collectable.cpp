@@ -13,6 +13,7 @@ TWCollectable::TWCollectable(std::string current_level, double ch){
     m_height = m_width = 30;
     m_y = 480 - ch;
     m_texture = resources::get_texture(current_level + "/collectable.png");
+    m_active = false;
 }
 
 TWCollectable::~TWCollectable(){
@@ -34,15 +35,16 @@ void TWCollectable::set_height(double ch) { m_height = ch; }
 void TWCollectable::register_self(int current_x){
     m_x = current_x;
     m_bounding_box = Rectangle(current_x, m_y, m_width, m_height);
+    m_active = true;
     physics::register_object(this);
 }
 
 bool TWCollectable::active() const{
-    return true;
+    return m_active;
 }
 
 pair<double, double> TWCollectable::direction() const{
-    pair<double, double> p(-5/19.0,0);
+    pair<double, double> p(0,0);
     return p;
 }
 
@@ -51,18 +53,12 @@ const Rectangle& TWCollectable::bounding_box() const{
 }
 
 const list<Rectangle>& TWCollectable::hit_boxes() const{
-    static list<Rectangle> l {m_bounding_box};
     return l;
 }
 
 void TWCollectable::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
     printf("TWCollectable colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
-    m_x = -100;
-
-    // if( TWPlatform * plat = dynamic_cast<TWPlatform *>(parent()) ){
-    //     plat->remove(0);
-    // }
-    //((TWPlatform *) parent())->remove(0);
+    m_active = false;
 }
 
 void TWCollectable::update_self(unsigned now, unsigned) {
@@ -71,6 +67,8 @@ void TWCollectable::update_self(unsigned now, unsigned) {
     }
 
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
+    l.clear();
+    l.insert(l.begin(), m_bounding_box);
 
     m_sprite_counter += (now - m_start) * m_sprite_speed;
     if(m_sprite_counter > 5.9){
@@ -81,7 +79,7 @@ void TWCollectable::update_self(unsigned now, unsigned) {
 }
 void TWCollectable::draw_self(Canvas* canvas, unsigned, unsigned) {
     //printf("Entrando no draw de collectable\n");
-    canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
+    if(m_active) canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
     //printf("Saindo do draw de collectable\n");
 }
 
