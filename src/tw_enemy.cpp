@@ -52,7 +52,7 @@ bool TWEnemy::active() const{
 }
 
 pair<double, double> TWEnemy::direction() const{
-    pair<double, double> p(-5/19.0,0);
+    pair<double, double> p(0,0);
     return p;
 }
 
@@ -61,19 +61,12 @@ const Rectangle& TWEnemy::bounding_box() const{
 }
 
 const list<Rectangle>& TWEnemy::hit_boxes() const{
-    static list<Rectangle> l {m_bounding_box};
     return l;
 }
 
 void TWEnemy::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
     printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
-    // m_x = -100;
     m_active = false;
-
-    //((TWPlatform *) parent())->remove(1);
-    // if( TWPlatform * plat = dynamic_cast<TWPlatform *>(parent()) ){
-    //     plat->remove(1);
-    // }
 }
 
 void TWEnemy::update_self(unsigned now, unsigned) {
@@ -82,6 +75,8 @@ void TWEnemy::update_self(unsigned now, unsigned) {
     }
 
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
+    l.clear();
+    l.insert(l.begin(), m_bounding_box);
 
     m_sprite_counter += (now - m_start) * m_sprite_speed;
     if(m_sprite_counter > 5.9){

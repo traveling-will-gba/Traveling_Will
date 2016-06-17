@@ -56,6 +56,7 @@ class TWWill : public GameObject, public GameEventsListener, public Collidable {
         bool m_is_punching;
         int m_start,  m_collectables;
         Rectangle m_bounding_box;
+        list<Rectangle> l;
         shared_ptr<Texture> m_sprite[20];
 };
 

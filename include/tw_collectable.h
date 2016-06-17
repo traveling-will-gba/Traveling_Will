@@ -10,8 +10,10 @@
 #include <ijengine/game_events_listener.h>
 
 #include <string>
+#include <list>
 
 using std::shared_ptr;
+using std::list;
 using namespace ijengine;
 
 class TWCollectable : public GameObject, public Collidable {
@@ -49,6 +51,7 @@ class TWCollectable : public GameObject, public Collidable {
         double m_sprite_counter, m_sprite_speed;
         int m_start;
         Rectangle m_bounding_box;
+        list<Rectangle> l;
         bool m_active;
         // more sprites later (i.e. disappearing)
         shared_ptr<Texture> m_texture;

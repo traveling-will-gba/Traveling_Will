@@ -93,7 +93,6 @@ const Rectangle& TWWill::bounding_box() const{
 }
 
 const list<Rectangle>& TWWill::hit_boxes() const{
-    static list<Rectangle> l {m_bounding_box};
     return l;
 }
 
@@ -128,6 +127,8 @@ void TWWill::update_self(unsigned now, unsigned){
     int slide_height = m_state == SLIDING ? 15 : 0;
 
     m_bounding_box = Rectangle(m_x, m_y + slide_height, m_width, m_height - slide_height);
+    l.clear();
+    l.insert(l.begin(), m_bounding_box);
 
     m_start = now;
     printf("Saindo de will update\n");
