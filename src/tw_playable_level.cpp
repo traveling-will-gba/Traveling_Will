@@ -24,8 +24,7 @@ int audio_duration) :
     m_x_speed(5/19.0), m_y_speed(0),
     sprite_counter(0), m_sprite_speed(1/170.0),
     m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_cur_collectable(nullptr), m_cur_enemy(nullptr),
-    m_number(resources::get_texture("numbers.png")){
+    m_cur_collectable(nullptr), m_cur_enemy(nullptr){
 
     //printf("Entrando em construtor\n");
 
@@ -37,18 +36,13 @@ int audio_duration) :
 	m_audio_start = 0;
 	m_start = -1;
 
-	m_progress_bar[0] = resources::get_texture("whole-progress-bar.png");
-	m_progress_bar[1] = resources::get_texture("progress-bar.png"); 
-	m_progress_bar[2] = resources::get_texture("begin-progress-bar.png");
-	m_will_progress_bar = resources::get_texture("tiny-will-progress-bar.png");
-
-/*    m_background[0] = resources::get_texture(m_current_level + "/background_0.png");
-    m_background[1] = resources::get_texture(m_current_level + "/background_1.png");
-    m_background[2] = resources::get_texture(m_current_level + "/background_2.png");*/
+    for(int i=0;i<2;i++){
+        TWHud *h = new TWHud(m_current_level, i);
+        hud.push_back(h);
+        add_child(h);
+    }
 
     m_floor_texture = resources::get_texture(m_current_level + "/floor.png");
-
-    m_collectable_icon = resources::get_texture(m_current_level + "/collectable_icon.png");
 
 	//Read level design from txt
 	fstream level_design("res/" + m_current_level + "/level_design.txt");
@@ -258,6 +252,10 @@ void TWPlayableLevel::update_counters(unsigned now){
     if(sprite_counter > 5.9){
         sprite_counter -= 5.9;
     }
+
+    hud[0]->set_attribute("collectables", m_will->collectables());
+    hud[1]->set_attribute("audio_counter", m_audio_counter);
+    hud[1]->set_attribute("audio_duration", m_audio_duration);
     //printf("Saindo de update_counters\n");
 }
 
@@ -270,22 +268,6 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         canvas->draw(m_background[i].get(), Rectangle(fmod(m_camera_x/divisor, 1704), 0, 852, 480), 0, 0);
         divisor /= 2;
     }
-
-    double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
-
-    canvas->draw(m_progress_bar[0].get(), Rectangle(0, 0, 800, 19), 26, 18);
-    canvas->draw(m_progress_bar[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
-    canvas->draw(m_progress_bar[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
-    canvas->draw(m_will_progress_bar.get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
-
-    canvas->draw(m_collectable_icon.get(), 705, 25);
-    int x_digit = 805;
-    int aux = m_will->collectables();
-    do{
-        canvas->draw(m_number.get(), Rectangle(23 * (aux % 10), 0, 23, 36), x_digit, 35);
-        aux /= 10;
-        x_digit -= 25;
-    }while(aux);
 
     //printf("Saindo de draw_self\n");
 }
