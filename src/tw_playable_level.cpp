@@ -36,11 +36,11 @@ int audio_duration) :
 	m_audio_start = 0;
 	m_start = -1;
 
-    for(int i=0;i<2;i++){
-        TWHud *h = new TWHud(m_current_level, i);
-        hud.push_back(h);
-        add_child(h);
-    }
+    m_progress_bar = new TWProgressBar(m_current_level, m_audio_duration);
+    add_child(m_progress_bar);
+
+    m_collectable_status = new TWCollectableStatus(m_current_level);
+    add_child(m_collectable_status);
 
     m_floor_texture = resources::get_texture(m_current_level + "/floor.png");
 
@@ -253,9 +253,8 @@ void TWPlayableLevel::update_counters(unsigned now){
         sprite_counter -= 5.9;
     }
 
-    hud[0]->set_attribute("collectables", m_will->collectables());
-    hud[1]->set_attribute("audio_counter", m_audio_counter);
-    hud[1]->set_attribute("audio_duration", m_audio_duration);
+    m_collectable_status->update_collectable_counter(m_will->collectables());
+    m_progress_bar->update_audio_counter(m_audio_counter);
     //printf("Saindo de update_counters\n");
 }
 

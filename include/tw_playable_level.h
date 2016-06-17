@@ -1,11 +1,12 @@
 #ifndef TW_PLAYABLE_LEVEL_H
 #define TW_PLAYABLE_LEVEL_H
 
-#include "tw_hud.h"
 #include "tw_will.h"
 #include "tw_level.h"
 #include "tw_button.h"
 #include "tw_platform.h"
+#include "tw_progress_bar.h"
+#include "tw_collectable_status.h"
 
 using std::string;
 using std::shared_ptr;
@@ -56,7 +57,6 @@ class TWPlayableLevel : public TWLevel{
         deque<int> enemy_type, collectable, enemy;
         deque<double> collectable_height, enemy_height, platform_height;
         deque<TWPlatform *> platforms;
-        deque<TWHud *> hud;
 
         double m_x_speed, m_y_speed;
         double sprite_counter, m_sprite_speed;
@@ -66,6 +66,8 @@ class TWPlayableLevel : public TWLevel{
         TWWill * m_will;
         TWCollectable *m_cur_collectable;
         TWEnemy *m_cur_enemy;
+        TWProgressBar *m_progress_bar;
+        TWCollectableStatus *m_collectable_status;
 
         shared_ptr<Texture> m_floor_texture;
 
