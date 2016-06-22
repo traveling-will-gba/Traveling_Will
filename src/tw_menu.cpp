@@ -122,7 +122,7 @@ bool TWMenu::on_event(const GameEvent& event){
 						}
 						break;
 					case 5:
-						printf("VOLUME\n");
+						//printf("VOLUME\n");
 						break;
 					case 6:
 						video::set_full_screen(1);
@@ -131,10 +131,10 @@ bool TWMenu::on_event(const GameEvent& event){
 						m_state = SELECTING;
 						break;
 					case 8:
-						printf("FASE 2\n");
+						//printf("FASE 2\n");
 						break;
 					case 9:
-						printf("FASE 3\n");
+						//printf("FASE 3\n");
 						break;
 					default:
 						break;

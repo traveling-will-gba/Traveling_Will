@@ -97,7 +97,7 @@ const list<Rectangle>& TWWill::hit_boxes() const{
 }
 
 void TWWill::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
+    //printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
 
     if(auto p = dynamic_cast<const TWCollectable *>(who)){
          m_collectables++;
@@ -107,7 +107,7 @@ void TWWill::on_collision(const Collidable *who, const Rectangle& where, const u
 }
 
 void TWWill::update_self(unsigned now, unsigned){
-    printf("Entrando em will update\n");
+    //printf("Entrando em will update\n");
     if(m_start == -1){
         m_start = now;
     }
@@ -131,7 +131,7 @@ void TWWill::update_self(unsigned now, unsigned){
     l.insert(l.begin(), m_bounding_box);
 
     m_start = now;
-    printf("Saindo de will update\n");
+    //printf("Saindo de will update\n");
 }
 
 void TWWill::draw_self(Canvas *canvas, unsigned, unsigned){

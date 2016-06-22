@@ -183,18 +183,18 @@ unsigned frames(const list<Note>& notes, int unit)
 
     for (auto note : notes)
     {
-printf("note: [%s], pitch = %d, duration = %d\n", note.base.c_str(), pitch(note), note.duration);
+//printf("note: [%s], pitch = %d, duration = %d\n", note.base.c_str(), pitch(note), note.duration);
         fs += (double) unit / note.duration;
-printf("new fs = %.2f\n", fs);
+//printf("new fs = %.2f\n", fs);
     }
     return (unsigned) round(fs);
 }
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        printf("Usage: %s {score.ly}\n", argv[0]);
+        printf("Usage: %s {score.ly} {output}\n", argv[0]);
         return -1;
     } 
 
@@ -206,8 +206,23 @@ int main(int argc, char *argv[])
         return -2;
     }
 
+	FILE *output = fopen(argv[2], "w");
+
+	if(not output)
+	{
+		printf("Invalid output file: %s\n", argv[2]);
+		return -3;
+	}
+
+	int time = extract_tempo(score);
+
     printf("Score = %s\n", argv[1]);
-    printf("Tempo = %d\n", extract_tempo(score));
+    printf("Tempo = %d\n", time);
+
+	int n_blocks = 300, n_background = 3;
+
+	fprintf(output, "%d\n", time);
+	fprintf(output, "%d %d\n", n_blocks, n_background);
 
     auto compass = extract_compass(score);
     printf("Compass = %d/%d\n", compass.first, compass.second);
@@ -221,7 +236,47 @@ int main(int argc, char *argv[])
     auto notes = extract_notes(score, relative);
 
     printf("count = %lu, frames = %u\n", notes.size(), frames(notes, compass.second));
+
+	int offset = 23;
+
+	int counter = offset;
+
+	while(offset--){
+		fprintf(output, "50 0 0\n");
+	}
+
+	for (auto note : notes)
+    {
+		int h = pitch(note);
+		int d = (compass.second * 4) / note.duration;
+
+		counter+=d;
+
+//		printf("%d\n", d);
+
+		if(h < 0){
+			while(d--){
+				fprintf(output, "50 0 0\n");
+			}
+		}else{
+			fprintf(output, "50 0 1 %d\n", h);
+
+			while(--d){
+				fprintf(output, "50 0 0\n");
+			}
+		}
+    }
+
+	int left = n_blocks - counter;
+
+	while(--left){
+		fprintf(output, "50 0 0\n");
+	}
+
+
     fclose(score);
+
+	fclose(output);
 
     return 0;
 }

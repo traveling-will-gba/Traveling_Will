@@ -35,7 +35,7 @@ class TWPlayableLevel : public TWLevel{
         static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
         static const int GAME_EVENT_MENU_SELECT =       1 << 7;
         static const int GAME_EVENT_PUNCH =             1 << 11;
-        static const int NUMBER_OF_SECTIONS =           7;
+        static const int NUMBER_OF_SECTIONS =           25;
         static const int WILL_HEIGHT =                  45;
         static const int WILL_WIDTH =                   45;
         static const int COLLECTABLE_DIMENSION =        30;
@@ -45,7 +45,7 @@ class TWPlayableLevel : public TWLevel{
         static const int INVALID =                      -10000000;
         static const int COLLECTABLE =                  0;
         static const int ENEMY =                        1; 
-        static const int PLATFORM_SIZE =                142;
+        static const int PLATFORM_SIZE =                36;
 
         bool m_is_punching, level_started, level_finished;
         

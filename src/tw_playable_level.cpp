@@ -26,7 +26,7 @@ int audio_duration) :
     m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
     m_cur_collectable(nullptr), m_cur_enemy(nullptr){
 
-    //printf("Entrando em construtor\n");
+    ////printf("Entrando em construtor\n");
 
 	m_current_level = current_level;
 	m_audio = audio_path;
@@ -45,12 +45,19 @@ int audio_duration) :
     m_floor_texture = resources::get_texture(m_current_level + "/floor.png");
 
 	//Read level design from txt
-	fstream level_design("res/" + m_current_level + "/level_design.txt");
+	fstream level_design("res/" + m_current_level + "/level_design_2.txt");
 
 	if(not level_design.is_open()){
-		//printf("Level design txt not available\n");
+		////printf("Level design txt not available\n");
 		exit(0);
 	}
+
+	m_x_speed = 0.24;
+	int tempo;
+
+	level_design >> tempo;
+
+	m_x_speed = tempo * 4 * 36 / 60000.0;
 
     level_design >> n_screens >> n_backgrounds;
 
@@ -99,7 +106,7 @@ int audio_duration) :
 
     physics::set_collision_mode(physics::Mode::ONE_TO_ALL, m_will);
 
-    //printf("Saindo de construtor\n");
+    ////printf("Saindo de construtor\n");
 }
 
 TWPlayableLevel::~TWPlayableLevel(){
@@ -119,12 +126,12 @@ string TWPlayableLevel::audio() const{
 }
 
 bool TWPlayableLevel::on_event(const GameEvent&){
-    //printf("Pegou evento\n");
+    ////printf("Pegou evento\n");
 	return false;
 }
 
 void TWPlayableLevel::update_self(unsigned now, unsigned last){
-    //printf("Entrando em update_self\n");
+    ////printf("Entrando em update_self\n");
     if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
@@ -139,11 +146,11 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
     test_floor(now);
 
     m_start = now;
-    //printf("Saindo de update_self\n");
+    ////printf("Saindo de update_self\n");
 }
 
 void TWPlayableLevel::test_floor(unsigned now){
-    //printf("Entrando em test_floor\n");
+    ////printf("Entrando em test_floor\n");
     //Test TWWill colision
 
     //Start jump if TWWill is at the end of a cliff
@@ -171,11 +178,11 @@ void TWPlayableLevel::test_floor(unsigned now){
         }
     }
 
-    //printf("Saindo de test_floor\n");
+    ////printf("Saindo de test_floor\n");
 }
 
 void TWPlayableLevel::update_platforms_position(){
-    //printf("Entrando em update_platforms_position\n");
+    ////printf("Entrando em update_platforms_position\n");
     int height, current_x;
 
     for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
@@ -187,7 +194,7 @@ void TWPlayableLevel::update_platforms_position(){
         current_x = platforms[i]->x();
         height = platforms[i]->height();
 
-        // //printf("i:%d, x: %d, m_floor: %.2f, height: %.2f \n", i, current_x, m_floor, 480.0 - height - WILL_HEIGHT);
+        // ////printf("i:%d, x: %d, m_floor: %.2f, height: %.2f \n", i, current_x, m_floor, 480.0 - height - WILL_HEIGHT);
         if(current_x >= m_will->x() && current_x + 142 <= m_will->x() + WILL_WIDTH){
             m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
         }
@@ -201,11 +208,11 @@ void TWPlayableLevel::update_platforms_position(){
         m_floor = 430 - WILL_HEIGHT;
     }
 
-    //printf("Saindo de update_platforms_position\n");
+    ////printf("Saindo de update_platforms_position\n");
 }
 
 void TWPlayableLevel::update_counters(unsigned now){
-    //printf("Entrando em update_counters\n");
+    ////printf("Entrando em update_counters\n");
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
 
@@ -228,7 +235,7 @@ void TWPlayableLevel::update_counters(unsigned now){
     }
 
     //Reset value of reverse camera for each part of the level
-    //printf("Entrando na treta\n");
+    ////printf("Entrando na treta\n");
     if(m_reverse_camera_x < -PLATFORM_SIZE){
         m_reverse_camera_x += PLATFORM_SIZE;
         destroy_child(platforms[0]);
@@ -237,9 +244,9 @@ void TWPlayableLevel::update_counters(unsigned now){
         platforms[NUMBER_OF_SECTIONS-1]->register_objects(852);
         add_child(platforms[NUMBER_OF_SECTIONS-1]);
     }
-    //printf("Saindo da treta\n");
+    ////printf("Saindo da treta\n");
 
-    printf("m_camera_x = %.2f\n", m_camera_x);
+    //printf("m_camera_x = %.2f\n", m_camera_x);
 
     //Reset background camera
     // if(m_camera_x > 1704){
@@ -253,11 +260,11 @@ void TWPlayableLevel::update_counters(unsigned now){
 
     m_collectable_status->update_collectable_counter(m_will->collectables());
     m_progress_bar->update_audio_counter(m_audio_counter);
-    //printf("Saindo de update_counters\n");
+    ////printf("Saindo de update_counters\n");
 }
 
 void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
-    //printf("Entrando em draw_self\n");
+    ////printf("Entrando em draw_self\n");
     canvas->clear();
 
     int divisor = 1 << (n_backgrounds - 1);
@@ -266,5 +273,5 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         divisor /= 2;
     }
 
-    //printf("Saindo de draw_self\n");
+    ////printf("Saindo de draw_self\n");
 }
