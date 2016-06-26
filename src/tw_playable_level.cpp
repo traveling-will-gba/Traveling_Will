@@ -77,8 +77,13 @@ int audio_duration) :
             level_design >> ch;
         }
 
-        auto p = new TWPlatform(m_current_level, ph, et, eh, e_present, ch, c_present);
+        auto p = new TWPlatform(m_current_level, ph, et, eh, e_present, ch, 0);
         platforms.push_back(p);
+
+		if(platforms.size()>=25){
+			auto q = platforms[platforms.size()-25];
+			q->create_collectable(m_current_level, ch);
+		}
     }
 
     for(int i = 0; i < n_backgrounds; ++i){

@@ -25,12 +25,12 @@ TWPlatform::TWPlatform(string current_level, double ph, double et, double eh, in
         m_enemy = nullptr;
     }
 
-    if(cp){
+/*    if(cp){
         m_collectable = new TWCollectable(current_level, ch);
         add_child(m_collectable);
     }else{
         m_collectable = nullptr;
-    }
+    }*/
 
     this->set_priority(4);
 }
@@ -69,6 +69,12 @@ void TWPlatform::register_objects(int current_x){
     if(m_enemy){
         m_enemy->register_self(current_x + 48);
     }
+}
+
+void TWPlatform::create_collectable(string current_level, int c_y){
+	m_collectable = new TWCollectable(current_level, c_y);
+
+	add_child(m_collectable);
 }
 
 void TWPlatform::update_self(unsigned, unsigned) {
