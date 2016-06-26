@@ -45,7 +45,7 @@ int audio_duration) :
     m_floor_texture = resources::get_texture(m_current_level + "/floor.png");
 
 	//Read level design from txt
-	fstream level_design("res/" + m_current_level + "/level_design_2.txt");
+	fstream level_design("res/" + m_current_level + "/level_design.txt");
 
 	if(not level_design.is_open()){
 		////printf("Level design txt not available\n");
@@ -77,13 +77,9 @@ int audio_duration) :
             level_design >> ch;
         }
 
-        auto p = new TWPlatform(m_current_level, ph, et, eh, e_present, ch, 0);
+        auto p = new TWPlatform(m_current_level, ph, et, eh, e_present, ch, c_present);
         platforms.push_back(p);
 
-		if(platforms.size()>=25){
-			auto q = platforms[platforms.size()-25];
-			q->create_collectable(m_current_level, ch);
-		}
     }
 
     for(int i = 0; i < n_backgrounds; ++i){
@@ -102,7 +98,7 @@ int audio_duration) :
     //Sets initial will height based on level design
     m_floor = 480 - platforms[0]->height() - WILL_HEIGHT;
 
-    m_will = new TWWill(50, 480 - platforms[0]->height() - WILL_HEIGHT);
+    m_will = new TWWill(53, 480 - platforms[0]->height() - WILL_HEIGHT);
     add_child(m_will);
 
     m_start = -1;
@@ -195,7 +191,7 @@ void TWPlayableLevel::update_platforms_position(){
     }
 
 
-    for(int i = 0; i < 2; ++i){
+    for(int i = 0; i < 20; ++i){
         current_x = platforms[i]->x();
         height = platforms[i]->height();
 

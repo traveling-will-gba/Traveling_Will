@@ -1,6 +1,6 @@
 #include "tw_platform.h"
 
-TWPlatform::TWPlatform() : m_width(142) {
+TWPlatform::TWPlatform() : m_width(36) {
 
 }
 
@@ -11,7 +11,7 @@ TWPlatform::TWPlatform() : m_width(142) {
 //collectable height
 //collectable present
 TWPlatform::TWPlatform(string current_level, double ph, double et, double eh, int ep, double ch, int cp){
-    m_width = 142;
+    m_width = 36;
     m_height = ph;
     m_y = 480 - m_height;
 
@@ -25,12 +25,12 @@ TWPlatform::TWPlatform(string current_level, double ph, double et, double eh, in
         m_enemy = nullptr;
     }
 
-/*    if(cp){
+    if(cp){
         m_collectable = new TWCollectable(current_level, ch);
         add_child(m_collectable);
     }else{
         m_collectable = nullptr;
-    }*/
+    }
 
     this->set_priority(4);
 }
@@ -64,26 +64,20 @@ void TWPlatform::remove(int option){
 
 void TWPlatform::register_objects(int current_x){
     if(m_collectable){
-        m_collectable->register_self(current_x + 56);
+        m_collectable->register_self(current_x);
     }
     if(m_enemy){
-        m_enemy->register_self(current_x + 48);
+        m_enemy->register_self(current_x + 3);
     }
-}
-
-void TWPlatform::create_collectable(string current_level, int c_y){
-	m_collectable = new TWCollectable(current_level, c_y);
-
-	add_child(m_collectable);
 }
 
 void TWPlatform::update_self(unsigned, unsigned) {
     if(m_enemy){
-         m_enemy->set_x(m_x + 48);
+         m_enemy->set_x(m_x);
     }
 
     if(m_collectable){
-        m_collectable->set_x(m_x + 56);
+        m_collectable->set_x(m_x + 3);
     }
 }
 

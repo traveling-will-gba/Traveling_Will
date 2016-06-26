@@ -33,7 +33,6 @@ class TWPlatform : public GameObject {
         void set_height(double ph);
         void remove(int option);
         void register_objects(int m_x);
-		void create_collectable(string current_level, int c_y);
 
     protected:
         void update_self(unsigned now, unsigned last);

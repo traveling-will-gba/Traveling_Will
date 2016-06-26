@@ -260,12 +260,12 @@ int main(int argc, char *argv[])
 			}
 		}else{
 			fprintf(output, "50 0 1 %d\n", h);
-
 			while(--d){
-				fprintf(output, "50 0 0\n");
+				fprintf(output, "50 0 1 %d\n", h);
 			}
 		}
     }
+
 
 	int left = n_blocks - counter;
 

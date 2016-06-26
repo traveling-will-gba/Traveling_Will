@@ -59,8 +59,8 @@ bool TWWill::on_event(const GameEvent& event){
             return true;
         }
 
-        if(event.id() == EVENT_JUMP && m_state == RUNNING){
-            m_y_speed = -0.5;
+        if(event.id() == EVENT_JUMP){
+            m_y_speed = -0.25;
             this->set_state(JUMPING);
             return true;
         }   
@@ -114,6 +114,7 @@ void TWWill::update_self(unsigned now, unsigned){
 
     m_sprite_counter += (now - m_start) * m_sprite_speed;
     m_y += (now - m_start) * m_y_speed;
+    if(m_y < 0) m_y = 0;
 
     if(m_sprite_counter > 5.9){
         m_sprite_counter -= 5.9;
