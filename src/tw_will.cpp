@@ -60,7 +60,7 @@ bool TWWill::on_event(const GameEvent& event){
         }
 
         if(event.id() == EVENT_JUMP){
-            m_y_speed = -0.25;
+            m_y_speed = -0.4;
             this->set_state(JUMPING);
             return true;
         }   

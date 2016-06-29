@@ -259,9 +259,9 @@ int main(int argc, char *argv[])
 				fprintf(output, "50 0 0\n");
 			}
 		}else{
-			fprintf(output, "50 0 1 %d\n", h);
+			fprintf(output, "%d 0 1 %d\n", h-40, h);
 			while(--d){
-				fprintf(output, "50 0 1 %d\n", h);
+				fprintf(output, "%d 0 1 %d\n", h-40, h);
 			}
 		}
     }
