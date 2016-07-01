@@ -1,9 +1,10 @@
 #include "tw_portal.h"
 #include "tw_platform.h"
 #include "tw_limbo.h"
+#include "tw_playable_level.h"
 
-TWPortal::TWPortal(int px, int py){
-	m_x_speed = 5/19.0;
+TWPortal::TWPortal(int px, int py, double speed){
+	m_x_speed = speed;
     m_sprite_speed = 1/270.0; //FIXME
     m_sprite_counter = 0;
     m_start = -1;
@@ -57,7 +58,9 @@ const list<Rectangle>& TWPortal::hit_boxes() const{
 }
 
 void TWPortal::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("TWPortal colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
+	if(auto p = dynamic_cast<TWPlayableLevel *>(this->parent())){
+        p->set_done(true);
+    }
 }
 
 void TWPortal::update_self(unsigned now, unsigned) {
@@ -65,7 +68,7 @@ void TWPortal::update_self(unsigned now, unsigned) {
         m_start = now;
     }
 
-	m_x -= ((now - m_start) * m_x_speed);
+	m_x -= (now - m_start) * m_x_speed;
 	printf("portal: %.2f\n", m_x);
 
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);

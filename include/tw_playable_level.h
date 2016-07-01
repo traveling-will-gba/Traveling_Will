@@ -26,6 +26,8 @@ class TWPlayableLevel : public TWLevel{
 
 		bool on_event(const GameEvent& event);
 
+		void set_done(bool done);
+
 	protected:
 		void update_self(unsigned now, unsigned last);
 		void draw_self(Canvas *canvas, unsigned now, unsigned last);

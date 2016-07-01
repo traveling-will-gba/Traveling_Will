@@ -19,8 +19,7 @@ using namespace ijengine;
 
 class TWPortal : public GameObject, public Collidable {
     public:
-        TWPortal();
-        TWPortal(int px, int py);
+        TWPortal(int px, int py, double speed);
         ~TWPortal();
         double x();
         double y();

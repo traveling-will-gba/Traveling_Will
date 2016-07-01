@@ -63,7 +63,7 @@ int audio_duration) :
     level_design >> n_screens >> n_backgrounds;
 
 
-	m_portal = new TWPortal((n_screens+10) * 36, 100);
+	m_portal = new TWPortal((n_screens-3) * 36, 100, m_x_speed);
 	add_child(m_portal);
 
 
@@ -135,6 +135,10 @@ string TWPlayableLevel::audio() const{
 bool TWPlayableLevel::on_event(const GameEvent&){
     ////printf("Pegou evento\n");
 	return false;
+}
+
+void TWPlayableLevel::set_done(bool done){
+	m_done = done;
 }
 
 void TWPlayableLevel::update_self(unsigned now, unsigned last){
