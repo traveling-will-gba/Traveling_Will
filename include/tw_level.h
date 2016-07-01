@@ -26,7 +26,6 @@ class TWLevel : public Level, public GameEventsListener {
 		~TWLevel(){}
 
 	protected:		
-        static const int GAME_MOUSE_CLICK =             1 << 8;
         static const int GAME_MOUSE_MOVEMENT =          1 << 9;
         static const int GAME_MOUSE_MOTION =            1 << 10;
         static const int BACK_BUTTON =                  0;

@@ -28,7 +28,7 @@ TWCutscene::TWCutscene(const string &current_level, const string& next_level, co
 			m_start_cutscene[i] = resources::get_texture(m_current_level + "/start_cutscene-" + to_string(i) + ".png");
 		}
 
-		m_buttons.push_back(new TWButton(0, m_current_level, 700, 410, "pular-botao.png", 142, 50, 1));
+		// m_buttons.push_back(new TWButton(0, m_current_level, 700, 410, "pular-botao.png", 142, 50, 1));
 	}
 	else if(m_current_level == "cutscene-end"){
 		m_cutscene_speed = 1/300.0;
@@ -38,9 +38,9 @@ TWCutscene::TWCutscene(const string &current_level, const string& next_level, co
 		}
 	}
 
-	for(auto btn : m_buttons){
-		add_child(btn);
-	}
+	// for(auto btn : m_buttons){
+	// 	add_child(btn);
+	// }
 	
 	event::register_listener(this);
 }
@@ -53,35 +53,7 @@ bool TWCutscene::done() const{ return m_done; }
 string TWCutscene::next() const{ return m_next; }
 string TWCutscene::audio() const{ return m_audio; }
 
-bool TWCutscene::on_event(const GameEvent& event){
-	if(m_current_level == "cutscene-intro"){
-		if(event.id() == GAME_MOUSE_CLICK){
-			double mouse_x = event.get_property<double>("x");
-			double mouse_y = event.get_property<double>("y");
-
-			for(auto btn : m_buttons){
-				if(btn->able_to_draw() == 0) continue;
-
-				int min_x = btn->x(), max_x = min_x + btn->w();
-				int min_y = btn->y(), max_y = min_y + btn->h();
-
-				if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
-					switch(btn->id()){
-						case 0:
-							m_done = true;
-							break;
-						default:
-							break;
-					}
-
-					return true;
-				}
-			}
-		}
-	}
-
-    return false;
-}
+bool TWCutscene::on_event(const GameEvent& event){ return false; }
 
 void TWCutscene::update_self(unsigned now, unsigned){
 	if(m_start == -1){
