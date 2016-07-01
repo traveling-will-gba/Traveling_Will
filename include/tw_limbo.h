@@ -1,8 +1,9 @@
 #ifndef TW_LIMBO_H
 #define TW_LIMBO_H
 
-#include "tw_will.h"
 #include "tw_level.h"
+#include "tw_will.h"
+#include "tw_portal_to_level.h"
 
 using std::string;
 using std::shared_ptr;
@@ -14,6 +15,8 @@ class TWLimbo : public TWLevel{
         TWLimbo(const string& current_level, const string& next_level = "", const string audio_path = "", 
         int audio_duration = -1);
         ~TWLimbo();
+
+        void set_next(string next_level);
 
         bool done() const;
         string next() const;
@@ -37,6 +40,7 @@ class TWLimbo : public TWLevel{
         static const int GAME_EVENT_LEFT_RELEASED =     1 << 15;
         static const int GAME_EVENT_RIGHT_PRESSED =     1 << 16;
         static const int GAME_EVENT_RIGHT_RELEASED =    1 << 17;
+        static const int GAME_EVENT_ENTER =             1 << 18;
 
         static const int NUMBER_OF_SECTIONS =           25;
         static const int WILL_HEIGHT =                  45;
@@ -57,7 +61,10 @@ class TWLimbo : public TWLevel{
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_floor;
 
+        bool on_portal;
+
         TWWill * m_will;
+        TWPortalToLevel * m_portal[6];
 
         shared_ptr<Texture> m_background_texture;
 };

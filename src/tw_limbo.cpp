@@ -1,5 +1,6 @@
-#include "tw_will.h"
 #include "tw_limbo.h"
+#include "tw_will.h"
+#include "tw_portal_to_level.h"
 
 #include <ijengine/canvas.h>
 #include <ijengine/engine.h>
@@ -29,12 +30,23 @@ int audio_duration) :
     m_audio_start = 0;
     m_start = -1;
 
+    on_portal = false;
+
     m_background_texture = resources::get_texture(m_current_level + "/background.png");
     
     //Sets initial will height based on level design
     m_will = new TWWill(53, 430 - WILL_HEIGHT);
     m_will->set_m_active_events(false);
     add_child(m_will);
+
+    m_portal[1] = new TWPortalToLevel("1", 50, 50);
+    m_portal[2] = new TWPortalToLevel("2", 160, 160);
+    m_portal[3] = new TWPortalToLevel("3", 270, 270);
+    m_portal[4] = new TWPortalToLevel("4", 380, 380);
+
+    for(int i = 1; i <= 4; ++i){
+        add_child(m_portal[i]);
+    }
 
     m_start = -1;
 
@@ -47,6 +59,10 @@ int audio_duration) :
 
 TWLimbo::~TWLimbo(){
     event::unregister_listener(this);
+}
+
+void TWLimbo::set_next(string next_level){
+    m_next = next_level;
 }
 
 bool TWLimbo::done() const{
@@ -95,6 +111,13 @@ bool TWLimbo::on_event(const GameEvent& event){
         m_will->set_x_speed(0);
     }
 
+    if(event.id() == GAME_EVENT_ENTER){
+        printf("Pressed enter\n");
+        if(m_next != ""){
+            m_done = true;
+        }
+    }
+
     return true;
 }
 
@@ -127,6 +150,11 @@ void TWLimbo::update_self(unsigned now, unsigned last){
     }
 
     physics::do_collisions(now, last);
+
+    if(not on_portal){
+        m_next = "";
+    }
+    on_portal = false;
 
     m_start = now;
     ////printf("Saindo de update_self\n");
