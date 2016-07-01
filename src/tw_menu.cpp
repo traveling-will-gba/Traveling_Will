@@ -39,11 +39,6 @@ TWMenu::TWMenu(const string &current_level, const string& next_level, const stri
 		add_child(btn);
 	}
 
-	m_button_labels.push_back("new-adventure");
-	m_button_labels.push_back("missions");
-	m_button_labels.push_back("options");
-	m_button_labels.push_back("exit");
-
 	event::register_listener(this);
 }
 
@@ -89,9 +84,13 @@ void TWMenu::do_action(string label){
 	}
 
 	if(label == "exit"){
-		replace_texture_in_button(label, "menu-nova-aventura-on.png");
+		replace_texture_in_button(label, "menu-sair-on.png");
 		exit(0);
 	}
+}
+
+bool TWMenu::on_event(const GameEvent&){
+	return false;
 }
 
 void TWMenu::update_self(unsigned, unsigned){
@@ -109,17 +108,10 @@ void TWMenu::draw_self(Canvas *canvas, unsigned, unsigned){
 }
 
 void TWMenu::replace_texture_in_button(string label, string texture){
-	string old_texture;
-	TWButton *btn = new TWButton();
-
 	for(auto button : m_buttons){
 		if(button->label() == label){
-			old_texture = button->texture();
-			btn = button;
 			button->set_texture(texture);
 			break;
 		}
 	}
-
-	btn->set_texture(old_texture);
 }

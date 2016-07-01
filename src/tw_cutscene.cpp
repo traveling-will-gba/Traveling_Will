@@ -53,7 +53,7 @@ bool TWCutscene::done() const{ return m_done; }
 string TWCutscene::next() const{ return m_next; }
 string TWCutscene::audio() const{ return m_audio; }
 
-bool TWCutscene::on_event(const GameEvent& event){ return false; }
+bool TWCutscene::on_event(const GameEvent&){ return false; }
 
 void TWCutscene::update_self(unsigned now, unsigned){
 	if(m_start == -1){

@@ -4,8 +4,8 @@
 #include <ijengine/canvas.h>
 
 TWButton::TWButton(string btn_label, string cur_level, double b_x, double b_y, string img, double b_w, double b_h) :
-    m_label(btn_label), m_img(img), m_level(cur_level), m_x(b_x),
-    m_y(b_y), m_h(b_h), m_w(b_w), m_state(NOT_CLICKING) {
+    m_state(NOT_CLICKING), m_label(btn_label), m_img(img), m_level(cur_level),
+    m_x(b_x), m_y(b_y), m_h(b_h), m_w(b_w) {
     
     m_texture_label = img;
     m_texture = resources::get_texture(cur_level + "/" + m_texture_label);
@@ -25,8 +25,8 @@ string TWButton::level(){ return m_level; }
 string TWButton::label(){ return m_label; }
 string TWButton::texture(){ return m_texture_label; }
 
-void TWButton::set_texture(string texture){
-    m_texture = resources::get_texture(m_level + "/" + texture);
+void TWButton::set_texture(string btn_texture){
+    m_texture = resources::get_texture(m_level + "/" + btn_texture);
 }
 
 void TWButton::update_self(unsigned, unsigned){}

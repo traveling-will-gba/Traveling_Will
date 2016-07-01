@@ -25,7 +25,7 @@ class TWButton : public GameObject, public GameEventsListener {
         string level();
         string label();
         string texture();
-        void set_texture(string texture);
+        void set_texture(string btn_texture);
 
         bool on_event(const GameEvent& event);
 
