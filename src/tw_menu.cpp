@@ -26,11 +26,13 @@ TWMenu::TWMenu(const string &current_level, const string& next_level, const stri
 
 	auto button = new TWButton("new-adventure", m_current_level, 50, 220, "menu-nova-aventura.png", 299, 34);
 	m_buttons.push_back(button);
-	button = new TWButton("missions", m_current_level, 50, 264, "menu-missoes.png", 167, 42);
+	button = new TWButton("continue-adventure", m_current_level, 50, 264, "menu-continuar-aventura.png", 400, 34);
 	m_buttons.push_back(button);
-	button = new TWButton("options", m_current_level, 50, 316, "menu-opcoes.png", 139, 51);
+	button = new TWButton("missions", m_current_level, 50, 316, "menu-missoes.png", 167, 42);
 	m_buttons.push_back(button);
-	button = new TWButton("exit", m_current_level, 50, 377, "menu-sair.png", 86, 34);
+	button = new TWButton("options", m_current_level, 50, 377, "menu-opcoes.png", 139, 51);
+	m_buttons.push_back(button);
+	button = new TWButton("exit", m_current_level, 50, 438, "menu-sair.png", 86, 34);
 	m_buttons.push_back(button);
 
 	for(auto btn : m_buttons){
@@ -72,7 +74,10 @@ void TWMenu::do_action(string label){
 	}
 	
 	if(label == "continue-adventure"){
+		replace_texture_in_button(label, "menu-continuar-aventura-on.png");
 
+		m_next = "limbo";
+		m_done = true;
 	}
 
 	if(label == "missions"){
