@@ -1,5 +1,6 @@
 #include "tw_button.h"
 #include "tw_menu.h"
+#include "tw_cutscene.h"
 
 #include <ijengine/canvas.h>
 
@@ -43,10 +44,15 @@ bool TWButton::on_event(const GameEvent& event){
             if(m_state == CLICKING){
                 auto p = this->parent();
 
-                if(p){
-                    auto menu = dynamic_cast<TWMenu *>(p);
-                    menu->do_action(m_label);
+                if(m_level == "menu"){
+                    auto parent_class = dynamic_cast<TWMenu *>(p);
+                    parent_class->do_action(m_label);
                 }
+                else if(m_level == "cutscene-intro"){
+                    auto parent_class = dynamic_cast<TWCutscene *>(p);
+                    parent_class->do_action(m_label);
+                }
+
 
                 m_state = NOT_CLICKING;
                 return true;

@@ -65,11 +65,24 @@ void TWCutscene::update_self(unsigned now, unsigned){
         if((now - m_start) >= 28000){
             m_done = true;
         }
+
+        m_buttons.push_back(new TWButton("skip", m_current_level, 700, 410, "pular-botao.png", 142, 50));
     }
 	else if(m_current_level == "cutscene-end"){
 		if((now - m_start) >= 9000){
 			m_done = true;
 		}
+	}
+
+	for(auto btn : m_buttons){
+		add_child(btn);
+	}
+}
+
+void TWCutscene::do_action(string label){
+	if(label == "skip"){
+		m_next = "1";
+		m_done = true;
 	}
 }
 

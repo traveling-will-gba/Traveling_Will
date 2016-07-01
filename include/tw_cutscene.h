@@ -17,6 +17,7 @@ class TWCutscene : public TWLevel{
 		bool done() const;
 		string next() const;
 		string audio() const;
+		void do_action(string label);
 
 		bool on_event(const GameEvent& event);
 
