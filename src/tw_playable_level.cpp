@@ -24,7 +24,7 @@ int audio_duration) :
     m_x_speed(5/19.0), m_y_speed(0),
     sprite_counter(0), m_sprite_speed(1/170.0),
     m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_cur_collectable(nullptr), m_cur_enemy(nullptr), portal_able(false){
+    m_cur_collectable(nullptr), m_cur_enemy(nullptr){
 
     ////printf("Entrando em construtor\n");
 
@@ -36,6 +36,7 @@ int audio_duration) :
 	m_audio_start = 0;
 	m_start = -1;
 
+	
     m_progress_bar = new TWProgressBar(m_current_level, m_audio_duration);
     add_child(m_progress_bar);
 
@@ -60,6 +61,11 @@ int audio_duration) :
 	m_x_speed = tempo * 4 * 36 / 60000.0;
 
     level_design >> n_screens >> n_backgrounds;
+
+
+	m_portal = new TWPortal((n_screens+10) * 36, 100);
+	add_child(m_portal);
+
 
     for(int i = 0; i < n_screens; ++i){
         int ph, e_present, c_present;
@@ -138,13 +144,13 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
         m_audio_start = m_start;
     }
 
-	double percentage_level = (m_audio_counter * 100.0) / m_audio_duration;
-	if(percentage_level >= 80 && not portal_able){
-		m_portal = new TWPortal(100, 30);
+//	double percentage_level = (m_audio_counter * 100.0) / m_audio_duration;
+//	if(percentage_level >= 80 && not portal_able){
+/*		m_portal = new TWPortal(30000, 100);
 		add_child(m_portal);
 
-		portal_able = true;
-	}
+		portal_able = true;*/
+//	}
 
     update_counters(now);
 
@@ -249,6 +255,12 @@ void TWPlayableLevel::update_counters(unsigned now){
         m_reverse_camera_x += PLATFORM_SIZE;
         destroy_child(platforms[0]);
         platforms.pop_front();
+
+		if(platforms.size() == NUMBER_OF_SECTIONS){
+			m_x_speed = 0;
+			m_portal->set_x_speed(0);
+		}
+
         platforms[NUMBER_OF_SECTIONS-1]->set_x(852);
         platforms[NUMBER_OF_SECTIONS-1]->register_objects(852);
         add_child(platforms[NUMBER_OF_SECTIONS-1]);

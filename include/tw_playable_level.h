@@ -48,7 +48,7 @@ class TWPlayableLevel : public TWLevel{
         static const int ENEMY =                        1; 
         static const int PLATFORM_SIZE =                36;
 
-        bool m_is_punching, level_started, level_finished, portal_able;
+        bool m_is_punching, level_started, level_finished;
         
         int m_audio_duration, m_audio_counter;
         int n_screens, m_punch_counter;

@@ -3,6 +3,7 @@
 #include "tw_limbo.h"
 
 TWPortal::TWPortal(int px, int py){
+	m_x_speed = 5/19.0;
     m_sprite_speed = 1/270.0; //FIXME
     m_sprite_counter = 0;
     m_start = -1;
@@ -14,7 +15,7 @@ TWPortal::TWPortal(int px, int py){
     m_texture = resources::get_texture("portal.png");
     
     m_active = true;
-    this->set_priority(4);
+    this->set_priority(5);
     
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     physics::register_object(this);
@@ -35,6 +36,8 @@ shared_ptr<Texture> TWPortal::texture(){ return m_texture; }
 void TWPortal::set_x(double cx) { m_x = cx; }
 void TWPortal::set_y(double cy) { m_y = cy; }
 void TWPortal::set_height(double ch) { m_height = ch; }    
+
+void TWPortal::set_x_speed(double speed){ m_x_speed = speed; }
 
 bool TWPortal::active() const{
     return m_active;
@@ -62,6 +65,9 @@ void TWPortal::update_self(unsigned now, unsigned) {
         m_start = now;
     }
 
+	m_x -= ((now - m_start) * m_x_speed);
+	printf("portal: %.2f\n", m_x);
+
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     l.clear();
     l.insert(l.begin(), m_bounding_box);
@@ -75,7 +81,7 @@ void TWPortal::update_self(unsigned now, unsigned) {
 }
 void TWPortal::draw_self(Canvas* canvas, unsigned, unsigned) {
     ////printf("Entrando no draw de collectable\n");
-    if(m_active) canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
+/*    if(m_active)*/ canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
     ////printf("Saindo do draw de collectable\n");
 }
 

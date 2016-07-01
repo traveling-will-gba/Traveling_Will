@@ -40,6 +40,8 @@ class TWPortal : public GameObject, public Collidable {
 
         void on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last);
 
+		void set_x_speed(double speed);
+
     protected:
         void update_self(unsigned now, unsigned last);
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
@@ -47,7 +49,7 @@ class TWPortal : public GameObject, public Collidable {
     private:
         double m_x, m_y;
         double m_height, m_width;
-        double m_sprite_counter, m_sprite_speed;
+        double m_sprite_counter, m_sprite_speed, m_x_speed;
         int m_start;
         Rectangle m_bounding_box;
         list<Rectangle> l;
