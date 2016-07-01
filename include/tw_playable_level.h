@@ -7,6 +7,7 @@
 #include "tw_platform.h"
 #include "tw_progress_bar.h"
 #include "tw_collectable_status.h"
+#include "tw_portal.h"
 
 using std::string;
 using std::shared_ptr;
@@ -47,7 +48,7 @@ class TWPlayableLevel : public TWLevel{
         static const int ENEMY =                        1; 
         static const int PLATFORM_SIZE =                36;
 
-        bool m_is_punching, level_started, level_finished;
+        bool m_is_punching, level_started, level_finished, portal_able;
         
         int m_audio_duration, m_audio_counter;
         int n_screens, m_punch_counter;
@@ -63,11 +64,13 @@ class TWPlayableLevel : public TWLevel{
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_floor;
 
-        TWWill * m_will;
+        TWWill *m_will;
         TWCollectable *m_cur_collectable;
         TWEnemy *m_cur_enemy;
         TWProgressBar *m_progress_bar;
         TWCollectableStatus *m_collectable_status;
+		TWPortal *m_portal;
+
 
         shared_ptr<Texture> m_floor_texture;
 

@@ -24,7 +24,7 @@ int audio_duration) :
     m_x_speed(5/19.0), m_y_speed(0),
     sprite_counter(0), m_sprite_speed(1/170.0),
     m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_cur_collectable(nullptr), m_cur_enemy(nullptr){
+    m_cur_collectable(nullptr), m_cur_enemy(nullptr), portal_able(false){
 
     ////printf("Entrando em construtor\n");
 
@@ -137,6 +137,14 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
         m_start = now;
         m_audio_start = m_start;
     }
+
+	double percentage_level = (m_audio_counter * 100.0) / m_audio_duration;
+	if(percentage_level >= 80 && not portal_able){
+		m_portal = new TWPortal(100, 30);
+		add_child(m_portal);
+
+		portal_able = true;
+	}
 
     update_counters(now);
 
