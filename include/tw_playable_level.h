@@ -31,8 +31,8 @@ class TWPlayableLevel : public TWLevel{
 
 	private:
         static const int GAME_EVENT_JUMP =              1 << 4;
-        static const int GAME_EVENT_SLIDE_PRESSED =     1 << 5;
-        static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
+        static const int GAME_EVENT_DOWN_PRESSED =     1 << 5;
+        static const int GAME_EVENT_DOWN_RELEASED =    1 << 6;
         static const int GAME_EVENT_MENU_SELECT =       1 << 7;
         static const int GAME_EVENT_PUNCH =             1 << 11;
         static const int NUMBER_OF_SECTIONS =           25;

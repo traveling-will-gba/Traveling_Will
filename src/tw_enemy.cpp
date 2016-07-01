@@ -64,7 +64,7 @@ const list<Rectangle>& TWEnemy::hit_boxes() const{
     return l;
 }
 
-void TWEnemy::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
+void TWEnemy::on_collision(const Collidable *, const Rectangle&, const unsigned, const unsigned){
     //printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
     m_active = false;
 }
