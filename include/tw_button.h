@@ -29,7 +29,8 @@ class TWButton : public GameObject, public GameEventsListener {
 
         bool on_event(const GameEvent& event);
 
-        typedef enum { CLICKING, NOT_CLICKING } State;
+        typedef enum { CLICKING, NOT_CLICKING } ClickState;
+        typedef enum { HOVERING, NOT_HOVERING } HoverState;
 
     protected:
         void update_self(unsigned now, unsigned last);
@@ -37,7 +38,9 @@ class TWButton : public GameObject, public GameEventsListener {
 
     private:
         static const int GAME_MOUSE_CLICK = 1 << 8;
-        State m_state;
+        static const int GAME_MOUSE_MOTION = 1 << 10;
+        ClickState m_click_state;
+        HoverState m_hover_state;
         string m_label, m_texture_label;
         string m_img, m_action, m_level;
         double m_x, m_y, m_h, m_w;

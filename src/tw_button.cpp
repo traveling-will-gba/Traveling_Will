@@ -5,7 +5,7 @@
 #include <ijengine/canvas.h>
 
 TWButton::TWButton(string btn_label, string cur_level, double b_x, double b_y, string img, double b_w, double b_h) :
-    m_state(NOT_CLICKING), m_label(btn_label), m_img(img), m_level(cur_level),
+    m_click_state(NOT_CLICKING), m_hover_state(NOT_HOVERING), m_label(btn_label), m_img(img), m_level(cur_level),
     m_x(b_x), m_y(b_y), m_h(b_h), m_w(b_w) {
     
     m_texture_label = img;
@@ -41,7 +41,7 @@ bool TWButton::on_event(const GameEvent& event){
         int min_y = m_y, max_y = m_y + m_h;
 
         if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
-            if(m_state == CLICKING){
+            if(m_click_state == CLICKING){
                 auto p = this->parent();
 
                 if(m_level == "menu"){
@@ -54,12 +54,40 @@ bool TWButton::on_event(const GameEvent& event){
                 }
 
 
-                m_state = NOT_CLICKING;
+                m_click_state = NOT_CLICKING;
                 return true;
             }
 
-            m_state = CLICKING;
+            m_click_state = CLICKING;
             return true;
+        }
+    }
+
+    else if(event.id() == GAME_MOUSE_MOTION){
+        double mouse_x = event.get_property<double>("x");
+        double mouse_y = event.get_property<double>("y");
+        int min_x = m_x, max_x = m_x + m_w;
+        int min_y = m_y, max_y = m_y + m_h;
+
+        if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
+            auto it = m_texture_label.find("on");
+
+            if(it == string::npos){
+                it = m_texture_label.find(".png");
+                m_texture_label.insert(it, "-on");
+                m_texture = resources::get_texture(m_level + "/" + m_texture_label);
+            }
+
+            m_hover_state = HOVERING;
+        }
+        else{
+            if(m_hover_state == HOVERING){
+                auto it = m_texture_label.find("-on");
+                m_texture_label.erase(it, 3);
+                m_texture = resources::get_texture(m_level + "/" + m_texture_label);
+            }
+
+            m_hover_state = NOT_HOVERING;
         }
     }
 
