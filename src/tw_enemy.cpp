@@ -15,10 +15,10 @@ TWEnemy::TWEnemy(double et, double eh){
     m_y = 480 - eh;
 
     if(m_type == 1){
-        m_texture = resources::get_texture("1/enemy1.png");
+        m_texture = resources::get_texture("enemies/1.png");
     }
     else{
-        m_texture = resources::get_texture("1/enemy2.png");
+        m_texture = resources::get_texture("enemies/2.png");
     }
 
     m_active = false;

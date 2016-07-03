@@ -26,7 +26,7 @@ int audio_duration) :
     m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
     m_cur_collectable(nullptr), m_cur_enemy(nullptr){
 
-    ////printf("Entrando em construtor\n");
+    printf("Entrando em construtor\n");
 
 	m_current_level = current_level;
 	m_audio = audio_path;
@@ -43,13 +43,14 @@ int audio_duration) :
     m_collectable_status = new TWCollectableStatus(m_current_level);
     add_child(m_collectable_status);
 
+
     m_floor_texture = resources::get_texture(m_current_level + "/floor.png");
 
 	//Read level design from txt
 	fstream level_design("res/" + m_current_level + "/level_design.txt");
 
 	if(not level_design.is_open()){
-		////printf("Level design txt not available\n");
+		printf("Level design txt not available\n");
 		exit(0);
 	}
 
@@ -67,7 +68,7 @@ int audio_duration) :
         int et = INVALID, eh = INVALID, ch = INVALID;
 
         level_design >> ph >> e_present;
-        
+
         if(e_present){
             level_design >> et >> eh;
         }
@@ -117,7 +118,7 @@ int audio_duration) :
 
     physics::set_collision_mode(physics::Mode::ONE_TO_ALL, m_will);
 
-    ////printf("Saindo de construtor\n");
+    //printf("Saindo de construtor\n");
 }
 
 TWPlayableLevel::~TWPlayableLevel(){

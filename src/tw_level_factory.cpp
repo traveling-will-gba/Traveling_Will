@@ -18,6 +18,8 @@ Level * TWLevelFactory::make_level(const string& level_id){
         return new TWPlayableLevel("4", "cutscene-end", "res/4/music.wav", 147000);
     else if(level_id == "5")
         return new TWPlayableLevel("5", "cutscene-end", "res/5/music.wav", 147000);
+    else if(level_id == "6")
+        return new TWPlayableLevel("6", "cutscene-end", "res/6/music.wav", 147000);
     else if(level_id == "limbo")
         return new TWLimbo("limbo", "", "res/1/music.wav", -1); //FIXME
     else

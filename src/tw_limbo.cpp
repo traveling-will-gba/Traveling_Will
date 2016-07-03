@@ -44,8 +44,10 @@ int audio_duration) :
     m_portal[3] = new TWPortalToLevel("3", 270, 270);
     m_portal[4] = new TWPortalToLevel("4", 380, 380);
     m_portal[5] = new TWPortalToLevel("5", 0, 100);
+    m_portal[6] = new TWPortalToLevel("6", 0, 200);
 
-    for(int i = 1; i <= 5; ++i){
+
+    for(int i = 1; i <= 6; ++i){
         add_child(m_portal[i]);
     }
 
