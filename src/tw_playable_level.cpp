@@ -66,7 +66,7 @@ int audio_duration) :
 	m_portal_start = new TWPortal(53, 355, m_x_speed, START);
 	add_child(m_portal_start);
 
-	m_portal_end = new TWPortal((n_screens-3) * 36, 100, m_x_speed, END);
+	m_portal_end = new TWPortal((n_screens-3) * 36, 430 - PORTAL_HEIGHT, m_x_speed, END);
 	add_child(m_portal_end);
 
 
@@ -244,6 +244,7 @@ void TWPlayableLevel::update_counters(unsigned now){
 
     if(m_audio_duration - m_audio_counter <= 2000){
         m_will->set_x(m_will->x() + (now - m_start) * m_sprite_speed * 100);
+		m_will->set_y(430 - WILL_HEIGHT);
     }
     else{
         m_camera_x += ((now - m_start) * m_x_speed);

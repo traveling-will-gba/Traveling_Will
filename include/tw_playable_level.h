@@ -49,6 +49,7 @@ class TWPlayableLevel : public TWLevel{
         static const int COLLECTABLE =                  0;
         static const int ENEMY =                        1; 
         static const int PLATFORM_SIZE =                36;
+		static const int PORTAL_HEIGHT =				77;
 		static const int END =							1;
 		static const int START = 						0;
 
