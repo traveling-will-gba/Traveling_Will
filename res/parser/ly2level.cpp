@@ -261,7 +261,7 @@ int main(int argc, char *argv[])
 		}else{
 			fprintf(output, "%d 0 1 %d\n", h-40, h);
 			while(--d){
-				fprintf(output, "%d 0 1 %d\n", h-40, h);
+				fprintf(output, "%d 0 0s\n", h-40);
 			}
 		}
     }
