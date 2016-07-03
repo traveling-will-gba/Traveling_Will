@@ -62,9 +62,12 @@ int audio_duration) :
 
     level_design >> n_screens >> n_backgrounds;
 
+	
+	m_portal_start = new TWPortal(53, 355, m_x_speed, START);
+	add_child(m_portal_start);
 
-	m_portal = new TWPortal((n_screens-3) * 36, 100, m_x_speed);
-	add_child(m_portal);
+	m_portal_end = new TWPortal((n_screens-3) * 36, 100, m_x_speed, END);
+	add_child(m_portal_end);
 
 
     for(int i = 0; i < n_screens; ++i){
@@ -262,7 +265,7 @@ void TWPlayableLevel::update_counters(unsigned now){
 
 		if(platforms.size() == NUMBER_OF_SECTIONS){
 			m_x_speed = 0;
-			m_portal->set_x_speed(0);
+			m_portal_end->set_x_speed(0);
 		}
 
         platforms[NUMBER_OF_SECTIONS-1]->set_x(852);

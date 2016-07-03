@@ -33,9 +33,9 @@ class TWPlayableLevel : public TWLevel{
 		void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
 	private:
-        static const int GAME_EVENT_JUMP =              1 << 4;
-        static const int GAME_EVENT_DOWN_PRESSED =     1 << 5;
-        static const int GAME_EVENT_DOWN_RELEASED =    1 << 6;
+        static const int GAME_EVENT_JUMP =				1 << 4;
+        static const int GAME_EVENT_DOWN_PRESSED =		1 << 5;
+        static const int GAME_EVENT_DOWN_RELEASED =		1 << 6;
         static const int GAME_EVENT_MENU_SELECT =       1 << 7;
         static const int GAME_EVENT_PUNCH =             1 << 11;
         static const int NUMBER_OF_SECTIONS =           25;
@@ -49,6 +49,8 @@ class TWPlayableLevel : public TWLevel{
         static const int COLLECTABLE =                  0;
         static const int ENEMY =                        1; 
         static const int PLATFORM_SIZE =                36;
+		static const int END =							1;
+		static const int START = 						0;
 
         bool m_is_punching, level_started, level_finished;
         
@@ -71,7 +73,7 @@ class TWPlayableLevel : public TWLevel{
         TWEnemy *m_cur_enemy;
         TWProgressBar *m_progress_bar;
         TWCollectableStatus *m_collectable_status;
-		TWPortal *m_portal;
+		TWPortal *m_portal_start, *m_portal_end;
 
 
         shared_ptr<Texture> m_floor_texture;

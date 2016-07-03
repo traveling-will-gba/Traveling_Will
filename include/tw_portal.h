@@ -19,7 +19,7 @@ using namespace ijengine;
 
 class TWPortal : public GameObject, public Collidable {
     public:
-        TWPortal(int px, int py, double speed);
+        TWPortal(int px, int py, double speed, bool type);
         ~TWPortal();
         double x();
         double y();
@@ -38,7 +38,6 @@ class TWPortal : public GameObject, public Collidable {
         const list<Rectangle>& hit_boxes() const;
 
         void on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last);
-
 		void set_x_speed(double speed);
 
     protected:
@@ -46,13 +45,16 @@ class TWPortal : public GameObject, public Collidable {
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
     private:
+		static const int END = 1;
+		static const int START = 0;
+
         double m_x, m_y;
         double m_height, m_width;
         double m_sprite_counter, m_sprite_speed, m_x_speed;
         int m_start;
         Rectangle m_bounding_box;
         list<Rectangle> l;
-        bool m_active;
+        bool m_active, m_type;
         // more sprites later (i.e. disappearing)
         shared_ptr<Texture> m_texture;
 };

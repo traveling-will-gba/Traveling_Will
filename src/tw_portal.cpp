@@ -3,11 +3,12 @@
 #include "tw_limbo.h"
 #include "tw_playable_level.h"
 
-TWPortal::TWPortal(int px, int py, double speed){
+TWPortal::TWPortal(int px, int py, double speed, bool type){
 	m_x_speed = speed;
     m_sprite_speed = 1/270.0; //FIXME
     m_sprite_counter = 0;
     m_start = -1;
+	m_type = type;
 
     m_height = 77;
     m_width = 30;
@@ -58,9 +59,11 @@ const list<Rectangle>& TWPortal::hit_boxes() const{
 }
 
 void TWPortal::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
-	if(auto p = dynamic_cast<TWPlayableLevel *>(this->parent())){
-        p->set_done(true);
-    }
+	if(m_type == END){
+		if(auto p = dynamic_cast<TWPlayableLevel *>(this->parent())){
+	        p->set_done(true);
+	    }
+	}
 }
 
 void TWPortal::update_self(unsigned now, unsigned) {
