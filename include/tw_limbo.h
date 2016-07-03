@@ -29,7 +29,7 @@ class TWLimbo : public TWLevel{
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
     private:
-        static const int GAME_EVENT_JUMP =              1 << 4;
+		static const int GAME_EVENT_JUMP =              1 << 4;
         static const int GAME_EVENT_DOWN_PRESSED =      1 << 5;
         static const int GAME_EVENT_DOWN_RELEASED =     1 << 6;
         static const int GAME_EVENT_MENU_SELECT =       1 << 7;
@@ -53,6 +53,15 @@ class TWLimbo : public TWLevel{
         static const int COLLECTABLE =                  0;
         static const int ENEMY =                        1; 
         static const int PLATFORM_SIZE =                36;
+
+		typedef struct _ls{
+			bool unlocked = false;
+			bool cleared = false;
+			int max_collectables = 0;
+			int max_enemies = 0;
+			int record_collectables = 0;
+			int record_enemies = 0;
+		}Level_stat;
         
         int m_audio_duration, m_audio_counter;
         

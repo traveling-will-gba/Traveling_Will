@@ -39,15 +39,33 @@ int audio_duration) :
     m_will->set_m_active_events(false);
     add_child(m_will);
 
-    m_portal[1] = new TWPortalToLevel("1", 50, 50);
-    m_portal[2] = new TWPortalToLevel("2", 160, 160);
-    m_portal[3] = new TWPortalToLevel("3", 270, 270);
-    m_portal[4] = new TWPortalToLevel("4", 380, 380);
-    m_portal[5] = new TWPortalToLevel("5", 0, 100);
-    m_portal[6] = new TWPortalToLevel("6", 0, 200);
+	Level_stat level_info[50];
 
+	FILE *save = fopen("res/save.dat", "rb");
 
-    for(int i = 1; i <= 6; ++i){
+	if(not save){
+		printf("Não foi possível abrir o arquivo save.dat\n");
+		exit(1);
+	}
+
+	fread(&level_info[1], sizeof(Level_stat), 6, save);
+	fclose(save);
+
+	pair <int, int> portals_pos[] = { make_pair(0, 0), make_pair(50, 50), make_pair(160, 160), 
+									make_pair(270, 270), make_pair(380, 380), make_pair(0, 100), 
+									make_pair(0, 200)};
+
+	int n_unlocked_portals = 0;
+
+	for(int i = 1; i <= 6; i++){
+		if(level_info[i].unlocked){
+			m_portal[i] = new TWPortalToLevel(to_string(i), portals_pos[i].first, portals_pos[i].second);
+
+			n_unlocked_portals++;
+		}
+	}
+
+    for(int i = 1; i <= n_unlocked_portals; i++){
         add_child(m_portal[i]);
     }
 
