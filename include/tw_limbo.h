@@ -64,7 +64,7 @@ class TWLimbo : public TWLevel{
         bool on_portal;
 
         TWWill * m_will;
-        TWPortalToLevel * m_portal[6];
+        TWPortalToLevel * m_portal[10];
 
         shared_ptr<Texture> m_background_texture;
 };

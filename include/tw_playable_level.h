@@ -69,12 +69,12 @@ class TWPlayableLevel : public TWLevel{
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_floor;
 
-        TWWill *m_will;
-        TWCollectable *m_cur_collectable;
-        TWEnemy *m_cur_enemy;
-        TWProgressBar *m_progress_bar;
-        TWCollectableStatus *m_collectable_status;
-		TWPortal *m_portal_start, *m_portal_end;
+        TWWill * m_will;
+        TWCollectable * m_cur_collectable;
+        TWEnemy * m_cur_enemy;
+        TWProgressBar * m_progress_bar;
+        TWCollectableStatus * m_collectable_status;
+		TWPortal * m_portal_start, * m_portal_end[2];
 
 
         shared_ptr<Texture> m_floor_texture;

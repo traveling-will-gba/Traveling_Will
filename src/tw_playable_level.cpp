@@ -62,14 +62,6 @@ int audio_duration) :
 
     level_design >> n_screens >> n_backgrounds;
 
-	
-	m_portal_start = new TWPortal(53, 355, m_x_speed, START);
-	add_child(m_portal_start);
-
-	m_portal_end = new TWPortal((n_screens-3) * 36, 430 - PORTAL_HEIGHT, m_x_speed, END);
-	add_child(m_portal_end);
-
-
     for(int i = 0; i < n_screens; ++i){
         int ph, e_present, c_present;
         int et = INVALID, eh = INVALID, ch = INVALID;
@@ -90,6 +82,15 @@ int audio_duration) :
         platforms.push_back(p);
 
     }
+
+        m_portal_start = new TWPortal(53, 355, m_x_speed, START);
+    add_child(m_portal_start);
+
+    m_portal_end[0] = new TWPortal((n_screens-2) * 36, 430 - PORTAL_HEIGHT, m_x_speed, END);
+    add_child(m_portal_end[0]);
+
+    m_portal_end[1] = new TWPortal((n_screens-2) * 36, 480 - platforms[n_screens-3]->height() - PORTAL_HEIGHT, m_x_speed, END);
+    add_child(m_portal_end[1]);
 
     for(int i = 0; i < n_backgrounds; ++i){
         m_background[i] = resources::get_texture(m_current_level + "/background_" + to_string(i) + ".png");
@@ -242,22 +243,10 @@ void TWPlayableLevel::update_counters(unsigned now){
         m_audio_counter = now - m_audio_start;
     }
 
-    if(m_audio_duration - m_audio_counter <= 2000){
-        m_will->set_x(m_will->x() + (now - m_start) * m_sprite_speed * 100);
-		m_will->set_y(430 - WILL_HEIGHT);
-    }
-    else{
-        m_camera_x += ((now - m_start) * m_x_speed);
-        m_reverse_camera_x -= ((now - m_start) * m_x_speed);
-    }
 
-    //Checking if music has ended
-    if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
-        m_will->set_state(RUNNING);
-        m_done = true;
-    }
+    m_camera_x += ((now - m_start) * m_x_speed);
+    m_reverse_camera_x -= ((now - m_start) * m_x_speed);
 
-    //Reset value of reverse camera for each part of the level
     ////printf("Entrando na treta\n");
     if(m_reverse_camera_x < -PLATFORM_SIZE){
         m_reverse_camera_x += PLATFORM_SIZE;
@@ -266,7 +255,9 @@ void TWPlayableLevel::update_counters(unsigned now){
 
 		if(platforms.size() == NUMBER_OF_SECTIONS){
 			m_x_speed = 0;
-			m_portal_end->set_x_speed(0);
+			m_portal_end[0]->set_x_speed(0);
+            m_portal_end[1]->set_x_speed(0);
+            m_will->set_x_speed(m_sprite_speed * 100);
 		}
 
         platforms[NUMBER_OF_SECTIONS-1]->set_x(852);

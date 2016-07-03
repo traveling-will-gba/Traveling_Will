@@ -43,8 +43,9 @@ int audio_duration) :
     m_portal[2] = new TWPortalToLevel("2", 160, 160);
     m_portal[3] = new TWPortalToLevel("3", 270, 270);
     m_portal[4] = new TWPortalToLevel("4", 380, 380);
+    m_portal[5] = new TWPortalToLevel("5", 0, 100);
 
-    for(int i = 1; i <= 4; ++i){
+    for(int i = 1; i <= 5; ++i){
         add_child(m_portal[i]);
     }
 
@@ -124,19 +125,6 @@ bool TWLimbo::on_event(const GameEvent& event){
 void TWLimbo::update_self(unsigned now, unsigned last){
 
     sprite_counter += (now - m_start) * m_sprite_speed;
-
-    if(m_audio_duration - m_audio_counter <= 2000){
-        m_will->set_x(m_will->x() + (now - m_start) * m_sprite_speed * 100);
-    }
-
-    //Checking if music has ended
-    if(m_audio_duration != -1 && m_audio_counter >= m_audio_duration){
-        m_will->set_state(RUNNING);
-        m_done = true;
-    }
-
-    //Reset value of reverse camera for each part of the level
-    ////printf("Entrando na treta\n");
 
     // Reset sprite counter
     if(sprite_counter > 5.9){
