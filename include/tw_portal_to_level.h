@@ -20,7 +20,7 @@ using namespace ijengine;
 class TWPortalToLevel : public GameObject, public Collidable {
     public:
         TWPortalToLevel();
-        TWPortalToLevel(string current_level, int px, int py, int level_state);
+        TWPortalToLevel(string current_level, int px, int py, int level_state, int level_collectables);
         ~TWPortalToLevel();
         double x();
         double y();
@@ -50,13 +50,13 @@ class TWPortalToLevel : public GameObject, public Collidable {
         double m_x, m_y;
         double m_height, m_width;
         double m_sprite_counter, m_sprite_speed;
-        int m_start;
+        int m_start, m_num_col;
         string m_level;
         Rectangle m_bounding_box;
         list<Rectangle> l;
-        bool m_active;
-        // more sprites later (i.e. disappearing)
-        shared_ptr<Texture> m_texture;
+        bool m_active, m_info;
+        shared_ptr<Texture> m_texture, m_numbers;
+        shared_ptr<Texture> m_col, m_background;
 };
 
 #endif

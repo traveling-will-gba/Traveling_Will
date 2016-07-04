@@ -40,18 +40,22 @@ int audio_duration) :
 	int n_levels = 6;
 	m_save = new TWSave(n_levels);
 
-	pair <int, int> portals_pos[] = { make_pair(0, 0), make_pair(50, 50), make_pair(160, 160), 
-									make_pair(270, 270), make_pair(380, 380), make_pair(0, 100), 
-									make_pair(0, 200)};
+	pair <int, int> portals_pos[] = {   make_pair(0, 0), make_pair(100, 70), make_pair(210, 220),
+                                        make_pair(100, 370), make_pair(500, 70), make_pair(610, 220),
+                                        make_pair(500, 370)};
 
 	int n_unlocked_portals = 0;
 
 	for(int i = 1; i <= n_levels; i++){
-		if(m_save->is_unlocked(i) || 1){
-			m_portal[i] = new TWPortalToLevel(to_string(i), portals_pos[i].first, portals_pos[i].second, 1);
+		if(m_save->is_unlocked(i)){
+			m_portal[i] = new TWPortalToLevel(to_string(i), portals_pos[i].first, portals_pos[i].second, 1, m_save->record_collectables(i));
 
 			n_unlocked_portals++;
 		}
+        else{
+            // colocar imagem de um cadeado na fase
+            // m_portal[i] = new TWPortalToLevel(to_string(i), portals_pos[i].first, portals_pos[i].second, 1);
+        }
 	}
 
     for(int i = 1; i <= n_unlocked_portals; i++){
@@ -158,10 +162,7 @@ void TWLimbo::update_self(unsigned now, unsigned last){
 }  
 
 void TWLimbo::draw_self(Canvas *canvas, unsigned, unsigned){
-    ////printf("Entrando em draw_self\n");
     canvas->clear();
 
     canvas->draw(m_background_texture.get(), Rectangle(0, 0, 852, 480), 0, 0);
-
-    ////printf("Saindo de draw_self\n");
 }
