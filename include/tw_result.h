@@ -3,6 +3,7 @@
 
 #include "tw_level.h"
 #include "tw_button.h"
+#include "tw_save.h"
 
 using std::string;
 using std::shared_ptr;
@@ -32,6 +33,8 @@ class TWResult : public TWLevel{
 		int n_collectables, n_defeated_enemies;
 
 		shared_ptr<Texture> final_texture, numbers;
+
+		TWSave *m_save;
 };
 
 #endif

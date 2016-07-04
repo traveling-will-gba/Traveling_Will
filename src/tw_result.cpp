@@ -21,31 +21,35 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
 	m_state = NOTHING;
 	m_start = -1;
 
+	int n_levels = 6;
+	m_save = new TWSave(n_levels);
+
 	FILE *result = fopen("result.dat", "rb");
-	int v[2];
+	int v[3];
 
 	if(not result){
 		printf("Não foi possível abrir o arquivo result.dat\n");
 		exit(1);
 	}
 
-	fread(&v[0], sizeof(int), 2, result);
+	fread(&v[0], sizeof(int), 3, result);
 
-	n_collectables = v[0];
-	n_defeated_enemies = v[1];
+	n_collectables = v[1];
+	n_defeated_enemies = v[2];
 
 	system("rm result.dat");
 
 	//Isso precisa ser pego do arquivo geral de salvamento
-	double max_col = 500;
-	double percentage_col = (100.0 * v[0])/max_col;
+	int played_level = v[0];
+
+	double max_col = m_save -> max_collectables(played_level);
+	double percentage_col = (100.0 * n_collectables)/max_col;
 
 	if(percentage_col >= MINIMUM_PERCENTAGE){
 		final_texture = resources::get_texture(m_current_level + "/ganhou.png");
 	}else{
 		final_texture = resources::get_texture(m_current_level + "/perdeu.png");
 	}
-
 
 	numbers = resources::get_texture("numbers.png");
 

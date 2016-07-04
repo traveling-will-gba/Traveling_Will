@@ -40,7 +40,6 @@ int audio_duration) :
     add_child(m_will);
 
 	int n_levels = 6;
-
 	m_save = new TWSave(n_levels);
 
 	pair <int, int> portals_pos[] = { make_pair(0, 0), make_pair(50, 50), make_pair(160, 160), 

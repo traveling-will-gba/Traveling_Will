@@ -117,8 +117,6 @@ int audio_duration) :
     event::register_listener(this);
 
     physics::set_collision_mode(physics::Mode::ONE_TO_ALL, m_will);
-
-    //printf("Saindo de construtor\n");
 }
 
 TWPlayableLevel::~TWPlayableLevel(){
@@ -138,7 +136,6 @@ string TWPlayableLevel::audio() const{
 }
 
 bool TWPlayableLevel::on_event(const GameEvent&){
-    ////printf("Pegou evento\n");
 	return false;
 }
 
@@ -150,20 +147,20 @@ void TWPlayableLevel::set_done(bool done){
 		exit(1);
 	}
 
-	int v[2];
+	int v[3];
 	int n_defeated_enemies = 3;
 
-	v[0] = m_will->collectables();
-	v[1] = n_defeated_enemies;
+	v[0] = atoi(m_current_level.c_str());
+	v[1] = m_will->collectables();
+	v[2] = n_defeated_enemies;
 
-	fwrite(&v[0], sizeof(int), 2, result);
+	fwrite(&v[0], sizeof(int), 3, result);
 	fclose(result);
 
 	m_done = done;
 }
 
 void TWPlayableLevel::update_self(unsigned now, unsigned last){
-    ////printf("Entrando em update_self\n");
     if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
@@ -178,13 +175,9 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
     test_floor(now);
 
     m_start = now;
-    ////printf("Saindo de update_self\n");
 }
 
 void TWPlayableLevel::test_floor(unsigned now){
-    ////printf("Entrando em test_floor\n");
-    //Test TWWill colision
-
     //Start jump if TWWill is at the end of a cliff
     if(m_will->y() < m_floor && m_will->state() != JUMPING && m_will->state() != FALLING){
         m_will->set_state(FALLING);
@@ -210,12 +203,9 @@ void TWPlayableLevel::test_floor(unsigned now){
             m_will->set_jump_counter(0);
         }
     }
-
-    ////printf("Saindo de test_floor\n");
 }
 
 void TWPlayableLevel::update_platforms_position(){
-    ////printf("Entrando em update_platforms_position\n");
     int height, current_x;
 
     for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
@@ -227,7 +217,6 @@ void TWPlayableLevel::update_platforms_position(){
         current_x = platforms[i]->x();
         height = platforms[i]->height();
 
-        // ////printf("i:%d, x: %d, m_floor: %.2f, height: %.2f \n", i, current_x, m_floor, 480.0 - height - WILL_HEIGHT);
         if(current_x >= m_will->x() && current_x + 142 <= m_will->x() + WILL_WIDTH){
             m_floor = min(480.0 - height - WILL_HEIGHT, m_floor);
         }
@@ -240,12 +229,9 @@ void TWPlayableLevel::update_platforms_position(){
     if(m_will->y() >= m_floor + 5){
         m_floor = 430 - WILL_HEIGHT;
     }
-
-    ////printf("Saindo de update_platforms_position\n");
 }
 
 void TWPlayableLevel::update_counters(unsigned now){
-    ////printf("Entrando em update_counters\n");
     //Update counters based on time
     sprite_counter += (now - m_start) * m_sprite_speed;
 
@@ -257,7 +243,6 @@ void TWPlayableLevel::update_counters(unsigned now){
     m_camera_x += ((now - m_start) * m_x_speed);
     m_reverse_camera_x -= ((now - m_start) * m_x_speed);
 
-    ////printf("Entrando na treta\n");
     if(m_reverse_camera_x < -PLATFORM_SIZE){
         m_reverse_camera_x += PLATFORM_SIZE;
         destroy_child(platforms[0]);
@@ -274,27 +259,16 @@ void TWPlayableLevel::update_counters(unsigned now){
         platforms[NUMBER_OF_SECTIONS-1]->register_objects(852);
         add_child(platforms[NUMBER_OF_SECTIONS-1]);
     }
-    ////printf("Saindo da treta\n");
 
-    //printf("m_camera_x = %.2f\n", m_camera_x);
-
-    //Reset background camera
-    // if(m_camera_x > 1704){
-    //     m_camera_x -= 1704;
-    // }
-
-    // Reset sprite counter
     if(sprite_counter > 5.9){
         sprite_counter -= 5.9;
     }
 
     m_collectable_status->update_collectable_counter(m_will->collectables());
     m_progress_bar->update_audio_counter(m_audio_counter);
-    ////printf("Saindo de update_counters\n");
 }
 
 void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
-    ////printf("Entrando em draw_self\n");
     canvas->clear();
 
     int divisor = 1 << (n_backgrounds - 1);
@@ -302,6 +276,4 @@ void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
         canvas->draw(m_background[i].get(), Rectangle(fmod(m_camera_x/divisor, 1704), 0, 852, 480), 0, 0);
         divisor /= 2;
     }
-
-    ////printf("Saindo de draw_self\n");
 }

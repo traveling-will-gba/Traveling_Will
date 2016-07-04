@@ -47,6 +47,14 @@ void TWSave::set_record(int level, int n_cols, int n_enemies){
 	m_level_info[level].record_enemies = n_enemies;
 }
 
+int TWSave::max_collectables(int level){
+	return m_level_info[level].max_collectables;	
+}
+
+int TWSave::max_enemies(int level){
+	return m_level_info[level].max_enemies;	
+}
+
 void TWSave::update(){
 	save = fopen("res/save.dat", "wb");
 	fwrite(&m_level_info[1], sizeof(Level_stat), n_levels, save);

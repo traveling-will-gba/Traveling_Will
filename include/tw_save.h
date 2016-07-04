@@ -18,6 +18,9 @@ class TWSave{
 		void set_record(int level, int n_cols, int n_enemies);
 		void update();
 
+		int max_collectables(int level);
+		int max_enemies(int level);
+
 	private:
 		typedef struct _ls{
 			bool unlocked = false;
