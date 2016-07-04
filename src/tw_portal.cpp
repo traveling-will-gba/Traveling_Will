@@ -72,7 +72,7 @@ void TWPortal::update_self(unsigned now, unsigned) {
     }
 
 	m_x -= (now - m_start) * m_x_speed;
-	printf("portal: %.2f\n", m_y);
+	// printf("portal: %.2f\n", m_y);
 
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     l.clear();

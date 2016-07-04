@@ -69,7 +69,6 @@ bool TWWill::on_event(const GameEvent& event){
             if(m_state == RUNNING || ((m_state == JUMPING || m_state == FALLING) && m_jump_counter < 3)){
                 m_y_speed = -0.5;
                 m_jump_counter++;
-                printf("jump counter = %d\n", m_jump_counter);
                 this->set_state(JUMPING);
                 return true;
             }
