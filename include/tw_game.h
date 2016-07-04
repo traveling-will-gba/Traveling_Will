@@ -78,8 +78,11 @@ class TWGame {
 
                 switch(from.key()){
                     case KeyboardEvent::SPACE:
-                        to.set_property<string>("jump", "space");
-                        to.set_id(game_event::GAME_EVENT_JUMP);
+                        if(from.state() == KeyboardEvent::PRESSED){
+                            to.set_property<string>("jump", "space");
+                            to.set_id(game_event::GAME_EVENT_JUMP);
+                        }
+
                         break;
 
                     case KeyboardEvent::C:
