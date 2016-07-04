@@ -22,6 +22,7 @@ TWWill::TWWill(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_collectables = 0;
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     m_active_events = true;
+    m_jump_counter = 0;
 
     m_sprite[RUNNING] = resources::get_texture("will/running.png");
     m_sprite[JUMPING] = resources::get_texture("will/jumping.png");
@@ -48,6 +49,7 @@ void TWWill::set_state(int will_state){ m_state = TWWill::State(will_state); }
 void TWWill::set_y_speed(double will_speed){ m_y_speed = will_speed; }
 void TWWill::set_x_speed(double will_speed){ m_x_speed = will_speed; }
 void TWWill::set_m_active_events(bool ac_events){ m_active_events = ac_events; }
+void TWWill::set_jump_counter(int jc){ m_jump_counter = jc; }
 void TWWill::update_y_speed(double speed_increment){ m_y_speed += speed_increment; }
 int TWWill::state(){ return (int)m_state; }
 double TWWill::x(){ return m_x; }
@@ -64,10 +66,13 @@ bool TWWill::on_event(const GameEvent& event){
         }
 
         if(event.id() == EVENT_JUMP){
-            m_y_speed = -0.4;
-            this->set_state(JUMPING);
-            return true;
-        }   
+            if(m_state == RUNNING || ((m_state == JUMPING || m_state == FALLING) && m_jump_counter < 3)){
+                m_y_speed = -0.5;
+                m_jump_counter++;
+                this->set_state(JUMPING);
+                return true;
+            }
+        }
 
         if(event.id() == EVENT_DOWN_PRESSED && m_state != JUMPING && m_state != FALLING){
             this->set_state(SLIDING);

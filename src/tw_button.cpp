@@ -1,6 +1,7 @@
 #include "tw_button.h"
 #include "tw_menu.h"
 #include "tw_cutscene.h"
+#include "tw_result.h"
 
 #include <ijengine/canvas.h>
 
@@ -45,14 +46,17 @@ bool TWButton::on_event(const GameEvent& event){
                 auto p = this->parent();
 
                 if(m_level == "menu"){
-                    auto parent_class = dynamic_cast<TWMenu *>(p);
-                    parent_class->do_action(m_label);
+                    auto parent_class = dynamic_cast <TWMenu *>(p);
+                    parent_class -> do_action(m_label);
                 }
                 else if(m_level == "cutscene-intro"){
-                    auto parent_class = dynamic_cast<TWCutscene *>(p);
-                    parent_class->do_action(m_label);
+                    auto parent_class = dynamic_cast <TWCutscene *>(p);
+                    parent_class -> do_action(m_label);
                 }
-
+				else if(m_level == "result"){
+					auto parent_class = dynamic_cast <TWResult *>(p);
+					parent_class -> do_action(m_label);
+				}
 
                 m_click_state = NOT_CLICKING;
                 return true;
@@ -70,7 +74,7 @@ bool TWButton::on_event(const GameEvent& event){
         int min_y = m_y, max_y = m_y + m_h;
 
         if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
-            auto it = m_texture_label.find("on");
+            auto it = m_texture_label.find("-on");
 
             if(it == string::npos){
                 it = m_texture_label.find(".png");
