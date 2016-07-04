@@ -4,6 +4,7 @@
 #include "tw_level.h"
 #include "tw_will.h"
 #include "tw_portal_to_level.h"
+#include "tw_save.h"
 
 using std::string;
 using std::shared_ptr;
@@ -54,15 +55,6 @@ class TWLimbo : public TWLevel{
         static const int ENEMY =                        1; 
         static const int PLATFORM_SIZE =                36;
 
-		typedef struct _ls{
-			bool unlocked = false;
-			bool cleared = false;
-			int max_collectables = 0;
-			int max_enemies = 0;
-			int record_collectables = 0;
-			int record_enemies = 0;
-		}Level_stat;
-        
         int m_audio_duration, m_audio_counter;
         
         double m_x_speed, m_y_speed;
@@ -72,8 +64,9 @@ class TWLimbo : public TWLevel{
 
         bool on_portal;
 
-        TWWill * m_will;
-        TWPortalToLevel * m_portal[10];
+        TWWill *m_will;
+        TWPortalToLevel *m_portal[10];
+		TWSave *m_save;
 
         shared_ptr<Texture> m_background_texture;
 };
