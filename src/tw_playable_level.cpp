@@ -26,7 +26,7 @@ int audio_duration) :
     m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
     m_cur_collectable(nullptr), m_cur_enemy(nullptr){
 
-    printf("Entrando em construtor\n");
+    // printf("Entrando em construtor\n");
 
 	m_current_level = current_level;
 	m_audio = audio_path;
@@ -79,9 +79,27 @@ int audio_duration) :
             level_design >> ch;
         }
 
-        auto p = new TWPlatform(m_current_level, ph, et, eh, e_present, ch, c_present);
+        auto p = new TWPlatform(m_current_level, ph, et, eh, e_present, ch, c_present, 0);
         platforms.push_back(p);
 
+    }
+
+    // sets correct sprite of platform
+    int tam = platforms.size();
+    for(int i = 0; i < (tam-1); i++){
+        if(i == 0) continue;
+
+        auto cur_plat = platforms[i];
+        auto prev_plat = platforms[i-1];
+        auto next_plat = platforms[i+1];
+
+        auto cur_h = cur_plat->height();
+        auto prev_h = prev_plat->height();
+        auto next_h = next_plat->height();
+
+        if(prev_h != cur_h && cur_h != next_h) cur_plat->set_texture(1);
+        if(prev_h != cur_h && cur_h == next_h) cur_plat->set_texture(2);
+        if(prev_h == cur_h && cur_h != next_h) cur_plat->set_texture(3);
     }
 
     m_portal_start = new TWPortal(53, 355, m_x_speed, START);

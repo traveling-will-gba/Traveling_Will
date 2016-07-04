@@ -5,8 +5,6 @@
 Level * TWLevelFactory::make_level(const string& level_id){
     if(level_id == "menu")
         return new TWMenu("menu", "limbo", "res/menu/menu.mp3", -1);
-    if(level_id == "menu")
-        return new TWMenu("menu", "cutscene-intro", "res/menu/menu.mp3", -1);
     else if(level_id == "cutscene-intro")
         return new TWCutscene("cutscene-intro", "1", "res/cutscene-intro/cutscene-intro.mp3", 28000);
     else if(level_id == "1")
@@ -24,7 +22,7 @@ Level * TWLevelFactory::make_level(const string& level_id){
     else if(level_id == "6")
         return new TWPlayableLevel("6", "cutscene-end", "res/6/music.wav", 147000);
     else if(level_id == "limbo")
-        return new TWLimbo("limbo", "", "res/1/music.wav", -1); //FIXME
+        return new TWLimbo("limbo", "", "res/1/music.wav", -1);
     else
         return nullptr;
 }
