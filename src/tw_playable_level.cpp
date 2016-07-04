@@ -199,6 +199,7 @@ void TWPlayableLevel::test_floor(unsigned now){
             m_will->set_y(m_floor);
             m_will->set_y_speed(0);
             m_will->set_state(RUNNING);
+            m_will->set_jump_counter(0);
         }
     }
 
