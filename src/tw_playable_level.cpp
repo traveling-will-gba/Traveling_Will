@@ -84,7 +84,7 @@ int audio_duration) :
 
     }
 
-        m_portal_start = new TWPortal(53, 355, m_x_speed, START);
+    m_portal_start = new TWPortal(53, 355, m_x_speed, START);
     add_child(m_portal_start);
 
     m_portal_end[0] = new TWPortal((n_screens-2) * 36, 430 - PORTAL_HEIGHT, m_x_speed, END);
@@ -143,6 +143,22 @@ bool TWPlayableLevel::on_event(const GameEvent&){
 }
 
 void TWPlayableLevel::set_done(bool done){
+	FILE *result = fopen("result.dat", "wb");
+
+	if (not result){
+		printf("Não foi possível abrir o arquivo result.dat\n");
+		exit(1);
+	}
+
+	int v[2];
+	int n_defeated_enemies = 3;
+
+	v[0] = m_will->collectables();
+	v[1] = n_defeated_enemies;
+
+	fwrite(&v[0], sizeof(int), 2, result);
+	fclose(result);
+
 	m_done = done;
 }
 
@@ -152,14 +168,6 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
         m_start = now;
         m_audio_start = m_start;
     }
-
-//	double percentage_level = (m_audio_counter * 100.0) / m_audio_duration;
-//	if(percentage_level >= 80 && not portal_able){
-/*		m_portal = new TWPortal(30000, 100);
-		add_child(m_portal);
-
-		portal_able = true;*/
-//	}
 
     update_counters(now);
 

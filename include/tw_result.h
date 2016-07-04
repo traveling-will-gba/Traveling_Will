@@ -18,6 +18,8 @@ class TWResult : public TWLevel{
 		string next() const;
 		string audio() const;
 
+		void do_action(string label);
+
 		bool on_event(const GameEvent& event);
 
 	protected:

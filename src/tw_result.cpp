@@ -110,3 +110,10 @@ void TWResult::draw_self(Canvas *canvas, unsigned, unsigned){
 	}while(counter_enemies);
 
 }
+
+void TWResult::do_action(string label){
+	if(label == "limbo"){
+		m_next = "limbo";
+		m_done = true;
+	}
+}
