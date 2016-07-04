@@ -50,8 +50,8 @@ int audio_duration) :
 	int n_unlocked_portals = 0;
 
 	for(int i = 1; i <= n_levels; i++){
-		if(m_save->is_unlocked(i)){
-			m_portal[i] = new TWPortalToLevel(to_string(i), portals_pos[i].first, portals_pos[i].second);
+		if(m_save->is_unlocked(i) || 1){
+			m_portal[i] = new TWPortalToLevel(to_string(i), portals_pos[i].first, portals_pos[i].second, 1);
 
 			n_unlocked_portals++;
 		}

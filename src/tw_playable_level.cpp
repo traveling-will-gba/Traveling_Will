@@ -20,8 +20,7 @@ int audio_duration) :
 	m_is_punching(false), level_started(false), level_finished(false),
     m_audio_duration(audio_duration), m_audio_counter(0),
     m_punch_counter(0), n_collectables(0), n_enemies(0),
-    m_cur_collectable_it(INVALID), m_cur_enemy_it(INVALID),
-    m_x_speed(5/19.0), m_y_speed(0),
+    m_cur_collectable_it(INVALID), m_cur_enemy_it(INVALID), m_y_speed(0),
     sprite_counter(0), m_sprite_speed(1/170.0),
     m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
     m_cur_collectable(nullptr), m_cur_enemy(nullptr){
@@ -54,12 +53,11 @@ int audio_duration) :
 		exit(0);
 	}
 
-	m_x_speed = 0.24;
 	int tempo;
 
 	level_design >> tempo;
 
-	m_x_speed = tempo * 4 * 36 / 60000.0;
+	m_x_speed = tempo * 8 * 36 / 60000.0;
 
     level_design >> n_screens >> n_backgrounds;
 
@@ -214,7 +212,7 @@ void TWPlayableLevel::update_platforms_position(){
     }
 
 
-    for(int i = 0; i < 20; ++i){
+    for(int i = 0; i < NUMBER_OF_SECTIONS; ++i){
         current_x = platforms[i]->x();
         height = platforms[i]->height();
 

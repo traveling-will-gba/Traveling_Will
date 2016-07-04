@@ -20,7 +20,7 @@ using namespace ijengine;
 class TWPortalToLevel : public GameObject, public Collidable {
     public:
         TWPortalToLevel();
-        TWPortalToLevel(string current_level, int px, int py);
+        TWPortalToLevel(string current_level, int px, int py, int level_state);
         ~TWPortalToLevel();
         double x();
         double y();
@@ -46,6 +46,7 @@ class TWPortalToLevel : public GameObject, public Collidable {
 
     private:
         static const int INVALID = -10000000;
+
         double m_x, m_y;
         double m_height, m_width;
         double m_sprite_counter, m_sprite_speed;

@@ -14,7 +14,7 @@ typedef struct _Note
 
 #define Y_BLOCK 20
 #define X_BLOCK 142
-#define SCALE_SHIFT (12 * Y_BLOCK)
+#define SCALE_SHIFT (4 * Y_BLOCK)
 
 const list< set<string> > scale { 
     { "c", "bis" },  // pos = 0
@@ -99,7 +99,7 @@ int pitch(const Note& n)
     int h = pos * Y_BLOCK - SCALE_SHIFT;
 
     for (auto p : n.modifier)
-        if (p == '\'')
+        if (p == '\'' || p == ',')
             h += SCALE_SHIFT;
 
     return h;
@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
     printf("Score = %s\n", argv[1]);
     printf("Tempo = %d\n", time);
 
-	int n_blocks = 300, n_background = 3;
+	int n_blocks = 3000, n_background = 3;
 
 	fprintf(output, "%d\n", time);
 	fprintf(output, "%d %d\n", n_blocks, n_background);
@@ -237,18 +237,18 @@ int main(int argc, char *argv[])
 
     printf("count = %lu, frames = %u\n", notes.size(), frames(notes, compass.second));
 
-	int offset = 23;
+	// int offset = 0;
 
-	int counter = offset;
+	int counter = 0;
 
-	while(offset--){
-		fprintf(output, "50 0 0\n");
-	}
+	// while(offset--){
+	// 	fprintf(output, "50 0 0\n");
+	// }
 
 	for (auto note : notes)
     {
 		int h = pitch(note);
-		int d = (compass.second * 4) / note.duration;
+		int d = (compass.second * 8) / note.duration;
 
 		counter+=d;
 
@@ -259,17 +259,19 @@ int main(int argc, char *argv[])
 				fprintf(output, "50 0 0\n");
 			}
 		}else{
+            if(d-- > 1){
+                fprintf(output, "%d 0 0\n", h-40);
+            }
 			fprintf(output, "%d 0 1 %d\n", h-40, h);
 			while(--d){
-				fprintf(output, "%d 0 0s\n", h-40);
+				fprintf(output, "%d 0 0\n", h-40);
 			}
 		}
     }
 
 
-	int left = n_blocks - counter;
-
-	while(--left){
+    int left = 10;
+	while(left--){
 		fprintf(output, "50 0 0\n");
 	}
 
