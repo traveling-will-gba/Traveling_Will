@@ -28,7 +28,7 @@ class TWResult : public TWLevel{
 		void draw_self(Canvas *canvas, unsigned, unsigned last);
 
 	private:
-		double MINIMUM_PERCENTAGE = 1.0;
+		double MINIMUM_PERCENTAGE = 75.0;
 
 		int n_collectables, n_defeated_enemies;
 

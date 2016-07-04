@@ -39,17 +39,26 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
 
 	system("rm result.dat");
 
-	//Isso precisa ser pego do arquivo geral de salvamento
 	int played_level = v[0];
-
 	double max_col = m_save -> max_collectables(played_level);
 	double percentage_col = (100.0 * n_collectables)/max_col;
 
 	if(percentage_col >= MINIMUM_PERCENTAGE){
 		final_texture = resources::get_texture(m_current_level + "/ganhou.png");
+
+		m_save -> set_cleared(played_level);
+		m_save -> set_unlocked(played_level + 1);
 	}else{
 		final_texture = resources::get_texture(m_current_level + "/perdeu.png");
 	}
+
+	if( (n_collectables > m_save -> record_collectables(played_level)) || 
+		(n_collectables == m_save -> record_collectables(played_level) 
+		&& n_defeated_enemies > m_save -> record_enemies(played_level))	){
+		m_save -> set_record(played_level, n_collectables, n_defeated_enemies);
+	}
+
+	m_save -> update();
 
 	numbers = resources::get_texture("numbers.png");
 

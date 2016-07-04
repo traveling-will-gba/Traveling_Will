@@ -20,8 +20,6 @@ TWLimbo::TWLimbo(const string &current_level, const string& next_level, const st
 int audio_duration) : 
     m_audio_duration(audio_duration), m_audio_counter(0), sprite_counter(0), m_sprite_speed(1/170.0){
 
-    ////printf("Entrando em construtor\n");
-
     m_current_level = current_level;
     m_audio = audio_path;
     m_next = next_level;

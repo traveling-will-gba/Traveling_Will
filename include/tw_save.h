@@ -20,6 +20,8 @@ class TWSave{
 
 		int max_collectables(int level);
 		int max_enemies(int level);
+		int record_collectables(int level);
+		int record_enemies(int level);
 
 	private:
 		typedef struct _ls{
