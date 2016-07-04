@@ -74,7 +74,7 @@ bool TWButton::on_event(const GameEvent& event){
         int min_y = m_y, max_y = m_y + m_h;
 
         if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
-            auto it = m_texture_label.find("on");
+            auto it = m_texture_label.find("-on");
 
             if(it == string::npos){
                 it = m_texture_label.find(".png");

@@ -21,8 +21,6 @@ class TWMenu : public TWLevel {
 
 		bool on_event(const GameEvent& event);
 
-		void replace_texture_in_button(string label, string texture);
-
 	protected:
 		void update_self(unsigned, unsigned last);
 		void draw_self(Canvas *canvas, unsigned, unsigned last);
