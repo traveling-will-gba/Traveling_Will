@@ -12,9 +12,9 @@ typedef struct _Note
     int duration;
 } Note;
 
-#define Y_BLOCK 20
+#define Y_BLOCK 10
 #define X_BLOCK 142
-#define SCALE_SHIFT (4 * Y_BLOCK)
+#define SCALE_SHIFT (12 * Y_BLOCK)
 
 const list< set<string> > scale { 
     { "c", "bis" },  // pos = 0
@@ -242,13 +242,13 @@ int main(int argc, char *argv[])
 	int counter = 0;
 
 	// while(offset--){
-	// 	fprintf(output, "50 0 0\n");
+	fprintf(output, "50 0 0\n");
 	// }
 
 	for (auto note : notes)
     {
 		int h = pitch(note);
-		int d = (compass.second * 8) / note.duration;
+		int d = (compass.second * 4) / note.duration;
 
 		counter+=d;
 
@@ -259,9 +259,6 @@ int main(int argc, char *argv[])
 				fprintf(output, "50 0 0\n");
 			}
 		}else{
-            if(d-- > 1){
-                fprintf(output, "%d 0 0\n", h-40);
-            }
 			fprintf(output, "%d 0 1 %d\n", h-40, h);
 			while(--d){
 				fprintf(output, "%d 0 0\n", h-40);
@@ -270,7 +267,7 @@ int main(int argc, char *argv[])
     }
 
 
-    int left = 10;
+    int left = 25;
 	while(left--){
 		fprintf(output, "50 0 0\n");
 	}

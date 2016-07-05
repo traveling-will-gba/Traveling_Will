@@ -3,9 +3,9 @@
 using namespace std;
 
 int main(){
-    int a, b, c, antA = -100, d = 0;
+    int a, b, c, d = 0;
     int v[1000][4];
-    int nA, nB, nC, count = 0, tot;
+    int count = 0, tot;
 
     cin >> a >> tot >> c;
     printf("%d\n%d %d\n", a, tot, c);

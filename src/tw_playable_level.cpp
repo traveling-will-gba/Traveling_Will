@@ -57,7 +57,7 @@ int audio_duration) :
 
 	level_design >> tempo;
 
-	m_x_speed = tempo * 8 * 36 / 60000.0;
+	m_x_speed = tempo * 4 * 36 / 60000.0;
 
     level_design >> n_screens >> n_backgrounds;
 
