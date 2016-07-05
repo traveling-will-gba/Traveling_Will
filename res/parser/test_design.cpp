@@ -4,7 +4,7 @@ using namespace std;
 
 int main(){
     fstream level_design("level_design.txt");
-    int alturas[100000], coletaveis[10000], valo[2][10000], inimigos[2][10000], high = 0, low = 100000, stand = 380;
+    int alturas[100000], coletaveis[10000], valo[2][10000], inimigos[2][10000], high = 0, low = 100000, stand = 300;
 
     if(not level_design.is_open()){
         printf("Level design txt not available\n");
@@ -40,8 +40,8 @@ int main(){
 
     int new_high = 0, new_low = 100000;
     for(int j = 0; j < i; ++j){
-        alturas[j] = 380*((alturas[j]-low)/range) + 50;
-        coletaveis[j] = 380*((coletaveis[j]-low)/range) + 50;
+        alturas[j] = 300*((alturas[j]-low)/range) + 50;
+        coletaveis[j] = 300*((coletaveis[j]-low)/range) + 50;
         new_high = max(new_high, alturas[j]);
         new_low = min(new_low, alturas[j]);
     }
