@@ -4,7 +4,7 @@ using namespace std;
 
 int main(){
     int a, b, c, d = 0;
-    int v[1000][4];
+    int v[100000][4];
     int count = 0, tot;
 
     cin >> a >> tot >> c;

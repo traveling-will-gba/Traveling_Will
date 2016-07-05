@@ -125,7 +125,7 @@ int audio_duration) :
     //Sets initial will height based on level design
     m_floor = 480 - platforms[0]->height() - WILL_HEIGHT;
 
-    m_will = new TWWill(53, 480 - platforms[0]->height() - WILL_HEIGHT);
+    m_will = new TWWill(53, 430 - WILL_HEIGHT);
     add_child(m_will);
 
     m_start = -1;

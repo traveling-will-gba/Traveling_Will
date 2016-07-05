@@ -98,9 +98,12 @@ int pitch(const Note& n)
 
     int h = pos * Y_BLOCK - SCALE_SHIFT;
 
-    for (auto p : n.modifier)
-        if (p == '\'' || p == ',')
+    for (auto p : n.modifier){
+        if (p == '\'')
             h += SCALE_SHIFT;
+	    else if (p == ',')
+            h += SCALE_SHIFT;
+	}
 
     return h;
 }
@@ -254,7 +257,7 @@ int main(int argc, char *argv[])
 
 //		printf("%d\n", d);
 
-		if(h < 0){
+		if(h <= 0){
 			while(d--){
 				fprintf(output, "50 0 0\n");
 			}

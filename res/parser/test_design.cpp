@@ -41,7 +41,7 @@ int main(){
     int new_high = 0, new_low = 100000;
     for(int j = 0; j < i; ++j){
         alturas[j] = 380*((alturas[j]-low)/range) + 50;
-        coletaveis[j] = alturas[j] + 40;
+        coletaveis[j] = 380*((coletaveis[j]-low)/range) + 50;
         new_high = max(new_high, alturas[j]);
         new_low = min(new_low, alturas[j]);
     }
