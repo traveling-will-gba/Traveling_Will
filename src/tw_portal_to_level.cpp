@@ -6,7 +6,7 @@ TWPortalToLevel::TWPortalToLevel(){
 
 }
 
-TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int level_state){
+TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int level_state, int level_collectables){
     m_sprite_speed = 1/270.0; //FIXME
     m_sprite_counter = 0;
     m_start = -1;
@@ -15,9 +15,14 @@ TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int level
     m_width = 40;
     m_y = py;
     m_x = px;
+    m_num_col = level_collectables;
     m_texture = resources::get_texture("limbo/portal.png");
-    
+    m_numbers = resources::get_texture("numbers.png");
+    m_col = resources::get_texture(current_level + "/collectable.png");
+    m_background = resources::get_texture("limbo/m_background.png");
+
     m_active = true;
+    m_info = false;
     this->set_priority(4);
     
     m_level = current_level;
@@ -28,9 +33,7 @@ TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int level
 }
 
 TWPortalToLevel::~TWPortalToLevel(){
-    //printf("Vamos destruir collectable\n");
     physics::unregister_object(this);
-    //printf("Destruiu de boa\n");
 }
 
 double TWPortalToLevel::x(){ return m_x; }
@@ -65,11 +68,14 @@ void TWPortalToLevel::on_collision(const Collidable *, const Rectangle&, const u
     // m_active = false;
 
     if(auto p = dynamic_cast<TWLimbo *>(this->parent())){
+        m_info = true;
         p->set_next(m_level);
     }
 }
 
 void TWPortalToLevel::update_self(unsigned now, unsigned) {
+    m_info = false;
+
     if(m_start == -1){
         m_start = now;
     }
@@ -86,8 +92,31 @@ void TWPortalToLevel::update_self(unsigned now, unsigned) {
     m_start = now;
 }
 void TWPortalToLevel::draw_self(Canvas* canvas, unsigned, unsigned) {
-    ////printf("Entrando no draw de collectable\n");
-    if(m_active) canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
-    ////printf("Saindo do draw de collectable\n");
+    if(m_info){
+        canvas->draw(m_background.get(), m_x - 30, m_y - 40);
+        canvas->draw(m_col.get(), Rectangle(0, 0, 30, 30), m_x + 70, m_y + 30);
+
+        int x_digit_col = m_x;
+        int counter_col = m_num_col;
+
+        do{
+            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col + 140, m_y + 30);
+            counter_col /= 10;
+            x_digit_col -= 25;
+        }while(counter_col);
+
+        int x_digit_level = m_x;
+        int counter_level = atoi(m_level.c_str());
+
+        do{
+            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_level % 10), 0, 23, 36), x_digit_level + 70, m_y - 30);
+            counter_level /= 10;
+            x_digit_level -= 25;
+        }while(counter_level);
+    }
+
+    if(m_active){
+        canvas->draw(m_texture.get(), Rectangle(0, 0, m_width, m_height), m_x, m_y);
+    }
 }
 
