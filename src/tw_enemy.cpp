@@ -32,7 +32,7 @@ double TWEnemy::x(){ return m_x; }
 double TWEnemy::y(){ return m_y; }
 double TWEnemy::height(){ return m_height; }
 double TWEnemy::width(){ return m_width; }
-int TWEnemy::type(){ return m_type; }
+int TWEnemy::type() const{ return m_type; }
 shared_ptr<Texture> TWEnemy::texture(){ return m_texture; }
 
 void TWEnemy::set_x(double ex){ m_x = ex; }
@@ -48,7 +48,7 @@ void TWEnemy::register_self(int current_x){
 }
 
 bool TWEnemy::active() const{
-    return true;
+    return m_active;
 }
 
 pair<double, double> TWEnemy::direction() const{

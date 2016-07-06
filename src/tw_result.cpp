@@ -29,45 +29,56 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
     m_save = new TWSave(n_levels);
 
     FILE *result = fopen("result.dat", "rb");
-    int v[3];
+    int v[4];
 
     if(not result){
         printf("Não foi possível abrir o arquivo result.dat\n");
         exit(1);
     }
 
-    fread(&v[0], sizeof(int), 3, result);
+    fread(&v[0], sizeof(int), 4, result);
 
+    int played_level = v[0];
     n_collectables = v[1];
     n_defeated_enemies = v[2];
+    m_game_over = v[3];
 
     system("rm result.dat");
 
-    int played_level = v[0];
     double max_col = m_save -> max_collectables(played_level);
     double percentage_col = (100.0 * n_collectables)/max_col;
 
-    m_background = resources::get_texture(current_level + "/background.png");
-    m_collectable = resources::get_texture(current_level + "/collectables.png");
-    m_enemy = resources::get_texture(current_level + "/enemies.png");
 
-    if(percentage_col >= MINIMUM_PERCENTAGE){
-        m_win = true;
-        m_result = resources::get_texture(current_level + "/win.png");
-        m_will_sprite = resources::get_texture(current_level + "/will-win.png");
+    if(m_game_over){
+        m_background = resources::get_texture(current_level + "/background-game-over.png");
 
-        m_save -> set_cleared(played_level);
-        m_save -> set_unlocked(played_level + 1);
-    }else{
         m_win = false;
-        m_result = resources::get_texture(current_level + "/lose.png");
+        m_result = resources::get_texture(current_level + "/game-over.png");
         m_will_sprite = resources::get_texture(current_level + "/will-lose.png");
     }
+    else{
+        m_background = resources::get_texture(current_level + "/background.png");
+        m_collectable = resources::get_texture(current_level + "/collectables.png");
+        m_enemy = resources::get_texture(current_level + "/enemies.png");
 
-    if( (n_collectables > m_save -> record_collectables(played_level)) ||
-        (n_collectables == m_save -> record_collectables(played_level)
-        && n_defeated_enemies > m_save -> record_enemies(played_level)) ){
-        m_save -> set_record(played_level, n_collectables, n_defeated_enemies);
+        if(percentage_col >= MINIMUM_PERCENTAGE){
+            m_win = true;
+            m_result = resources::get_texture(current_level + "/win.png");
+            m_will_sprite = resources::get_texture(current_level + "/will-win.png");
+
+            m_save -> set_cleared(played_level);
+            m_save -> set_unlocked(played_level + 1);
+        }else{
+            m_win = false;
+            m_result = resources::get_texture(current_level + "/lose.png");
+            m_will_sprite = resources::get_texture(current_level + "/will-lose.png");
+        }
+
+        if( (n_collectables > m_save -> record_collectables(played_level)) ||
+            (n_collectables == m_save -> record_collectables(played_level)
+            && n_defeated_enemies > m_save -> record_enemies(played_level)) ){
+            m_save -> set_record(played_level, n_collectables, n_defeated_enemies);
+        }
     }
 
     m_save -> update();
@@ -75,6 +86,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
     numbers = resources::get_texture("numbers.png");
 
     m_buttons.push_back(new TWButton("limbo", m_current_level, 700, 410, "limbo-botao.png", 142, 50));
+    m_buttons.push_back(new TWButton("restart", m_current_level, 200, 410, "restart-botao.png", 142, 50));
 
     for(auto btn : m_buttons){
         add_child(btn);
@@ -125,39 +137,50 @@ void TWResult::draw_self(Canvas *canvas, unsigned, unsigned){
     canvas->clear();
 
     canvas->draw(m_background.get(), 0, 0);
-    canvas->draw(m_collectable.get(), 200, 50);
-    canvas->draw(m_enemy.get(), 200, 100);
     canvas->draw(m_result.get(), 200, 200);
 
-    if(not m_win)
+    if(not m_game_over){
+        canvas->draw(m_collectable.get(), 200, 50);
+        canvas->draw(m_enemy.get(), 200, 100);
+    }
+
+    if(not m_win && not m_game_over)
         canvas->draw(m_will_sprite.get(), Rectangle(45 * (int)m_sprite_counter, 0, 45, 45), 75, 75);
-    else
+    else if(not m_win && m_game_over)
+        canvas->draw(m_will_sprite.get(), Rectangle(45 * (int)m_sprite_counter, 0, 45, 45), 400, 75);
+    else if(m_win)
         canvas->draw(m_will_sprite.get(), 75, 75);
 
     int x_digit_col = 700;
     int counter_col = n_collectables;
 
-    do{
-        canvas->draw(numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col, 50);
-        counter_col /= 10;
-        x_digit_col -= 25;
-    }while(counter_col);
+    if(not m_game_over){
+        do{
+            canvas->draw(numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col, 50);
+            counter_col /= 10;
+            x_digit_col -= 25;
+        }while(counter_col);
 
 
-    int x_digit_enemie = 700;
-    int counter_enemies = n_defeated_enemies;
+        int x_digit_enemie = 700;
+        int counter_enemies = n_defeated_enemies;
 
-    do{
-        canvas->draw(numbers.get(), Rectangle(23 * (counter_enemies % 10), 0, 23, 36), x_digit_enemie, 100);
-        counter_enemies /= 10;
-        x_digit_enemie -= 25;
-    }while(counter_enemies);
-
+        do{
+            canvas->draw(numbers.get(), Rectangle(23 * (counter_enemies % 10), 0, 23, 36), x_digit_enemie, 100);
+            counter_enemies /= 10;
+            x_digit_enemie -= 25;
+        }while(counter_enemies);
+    }
 }
 
 void TWResult::do_action(string label){
     if(label == "limbo"){
         m_next = "limbo";
+        m_done = true;
+    }
+
+    if(label == "restart"){
+        m_next = to_string(m_prev_level + 1);
         m_done = true;
     }
 }

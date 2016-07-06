@@ -1,5 +1,7 @@
 #include "tw_will.h"
+#include "tw_enemy.h"
 #include "tw_collectable.h"
+#include "tw_playable_level.h"
 
 static const int WILL_HEIGHT =              45;
 static const int WILL_WIDTH =               45;
@@ -19,7 +21,7 @@ TWWill::TWWill(double will_x, double will_y, int initial_state) : m_x(will_x), m
     m_start = -1;
     m_is_punching = false;
     m_punch_counter = 0;
-    m_collectables = 0;
+    m_collectables = m_enemies = 0;
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     m_active_events = true;
     m_jump_counter = 0;
@@ -58,6 +60,7 @@ double TWWill::y(){ return m_y; }
 double TWWill::speed(){ return m_y_speed; }
 double TWWill::x_speed(){ return m_x_speed; }
 int TWWill::collectables(){ return m_collectables; }
+int TWWill::enemies(){ return m_enemies; }
 
 bool TWWill::on_event(const GameEvent& event){
     if(m_state != GAME_OVER && m_active_events){
@@ -111,10 +114,21 @@ void TWWill::on_collision(const Collidable *who, const Rectangle&, const unsigne
     //printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
 
     if(dynamic_cast<const TWCollectable *>(who)){
-         m_collectables++;
-     } //else if(auto q = dynamic_cast<const TWEnemy *>(who)){
-    //     q->set_active(false);
-    // }
+        m_collectables++;
+    } 
+    else if(auto q = dynamic_cast<const TWEnemy *>(who)){
+        if(q->type() == 1){
+            auto p = dynamic_cast<TWPlayableLevel *>(this->parent());
+            p->set_done(true, true);
+        }
+        else{
+            if(m_is_punching) m_enemies++;
+            else{
+                auto p = dynamic_cast<TWPlayableLevel *>(this->parent());
+                p->set_done(true, true);
+            }
+        }
+    }
 }
 
 void TWWill::update_self(unsigned now, unsigned){

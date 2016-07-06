@@ -32,8 +32,8 @@ class TWResult : public TWLevel{
         double MINIMUM_PERCENTAGE = 75.0;
         double m_sprite_counter, m_sprite_speed;
 
-        int n_collectables, n_defeated_enemies, m_start;
-        bool m_win;
+        int n_collectables, n_defeated_enemies, m_start, m_prev_level;
+        bool m_win, m_game_over;
 
         shared_ptr<Texture> numbers;
         shared_ptr<Texture> m_background, m_collectable;

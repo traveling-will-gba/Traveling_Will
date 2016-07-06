@@ -157,7 +157,7 @@ bool TWPlayableLevel::on_event(const GameEvent&){
 	return false;
 }
 
-void TWPlayableLevel::set_done(bool done){
+void TWPlayableLevel::set_done(bool done, bool game_over){
 	FILE *result = fopen("result.dat", "wb");
 
 	if (not result){
@@ -165,14 +165,15 @@ void TWPlayableLevel::set_done(bool done){
 		exit(1);
 	}
 
-	int v[3];
-	int n_defeated_enemies = 3;
+	int v[5];
 
 	v[0] = atoi(m_current_level.c_str());
 	v[1] = m_will->collectables();
-	v[2] = n_defeated_enemies;
+	v[2] = m_will->enemies();
+    v[3] = game_over;
+    v[4] = atoi(m_current_level.c_str());
 
-	fwrite(&v[0], sizeof(int), 3, result);
+	fwrite(&v[0], sizeof(int), 5, result);
 	fclose(result);
 
 	m_done = done;
