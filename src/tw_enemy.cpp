@@ -6,7 +6,7 @@ TWEnemy::TWEnemy(){
 }
 
 TWEnemy::TWEnemy(double et, double eh){
-    m_sprite_speed = 1/170.0;
+    m_sprite_speed = 1/85.0;
     m_sprite_counter = 0;
     m_start = -1;
 
