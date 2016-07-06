@@ -1,5 +1,5 @@
 \tempo 100
-\time 6/4 
+\time 6/4
 \relative c
 \key bes
   r4 ees'' d ees d8 c bes c 

@@ -4,18 +4,23 @@ parser:
 smoother:
 	g++ -o smoother -W -Wall -ansi -pedantic smoother.cpp -std=c++11
 
-test_design:
-	g++ -o test_design -W -Wall -ansi -pedantic test_design.cpp -std=c++11
-
+normalizer:
+	g++ -o normalizer -W -Wall -ansi -pedantic normalizer.cpp -std=c++11
 
 generate:
 	rm parser -f
 	make parser
-	./parser $(a) $(a).txt
-	cp $(a).txt level_design.txt
-	rm test_design -f
-	make test_design
-	./test_design > $(a)_normalized.txt
+	./parser $(lilypond) $(lilypond).txt
+	cp $(lilypond).txt level_design.txt
+	rm normalizer -f
+	make normalizer
+	./normalizer > $(lilypond)_normalized.txt
 	rm smoother -f
 	make smoother
-	./smoother < $(a)_normalized.txt > $(a)_final.txt
+	./smoother < $(lilypond)_normalized.txt > level_design.txt
+	rm $(lilypond).txt $(lilypond)_normalized.txt 
+
+clean:
+	rm parser -f
+	rm normalizer -f
+	rm smoother -f

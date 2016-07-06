@@ -5,8 +5,7 @@
 
 using namespace std;
 
-typedef struct _Note
-{
+typedef struct _Note{
     string base;
     string modifier;
     int duration;
@@ -31,15 +30,12 @@ const list< set<string> > scale {
     { "b", "ces" } // pos = 11
 };
 
-Note parse_note(const char *s)
-{
+Note parse_note(const char *s){
     char base[128], modifier[128];
     int duration = 0, idx_base = 0, idx_mod = 0;
 
-    for (auto p = s; *p; ++p)
-    {
-        if (isdigit(*p))
-        {
+    for (auto p = s; *p; ++p){
+        if (isdigit(*p)){
             duration *= 10;
             duration += (*p - '0');
         } else if (isalpha(*p))
@@ -56,8 +52,7 @@ Note parse_note(const char *s)
     return n;
 }
 
-int extract_tempo(FILE *score)
-{
+int extract_tempo(FILE *score){
     int tempo = 0;
 
     fscanf(score, " \\tempo %d ", &tempo);
@@ -65,8 +60,7 @@ int extract_tempo(FILE *score)
     return tempo;
 }
 
-pair<int, int> extract_compass(FILE *score)
-{
+pair<int, int> extract_compass(FILE *score){
     pair<int, int> compass;
 
     fscanf(score, " \\time %d/%d ", &compass.first, &compass.second);
@@ -74,17 +68,12 @@ pair<int, int> extract_compass(FILE *score)
     return compass;
 }
 
-int find_note(const string& n)
-{
+int find_note(const string& n){
     int index = 0;
-    static int ct = 0;
 
-    for (auto s : scale)
-    {
-        if (s.count(n)){
-            printf("ct: %d (%s)\n", ++ct, n.c_str());
+    for (auto s : scale){
+        if (s.count(n))
             return index;
-        }
 
         ++index;
     }
@@ -92,8 +81,7 @@ int find_note(const string& n)
     return -1;
 }
 
-int pitch(const Note& n)
-{
+int pitch(const Note& n){
     int pos = find_note(n.base);
 
     if (pos == -1)
@@ -111,8 +99,7 @@ int pitch(const Note& n)
     return h;
 }
 
-Note extract_relative(FILE *score)
-{
+Note extract_relative(FILE *score){
     char info[16];
 
     fscanf(score, " \\relative %s ", info);
@@ -122,8 +109,7 @@ Note extract_relative(FILE *score)
     return note;
 }
 
-Note extract_key(FILE *score)
-{
+Note extract_key(FILE *score){
     char base_note[256];
 
     fscanf(score, "\\key %s ", base_note);
@@ -133,41 +119,35 @@ Note extract_key(FILE *score)
     return note;
 }
 
-bool is_pause(const Note& note)
-{
+bool is_pause(const Note& note){
     return find_note(note.base) == -1;
 }
 
-list<Note> extract_notes(FILE *score, const Note& rel)
-{
+list<Note> extract_notes(FILE *score, const Note& rel){
     Note prev = rel;
     char n[128];
     list<Note> notes;
 
-    while (fscanf(score, "%s", n) == 1)
-    {
+    while (fscanf(score, "%s", n) == 1){
         auto note = parse_note(n);
 
         if (not note.duration)
             note.duration = prev.duration;
 
-        if (note.modifier.size() == 0)
-        {
+        if (note.modifier.size() == 0){
             note.modifier = prev.modifier;
 
             int p = pitch(note);
             int q = pitch(prev);
 
-            if (p != -1 and q != -1)
-            {
+            if (p != -1 and q != -1){
                 if (p - q > 120)
                     note.modifier.pop_back();
 
                 if (p - q < -120)
                     note.modifier.push_back('\'');
             }
-        } else
-        {
+        }else{
             if (note.modifier.front() == '\'')
                 note.modifier += prev.modifier;
         }
@@ -183,47 +163,39 @@ list<Note> extract_notes(FILE *score, const Note& rel)
     return notes;
 }
 
-unsigned frames(const list<Note>& notes, int unit)
-{
+unsigned frames(const list<Note>& notes, int unit){
     double fs = 0.0;
 
-    for (auto note : notes)
-    {
-//printf("note: [%s], pitch = %d, duration = %d\n", note.base.c_str(), pitch(note), note.duration);
+    for (auto note : notes){
         fs += (double) unit / note.duration;
-//printf("new fs = %.2f\n", fs);
     }
     return (unsigned) round(fs);
 }
 
-int main(int argc, char *argv[])
-{
-    if (argc < 3)
-    {
+int main(int argc, char *argv[]){
+    if (argc < 3){
         printf("Usage: %s {score.ly} {output}\n", argv[0]);
         return -1;
     } 
 
     FILE *score = fopen(argv[1], "r");
 
-    if (not score)
-    {
+    if (not score){
         printf("Invalid score file: %s\n", argv[1]);
         return -2;
     }
 
 	FILE *output = fopen(argv[2], "w");
 
-	if(not output)
-	{
+	if(not output){
 		printf("Invalid output file: %s\n", argv[2]);
 		return -3;
 	}
 
 	int time = extract_tempo(score);
 
-    printf("Score = %s\n", argv[1]);
-    printf("Tempo = %d\n", time);
+    // printf("Score = %s\n", argv[1]);
+    // printf("Tempo = %d\n", time);
 
 	int n_blocks = 3000, n_background = 3;
 
@@ -231,46 +203,34 @@ int main(int argc, char *argv[])
 	fprintf(output, "%d %d\n", n_blocks, n_background);
 
     auto compass = extract_compass(score);
-    printf("Compass = %d/%d\n", compass.first, compass.second);
+    // printf("Compass = %d/%d\n", compass.first, compass.second);
 
     auto relative = extract_relative(score);
-    printf("Relative = %d [%s]\n", pitch(relative), relative.base.c_str());
+    // printf("Relative = %d [%s]\n", pitch(relative), relative.base.c_str());
 
     auto n = extract_key(score);
-    printf("Key = %d [%s]\n", pitch(n), n.base.c_str());
+    // printf("Key = %d [%s]\n", pitch(n), n.base.c_str());
 
     auto notes = extract_notes(score, relative);
 
-    printf("count = %lu, frames = %u\n", notes.size(), frames(notes, compass.second));
-
-	// int offset = 0;
-
-	int counter = 3;
+    // printf("count = %lu, frames = %u\n", notes.size(), frames(notes, compass.second));
 
 	fprintf(output, "50 0 0\n");
 	fprintf(output, "50 0 0\n");
 	fprintf(output, "50 0 0\n");
-	// }
 
-	for (auto note : notes)
-    {
+	for (auto note : notes){
 		int h = pitch(note);
 		int d = (compass.second * 4) / note.duration;
 
-//		printf("%d\n", d);
-		printf("d = %d\n", d);
-
 		if(h <= 0){
 			while(d--){
-				printf("counter %d: 50 0 0\n", ++counter);
 				fprintf(output, "50 0 0\n");
 			}
 		}else{
 			fprintf(output, "%d 0 1 %d\n", h-40, h);
-			printf("counter %d: %d 0 1 %d\n", ++counter, h-40, h);
 			while(--d){
 				fprintf(output, "%d 0 0\n", h-40);
-				printf("counter %d: %d 0 0\n", ++counter, h-40);
 			}
 		}
     }
