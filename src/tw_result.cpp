@@ -14,119 +14,150 @@ using namespace std;
 using namespace ijengine;
 
 TWResult::TWResult(const string &current_level, const string& next_level, const string audio_path, int){
-	m_current_level = current_level;
-	m_audio = audio_path;
-	m_next = next_level;
-	m_done = false;
-	m_state = NOTHING;
-	m_start = -1;
+    m_current_level = current_level;
+    m_audio = audio_path;
+    m_next = next_level;
+    m_done = false;
+    m_win = false;
+    m_state = NOTHING;
+    m_start = -1;
 
-	int n_levels = 6;
-	m_save = new TWSave(n_levels);
+    m_sprite_speed = 1/270.0;
+    m_sprite_counter = 0;
 
-	FILE *result = fopen("result.dat", "rb");
-	int v[3];
+    int n_levels = 6;
+    m_save = new TWSave(n_levels);
 
-	if(not result){
-		printf("Não foi possível abrir o arquivo result.dat\n");
-		exit(1);
-	}
+    FILE *result = fopen("result.dat", "rb");
+    int v[3];
 
-	fread(&v[0], sizeof(int), 3, result);
+    if(not result){
+        printf("Não foi possível abrir o arquivo result.dat\n");
+        exit(1);
+    }
 
-	n_collectables = v[1];
-	n_defeated_enemies = v[2];
+    fread(&v[0], sizeof(int), 3, result);
 
-	system("rm result.dat");
+    n_collectables = v[1];
+    n_defeated_enemies = v[2];
 
-	int played_level = v[0];
-	double max_col = m_save -> max_collectables(played_level);
-	double percentage_col = (100.0 * n_collectables)/max_col;
+    system("rm result.dat");
 
-	if(percentage_col >= MINIMUM_PERCENTAGE){
-		final_texture = resources::get_texture(m_current_level + "/ganhou.png");
+    int played_level = v[0];
+    double max_col = m_save -> max_collectables(played_level);
+    double percentage_col = (100.0 * n_collectables)/max_col;
 
-		m_save -> set_cleared(played_level);
-		m_save -> set_unlocked(played_level + 1);
-	}else{
-		final_texture = resources::get_texture(m_current_level + "/perdeu.png");
-	}
+    m_background = resources::get_texture(current_level + "/background.png");
+    m_collectable = resources::get_texture(current_level + "/collectables.png");
+    m_enemy = resources::get_texture(current_level + "/enemies.png");
 
-	if( (n_collectables > m_save -> record_collectables(played_level)) || 
-		(n_collectables == m_save -> record_collectables(played_level) 
-		&& n_defeated_enemies > m_save -> record_enemies(played_level))	){
-		m_save -> set_record(played_level, n_collectables, n_defeated_enemies);
-	}
+    if(percentage_col >= MINIMUM_PERCENTAGE){
+        m_win = true;
+        m_result = resources::get_texture(current_level + "/win.png");
+        m_will_sprite = resources::get_texture(current_level + "/will-win.png");
 
-	m_save -> update();
+        m_save -> set_cleared(played_level);
+        m_save -> set_unlocked(played_level + 1);
+    }else{
+        m_win = false;
+        m_result = resources::get_texture(current_level + "/lose.png");
+        m_will_sprite = resources::get_texture(current_level + "/will-lose.png");
+    }
 
-	numbers = resources::get_texture("numbers.png");
+    if( (n_collectables > m_save -> record_collectables(played_level)) ||
+        (n_collectables == m_save -> record_collectables(played_level)
+        && n_defeated_enemies > m_save -> record_enemies(played_level)) ){
+        m_save -> set_record(played_level, n_collectables, n_defeated_enemies);
+    }
 
-	m_buttons.push_back(new TWButton("limbo", m_current_level, 700, 410, "limbo-botao.png", 142, 50));
+    m_save -> update();
 
-	for(auto btn : m_buttons){
-		add_child(btn);
-	}
+    numbers = resources::get_texture("numbers.png");
 
-	event::register_listener(this);
+    m_buttons.push_back(new TWButton("limbo", m_current_level, 700, 410, "limbo-botao.png", 142, 50));
+
+    for(auto btn : m_buttons){
+        add_child(btn);
+    }
+
+    event::register_listener(this);
 }
 
 TWResult::~TWResult(){
-	event::unregister_listener(this);
+    event::unregister_listener(this);
 }
 
 bool TWResult::done() const{
-	return m_done;
+    return m_done;
 }
 
 string TWResult::next() const{
-	return m_next;
+    return m_next;
 }
 
 string TWResult::audio() const{
-	return m_audio;
+    return m_audio;
 }
 
 bool TWResult::on_event(const GameEvent& event){
-	return false;
+    return false;
 }
 
-void TWResult::update_self(unsigned, unsigned){
-	if(m_state == SELECTING){
-		m_state = RUNNING;
-		m_done = true;
-	}
+void TWResult::update_self(unsigned now, unsigned){
+    if(m_state == SELECTING){
+        m_state = RUNNING;
+        m_done = true;
+    }
+
+    if(m_start == -1){
+        m_start = now;
+    }
+
+    m_sprite_counter += (now - m_start) * m_sprite_speed;
+    if(m_sprite_counter > 5.9){
+        m_sprite_counter -= 5.9;
+    }
+
+    m_start = now;
 }
 
 void TWResult::draw_self(Canvas *canvas, unsigned, unsigned){
-	canvas->clear();
+    canvas->clear();
 
-	canvas->draw(final_texture.get(), Rectangle(0, 0, 852, 480), 0, 0);
+    canvas->draw(m_background.get(), 0, 0);
+    canvas->draw(m_collectable.get(), 200, 50);
+    canvas->draw(m_enemy.get(), 200, 100);
+    canvas->draw(m_result.get(), 200, 200);
 
-	int x_digit_col = 260;
-	int counter_col = n_collectables;
+    if(not m_win)
+        canvas->draw(m_will_sprite.get(), Rectangle(45 * (int)m_sprite_counter, 0, 45, 45), 75, 75);
+    else
+        canvas->draw(m_will_sprite.get(), 75, 75);
 
-	do{
-		canvas->draw(numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col, 17);
-		counter_col /= 10;
-		x_digit_col -= 25;
-	}while(counter_col);
+    int x_digit_col = 700;
+    int counter_col = n_collectables;
+
+    do{
+        canvas->draw(numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col, 50);
+        counter_col /= 10;
+        x_digit_col -= 25;
+    }while(counter_col);
 
 
-	int x_digit_enemie = 747;
-	int counter_enemies = n_defeated_enemies;
+    int x_digit_enemie = 700;
+    int counter_enemies = n_defeated_enemies;
 
-	do{
-		canvas->draw(numbers.get(), Rectangle(23 * (counter_enemies % 10), 0, 23, 36), x_digit_enemie, 17);
-		counter_enemies /= 10;
-		x_digit_enemie -= 25;
-	}while(counter_enemies);
+    do{
+        canvas->draw(numbers.get(), Rectangle(23 * (counter_enemies % 10), 0, 23, 36), x_digit_enemie, 100);
+        counter_enemies /= 10;
+        x_digit_enemie -= 25;
+    }while(counter_enemies);
 
 }
 
 void TWResult::do_action(string label){
-	if(label == "limbo"){
-		m_next = "limbo";
-		m_done = true;
-	}
+    if(label == "limbo"){
+        m_next = "limbo";
+        m_done = true;
+    }
 }
