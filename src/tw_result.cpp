@@ -36,18 +36,18 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
         exit(1);
     }
 
-    fread(&v[0], sizeof(int), 4, result);
+    fread(&v[0], sizeof(int), 5, result);
 
     int played_level = v[0];
     n_collectables = v[1];
     n_defeated_enemies = v[2];
     m_game_over = v[3];
+    m_prev_level = v[4];
 
     system("rm result.dat");
 
     double max_col = m_save -> max_collectables(played_level);
     double percentage_col = (100.0 * n_collectables)/max_col;
-
 
     if(m_game_over){
         m_background = resources::get_texture(current_level + "/background-game-over.png");
@@ -85,8 +85,8 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
 
     numbers = resources::get_texture("numbers.png");
 
-    m_buttons.push_back(new TWButton("limbo", m_current_level, 700, 410, "limbo-botao.png", 142, 50));
-    m_buttons.push_back(new TWButton("restart", m_current_level, 200, 410, "restart-botao.png", 142, 50));
+    m_buttons.push_back(new TWButton("limbo", m_current_level, 680, 410, "limbo-botao.png", 142, 50));
+    m_buttons.push_back(new TWButton("restart", m_current_level, 30, 410, "restart-botao.png", 142, 50));
 
     for(auto btn : m_buttons){
         add_child(btn);
@@ -180,7 +180,7 @@ void TWResult::do_action(string label){
     }
 
     if(label == "restart"){
-        m_next = to_string(m_prev_level + 1);
+        m_next = to_string(m_prev_level);
         m_done = true;
     }
 }
