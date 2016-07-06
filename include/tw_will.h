@@ -15,9 +15,9 @@ using namespace ijengine;
 class TWWill : public GameObject, public GameEventsListener, public Collidable {
 
     public:
-        typedef enum { RUNNING, JUMPING, SLIDING, FALLING, GAME_OVER, PUNCHING } State;
+        typedef enum { RUNNING, JUMPING, SLIDING, FALLING, GAME_OVER, PUNCHING, STOPPED } State;
 
-        TWWill(double will_x, double will_y);
+        TWWill(double will_x, double will_y, int initial_state = RUNNING);
         ~TWWill();
 
         void set_height(double will_h);
@@ -34,6 +34,7 @@ class TWWill : public GameObject, public GameEventsListener, public Collidable {
         double x();
         double y();
         double speed();
+        double x_speed();
         int collectables();
 
         bool on_event(const GameEvent& event);

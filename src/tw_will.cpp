@@ -8,9 +8,9 @@ static const int EVENT_DOWN_PRESSED =      1 << 5;
 static const int EVENT_DOWN_RELEASED =     1 << 6;
 static const int EVENT_PUNCH =              1 << 11;
 
-TWWill::TWWill(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
+TWWill::TWWill(double will_x, double will_y, int initial_state) : m_x(will_x), m_y(will_y) {
     m_sprite_counter = 0;
-    this->set_state(RUNNING);
+    this->set_state(initial_state);
     m_height = WILL_HEIGHT;
     m_width = WILL_WIDTH;
     m_y_speed = 0;
@@ -30,6 +30,7 @@ TWWill::TWWill(double will_x, double will_y) : m_x(will_x), m_y(will_y) {
     m_sprite[FALLING] = resources::get_texture("will/falling.png");
     m_sprite[PUNCHING] = resources::get_texture("will/punching.png");
     m_sprite[GAME_OVER] = resources::get_texture("will/gameover.png");
+    m_sprite[STOPPED] = resources::get_texture("will/stopped.png");
     this->set_priority(10);
 
     event::register_listener(this);
@@ -55,8 +56,9 @@ int TWWill::state(){ return (int)m_state; }
 double TWWill::x(){ return m_x; }
 double TWWill::y(){ return m_y; }
 double TWWill::speed(){ return m_y_speed; }
+double TWWill::x_speed(){ return m_x_speed; }
 int TWWill::collectables(){ return m_collectables; }
- 
+
 bool TWWill::on_event(const GameEvent& event){
     if(m_state != GAME_OVER && m_active_events){
         if(event.id() == EVENT_PUNCH && m_state != SLIDING && event.timestamp() - m_punch_counter > 230){

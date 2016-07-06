@@ -32,8 +32,7 @@ int audio_duration) :
 
     m_background_texture = resources::get_texture(m_current_level + "/background.png");
     
-    //Sets initial will height based on level design
-    m_will = new TWWill(53, 430 - WILL_HEIGHT);
+    m_will = new TWWill(53, 430 - WILL_HEIGHT, STOPPED);
     m_will->set_m_active_events(false);
     add_child(m_will);
 
@@ -52,10 +51,6 @@ int audio_duration) :
 
 			n_unlocked_portals++;
 		}
-        else{
-            // colocar imagem de um cadeado na fase
-            // m_portal[i] = new TWPortalToLevel(to_string(i), portals_pos[i].first, portals_pos[i].second, 1);
-        }
 	}
 
     for(int i = 1; i <= n_unlocked_portals; i++){
@@ -68,7 +63,7 @@ int audio_duration) :
 
     physics::set_collision_mode(physics::Mode::ONE_TO_ALL, m_will);
 
-    ////printf("Saindo de construtor\n");
+    //printf("Saindo de construtor\n");
 }
 
 TWLimbo::~TWLimbo(){
@@ -116,7 +111,6 @@ bool TWLimbo::on_event(const GameEvent& event){
         m_will->set_x_speed(0);
     }
 
-
     if(event.id() == GAME_EVENT_RIGHT_PRESSED){
         m_will->set_x_speed(0.15);
     }
@@ -126,7 +120,6 @@ bool TWLimbo::on_event(const GameEvent& event){
     }
 
     if(event.id() == GAME_EVENT_ENTER){
-        printf("Pressed enter\n");
         if(m_next != ""){
             m_done = true;
         }
@@ -136,6 +129,8 @@ bool TWLimbo::on_event(const GameEvent& event){
 }
 
 void TWLimbo::update_self(unsigned now, unsigned last){
+    if(m_will->x_speed() || m_will->speed()) m_will->set_state(RUNNING);
+    else m_will->set_state(STOPPED);
 
     sprite_counter += (now - m_start) * m_sprite_speed;
 
@@ -144,7 +139,7 @@ void TWLimbo::update_self(unsigned now, unsigned last){
         sprite_counter -= 5.9;
     }
 
-    ////printf("Entrando em update_self\n");
+    //printf("Entrando em update_self\n");
     if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
@@ -158,7 +153,7 @@ void TWLimbo::update_self(unsigned now, unsigned last){
     on_portal = false;
 
     m_start = now;
-    ////printf("Saindo de update_self\n");
+    //printf("Saindo de update_self\n");
 }  
 
 void TWLimbo::draw_self(Canvas *canvas, unsigned, unsigned){

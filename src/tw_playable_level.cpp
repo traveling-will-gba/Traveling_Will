@@ -98,7 +98,7 @@ int audio_duration) :
         auto next_h = next_plat->height();
 
         if(prev_h != cur_h && cur_h != next_h) cur_plat->set_texture(1);
-        if(prev_h < cur_h && cur_h == next_h) cur_plat->set_texture(2);
+        if(prev_h != cur_h && cur_h == next_h) cur_plat->set_texture(2);
         if(prev_h == cur_h && cur_h != next_h) cur_plat->set_texture(3);
     }
 
