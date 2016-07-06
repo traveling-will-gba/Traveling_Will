@@ -54,9 +54,10 @@ class TWLimbo : public TWLevel{
         static const int COLLECTABLE =                  0;
         static const int ENEMY =                        1; 
         static const int PLATFORM_SIZE =                36;
+        static const int STOPPED =                      6;
 
         int m_audio_duration, m_audio_counter;
-        
+
         double m_x_speed, m_y_speed;
         double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;

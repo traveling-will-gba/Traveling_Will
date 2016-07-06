@@ -61,7 +61,7 @@ const list<Rectangle>& TWPortal::hit_boxes() const{
 void TWPortal::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
 	if(m_type == END){
 		if(auto p = dynamic_cast<TWPlayableLevel *>(this->parent())){
-	        p->set_done(true);
+	        p->set_done(true, false);
 	    }
 	}
 }
