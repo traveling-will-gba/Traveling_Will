@@ -19,13 +19,15 @@ TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int level
     m_texture = resources::get_texture("limbo/portal.png");
     m_numbers = resources::get_texture("numbers.png");
     m_col = resources::get_texture(current_level + "/collectable.png");
-    m_background = resources::get_texture("limbo/m_background.png");
+    m_background = resources::get_texture("limbo/limbo-baloon.png");
 
     m_active = true;
     m_info = false;
     this->set_priority(4);
     
     m_level = current_level;
+
+    m_label = resources::get_texture("limbo/label" + m_level + ".png");
 
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     physics::register_object(this);
@@ -93,30 +95,23 @@ void TWPortalToLevel::update_self(unsigned now, unsigned) {
 }
 void TWPortalToLevel::draw_self(Canvas* canvas, unsigned, unsigned) {
     if(m_info){
-        canvas->draw(m_background.get(), m_x - 30, m_y - 40);
-        canvas->draw(m_col.get(), Rectangle(0, 0, 30, 30), m_x + 70, m_y + 30);
+        canvas->draw(m_background.get(), m_x + 40, m_y - 30);
+        canvas->draw(m_col.get(), Rectangle(0, 0, 30, 30), m_x + 70, m_y + 20);
 
         int x_digit_col = m_x;
         int counter_col = m_num_col;
 
         do{
-            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col + 140, m_y + 30);
+            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col + 160, m_y + 20);
             counter_col /= 10;
             x_digit_col -= 25;
         }while(counter_col);
 
-        int x_digit_level = m_x;
-        int counter_level = atoi(m_level.c_str());
-
-        do{
-            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_level % 10), 0, 23, 36), x_digit_level + 70, m_y - 30);
-            counter_level /= 10;
-            x_digit_level -= 25;
-        }while(counter_level);
+        canvas->draw(m_label.get(), m_x + 60, m_y - 30);
     }
 
     if(m_active){
-        canvas->draw(m_texture.get(), Rectangle(0, 0, m_width, m_height), m_x, m_y);
+        canvas->draw(m_texture.get(), Rectangle(m_width * (int)m_sprite_counter, 0, m_width, m_height), m_x, m_y);
     }
 }
 
