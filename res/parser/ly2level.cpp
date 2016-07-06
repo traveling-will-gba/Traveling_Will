@@ -77,11 +77,14 @@ pair<int, int> extract_compass(FILE *score)
 int find_note(const string& n)
 {
     int index = 0;
+    static int ct = 0;
 
     for (auto s : scale)
     {
-        if (s.count(n))
+        if (s.count(n)){
+            printf("ct: %d (%s)\n", ++ct, n.c_str());
             return index;
+        }
 
         ++index;
     }
@@ -242,9 +245,10 @@ int main(int argc, char *argv[])
 
 	// int offset = 0;
 
-	int counter = 0;
+	int counter = 3;
 
-	// while(offset--){
+	fprintf(output, "50 0 0\n");
+	fprintf(output, "50 0 0\n");
 	fprintf(output, "50 0 0\n");
 	// }
 
@@ -253,18 +257,20 @@ int main(int argc, char *argv[])
 		int h = pitch(note);
 		int d = (compass.second * 4) / note.duration;
 
-		counter+=d;
-
 //		printf("%d\n", d);
+		printf("d = %d\n", d);
 
 		if(h <= 0){
 			while(d--){
+				printf("counter %d: 50 0 0\n", ++counter);
 				fprintf(output, "50 0 0\n");
 			}
 		}else{
 			fprintf(output, "%d 0 1 %d\n", h-40, h);
+			printf("counter %d: %d 0 1 %d\n", ++counter, h-40, h);
 			while(--d){
 				fprintf(output, "%d 0 0\n", h-40);
+				printf("counter %d: %d 0 0\n", ++counter, h-40);
 			}
 		}
     }

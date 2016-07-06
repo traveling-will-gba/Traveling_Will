@@ -58,6 +58,8 @@ int audio_duration) :
 	level_design >> tempo;
 
 	m_x_speed = tempo * 4 * 36 / 60000.0;
+    //m_x_speed = 0.284; //FIXME
+    printf("tempo: %d, m_x_speed: %f\n", tempo, m_x_speed);
 
     level_design >> n_screens >> n_backgrounds;
 
@@ -125,7 +127,7 @@ int audio_duration) :
     //Sets initial will height based on level design
     m_floor = 480 - platforms[0]->height() - WILL_HEIGHT;
 
-    m_will = new TWWill(53, 430 - WILL_HEIGHT);
+    m_will = new TWWill(63, 430 - WILL_HEIGHT);
     add_child(m_will);
 
     m_start = -1;
