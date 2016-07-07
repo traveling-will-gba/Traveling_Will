@@ -79,6 +79,8 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
             && n_defeated_enemies > m_save -> record_enemies(played_level)) ){
             m_save -> set_record(played_level, n_collectables, n_defeated_enemies);
         }
+
+        m_save->increase_times_played(played_level);
     }
 
     m_save -> update();

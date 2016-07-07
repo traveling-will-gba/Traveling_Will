@@ -47,6 +47,11 @@ void TWSave::set_record(int level, int n_cols, int n_enemies){
 	m_level_info[level].record_enemies = n_enemies;
 }
 
+void TWSave::increase_times_played(int level){
+	m_level_info[level].times_played++;
+}
+
+
 int TWSave::max_collectables(int level){
 	return m_level_info[level].max_collectables;	
 }
@@ -63,11 +68,12 @@ int TWSave::record_enemies(int level){
 	return m_level_info[level].record_enemies;
 }
 
+int TWSave::times_played(int level){
+	return m_level_info[level].times_played;
+}
+
 void TWSave::update(){
 	save = fopen("res/save.dat", "wb");
 	fwrite(&m_level_info[1], sizeof(Level_stat), n_levels, save);
-
-	Level_stat level_info2[10];
-
 	fclose(save);
 }

@@ -130,17 +130,22 @@ int audio_duration) :
 
     m_start = -1;
 
-    if(m_current_level == "1"){
+    int n_levels = 6;
+    m_save = new TWSave(n_levels);
+    m_tutorial = nullptr;
+    m_triple_jump = nullptr;
+
+    if(m_save->times_played(1) == 0 && m_current_level == "1"){
         m_tutorial = new TWTutorial("jump", "tutorial/tutorial-jump.png");
         m_triple_jump = new TWTutorial("triple-jump", "tutorial/tutorial-triple-jump.png");
         add_child(m_triple_jump);
         add_child(m_tutorial);
     }
-    else if(m_current_level == "2"){
+    else if(m_save->times_played(2) == 0 && m_current_level == "2"){
         m_tutorial = new TWTutorial("slide", "tutorial/tutorial-slide.png");
         add_child(m_tutorial);
     }
-    else if(m_current_level == "3"){
+    else if(m_save->times_played(3) == 0 && m_current_level == "3"){
         m_tutorial = new TWTutorial("punch", "tutorial/tutorial-punch.png");
         add_child(m_tutorial);
     }
@@ -203,7 +208,7 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
         m_audio_start = m_start;
     }
 
-    if(m_tutorial && (m_current_level == "1" || m_current_level == "2" || m_current_level == "3")){
+    if(m_tutorial){
         if(m_will->state() == JUMPING && m_tutorial->label() == "jump"){
             m_tutorial->set_active(false);
         }
@@ -215,7 +220,7 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
         }
     }
 
-    if(m_triple_jump && m_current_level == "1"){
+    if(m_triple_jump){
         if(m_will->triple_jump() && m_triple_jump->active()){
             m_triple_jump->set_active(false);
         }
