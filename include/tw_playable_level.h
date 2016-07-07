@@ -2,6 +2,7 @@
 #define TW_PLAYABLE_LEVEL_H
 
 #include "tw_will.h"
+#include "tw_save.h"
 #include "tw_level.h"
 #include "tw_button.h"
 #include "tw_portal.h"
@@ -73,6 +74,7 @@ class TWPlayableLevel : public TWLevel{
         double m_floor;
 
         TWWill * m_will;
+        TWSave *m_save;
         TWProgressBar * m_progress_bar;
         TWCollectableStatus * m_collectable_status;
 		TWPortal * m_portal_start, * m_portal_end[2];
