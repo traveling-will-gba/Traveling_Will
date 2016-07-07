@@ -10,6 +10,7 @@ typedef struct _ls{
 	int max_enemies = 0;
 	int record_collectables = 0;
 	int record_enemies = 0;
+	int times_played = 0;
 }Level_stat;
 
 int main(){
@@ -47,6 +48,7 @@ int main(){
 
 		level_info[level_id].max_collectables = n_collectables;
 		level_info[level_id].max_enemies = n_enemies;
+		level_info[level_id].times_played = 0;
 
 		fclose(level);
 		level_id++;
