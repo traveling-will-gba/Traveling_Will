@@ -150,7 +150,7 @@ void TWWill::update_self(unsigned now, unsigned){
         m_sprite_counter -= 5.9;
     }
 
-    if(m_is_punching && (now - m_punch_counter) > 80){
+    if(m_is_punching && (now - m_punch_counter) > 240){
         m_punch_counter = now;
         m_is_punching = false;
     }
