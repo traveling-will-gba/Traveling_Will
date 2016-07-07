@@ -31,6 +31,7 @@ namespace ijengine
         const unsigned GAME_EVENT_RIGHT_PRESSED =   1 << 16;
         const unsigned GAME_EVENT_RIGHT_RELEASED =  1 << 17;
         const unsigned GAME_EVENT_ENTER =           1 << 18;
+        const unsigned GAME_EVENT_DEBUG =           1 << 19;
     }
 }
 
@@ -138,6 +139,11 @@ class TWGame {
                     case KeyboardEvent::RETURN:
                         to.set_property<string>("jump", "enter");
                         to.set_id(game_event::GAME_EVENT_ENTER);
+                        break;
+
+                    case KeyboardEvent::B:
+                        to.set_property<string>("debug", "b");
+                        to.set_id(game_event::GAME_EVENT_DEBUG);
                         break;
 
                     default:

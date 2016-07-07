@@ -30,6 +30,7 @@ int audio_duration) :
 	m_done = false;
 	m_state = RUNNING;
 	m_audio_start = 0;
+    counting = 0;
 	m_start = -1;
 
 	
@@ -165,7 +166,12 @@ string TWPlayableLevel::audio() const{
     return m_audio;
 }
 
-bool TWPlayableLevel::on_event(const GameEvent&){
+bool TWPlayableLevel::on_event(const GameEvent& event){
+    if(event.id() == GAME_EVENT_DEBUG){
+        printf("counting = %d\n", counting);
+        return true;
+    }
+
 	return false;
 }
 
@@ -292,6 +298,7 @@ void TWPlayableLevel::update_counters(unsigned now){
         m_reverse_camera_x += PLATFORM_SIZE;
         destroy_child(platforms[0]);
         platforms.pop_front();
+        ++counting;
 
 		if(platforms.size() == NUMBER_OF_SECTIONS){
 			m_x_speed = 0;

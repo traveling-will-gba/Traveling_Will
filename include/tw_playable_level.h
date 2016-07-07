@@ -39,6 +39,7 @@ class TWPlayableLevel : public TWLevel{
         static const int GAME_EVENT_DOWN_RELEASED =		1 << 6;
         static const int GAME_EVENT_MENU_SELECT =       1 << 7;
         static const int GAME_EVENT_PUNCH =             1 << 11;
+        static const int GAME_EVENT_DEBUG =             1 << 19;
         static const int NUMBER_OF_SECTIONS =           25;
         static const int WILL_HEIGHT =                  45;
         static const int WILL_WIDTH =                   45;
@@ -60,6 +61,8 @@ class TWPlayableLevel : public TWLevel{
         int n_screens, m_punch_counter;
         int n_collectables, n_enemies;
         int n_backgrounds;
+
+        int counting;
         
         deque<int> enemy_type, collectable, enemy;
         deque<double> collectable_height, enemy_height, platform_height;
