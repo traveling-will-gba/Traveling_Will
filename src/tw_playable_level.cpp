@@ -132,6 +132,21 @@ int audio_duration) :
 
     m_start = -1;
 
+    if(m_current_level == "1"){
+        m_tutorial = new TWTutorial("jump", "tutorial/tutorial-jump.png");
+        m_triple_jump = new TWTutorial("triple-jump", "tutorial/tutorial-triple-jump.png");
+        add_child(m_triple_jump);
+        add_child(m_tutorial);
+    }
+    else if(m_current_level == "2"){
+        m_tutorial = new TWTutorial("slide", "tutorial/tutorial-slide.png");
+        add_child(m_tutorial);
+    }
+    else if(m_current_level == "3"){
+        m_tutorial = new TWTutorial("punch", "tutorial/tutorial-punch.png");
+        add_child(m_tutorial);
+    }
+
     event::register_listener(this);
 
     physics::set_collision_mode(physics::Mode::ONE_TO_ALL, m_will);
@@ -183,6 +198,19 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
     if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
+    }
+
+    if(m_will->state() == JUMPING && m_tutorial->label() == "jump"){
+        m_tutorial->set_active(false);
+    }
+    else if(m_will->triple_jump() && m_triple_jump->active()){
+        m_triple_jump->set_active(false);
+    }
+    else if(m_will->state() == SLIDING && m_tutorial->label() == "slide"){
+        m_tutorial->set_active(false);
+    }
+    else if(m_will->punching() && m_tutorial->label() == "punch"){
+        m_tutorial->set_active(false);  
     }
 
     update_counters(now);
@@ -257,7 +285,6 @@ void TWPlayableLevel::update_counters(unsigned now){
     if(not level_finished){
         m_audio_counter = now - m_audio_start;
     }
-
 
     m_camera_x += ((now - m_start) * m_x_speed);
     m_reverse_camera_x -= ((now - m_start) * m_x_speed);
