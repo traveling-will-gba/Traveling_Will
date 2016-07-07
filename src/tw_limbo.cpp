@@ -57,6 +57,12 @@ int audio_duration) :
         add_child(m_portal[i]);
     }
 
+
+    m_buttons.push_back(new TWButton("back", m_current_level, 30, 410, "voltar-botao.png", 142, 50));
+
+    for(auto btn : m_buttons)
+        add_child(btn);
+
     m_start = -1;
 
     event::register_listener(this);
@@ -84,6 +90,13 @@ string TWLimbo::next() const{
 
 string TWLimbo::audio() const{
     return m_audio;
+}
+
+void TWLimbo::do_action(string label){
+    if(label == "back"){
+        m_next = "menu";
+        m_done = true;
+    }
 }
 
 bool TWLimbo::on_event(const GameEvent& event){
@@ -139,7 +152,6 @@ void TWLimbo::update_self(unsigned now, unsigned last){
         sprite_counter -= 5.9;
     }
 
-    //printf("Entrando em update_self\n");
     if(m_start == -1){
         m_start = now;
         m_audio_start = m_start;
@@ -147,13 +159,9 @@ void TWLimbo::update_self(unsigned now, unsigned last){
 
     physics::do_collisions(now, last);
 
-    if(not on_portal){
-        m_next = "";
-    }
     on_portal = false;
 
     m_start = now;
-    //printf("Saindo de update_self\n");
 }  
 
 void TWLimbo::draw_self(Canvas *canvas, unsigned, unsigned){

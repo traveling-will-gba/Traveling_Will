@@ -1,10 +1,11 @@
 #ifndef TW_LIMBO_H
 #define TW_LIMBO_H
 
-#include "tw_level.h"
 #include "tw_will.h"
-#include "tw_portal_to_level.h"
 #include "tw_save.h"
+#include "tw_level.h"
+#include "tw_button.h"
+#include "tw_portal_to_level.h"
 
 using std::string;
 using std::shared_ptr;
@@ -22,6 +23,7 @@ class TWLimbo : public TWLevel{
         bool done() const;
         string next() const;
         string audio() const;
+        void do_action(string label);
 
         bool on_event(const GameEvent& event);
 
