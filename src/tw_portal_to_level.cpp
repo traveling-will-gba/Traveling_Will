@@ -6,7 +6,7 @@ TWPortalToLevel::TWPortalToLevel(){
 
 }
 
-TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int level_state, int level_collectables){
+TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int, int level_collectables){
     m_sprite_speed = 1/270.0; //FIXME
     m_sprite_counter = 0;
     m_start = -1;

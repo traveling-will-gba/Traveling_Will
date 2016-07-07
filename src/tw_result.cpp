@@ -114,7 +114,7 @@ string TWResult::audio() const{
     return m_audio;
 }
 
-bool TWResult::on_event(const GameEvent& event){
+bool TWResult::on_event(const GameEvent&){
     return false;
 }
 

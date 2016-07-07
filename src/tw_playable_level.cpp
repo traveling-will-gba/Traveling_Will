@@ -180,7 +180,7 @@ bool TWPlayableLevel::on_event(const GameEvent& event){
 	return false;
 }
 
-void TWPlayableLevel::set_done(bool done, bool game_over){
+void TWPlayableLevel::set_done(bool is_done, bool game_over){
 	FILE *result = fopen("result.dat", "wb");
 
 	if (not result){
@@ -199,7 +199,7 @@ void TWPlayableLevel::set_done(bool done, bool game_over){
 	fwrite(&v[0], sizeof(int), 5, result);
 	fclose(result);
 
-	m_done = done;
+	m_done = is_done;
 }
 
 void TWPlayableLevel::update_self(unsigned now, unsigned last){
