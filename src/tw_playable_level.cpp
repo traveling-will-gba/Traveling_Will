@@ -200,17 +200,22 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
         m_audio_start = m_start;
     }
 
-    if(m_will->state() == JUMPING && m_tutorial->label() == "jump"){
-        m_tutorial->set_active(false);
+    if(m_tutorial){
+        if(m_will->state() == JUMPING && m_tutorial->label() == "jump"){
+            m_tutorial->set_active(false);
+        }
+        else if(m_will->state() == SLIDING && m_tutorial->label() == "slide"){
+            m_tutorial->set_active(false);
+        }
+        else if(m_will->punching() && m_tutorial->label() == "punch"){
+            m_tutorial->set_active(false);
+        }
     }
-    else if(m_will->triple_jump() && m_triple_jump->active()){
-        m_triple_jump->set_active(false);
-    }
-    else if(m_will->state() == SLIDING && m_tutorial->label() == "slide"){
-        m_tutorial->set_active(false);
-    }
-    else if(m_will->punching() && m_tutorial->label() == "punch"){
-        m_tutorial->set_active(false);  
+
+    if(m_triple_jump && m_current_level == "1"){
+        if(m_will->triple_jump() && m_triple_jump->active()){
+            m_triple_jump->set_active(false);
+        }
     }
 
     update_counters(now);
