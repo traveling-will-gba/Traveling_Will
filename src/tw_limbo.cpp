@@ -57,7 +57,7 @@ int audio_duration) :
         add_child(m_portal[i]);
     }
 
-
+    m_buttons.clear();
     m_buttons.push_back(new TWButton("back", m_current_level, 30, 410, "voltar-botao.png", 142, 50));
 
     for(auto btn : m_buttons)
@@ -94,6 +94,7 @@ string TWLimbo::audio() const{
 
 void TWLimbo::do_action(string label){
     if(label == "back"){
+        m_will->set_active(false);
         m_next = "menu";
         m_done = true;
     }

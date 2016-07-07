@@ -24,6 +24,7 @@ TWMenu::TWMenu(const string &current_level, const string& next_level, const stri
 	m_background[0] = resources::get_texture(m_current_level + "/menu-fundo.png");
 	m_background[1] = resources::get_texture(m_current_level + "/menu-titulo.png");
 
+	m_buttons.clear();
 	m_buttons.push_back(new TWButton("new-adventure", m_current_level, 50, 220, "menu-nova-aventura.png", 299, 34));
 	m_buttons.push_back(new TWButton("continue-adventure", m_current_level, 50, 264, "menu-continuar-aventura.png", 409, 35));
 	m_buttons.push_back(new TWButton("options", m_current_level, 50, 309, "menu-opcoes.png", 139, 51));

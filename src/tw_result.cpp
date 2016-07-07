@@ -85,6 +85,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
 
     numbers = resources::get_texture("numbers.png");
 
+    m_buttons.clear();
     m_buttons.push_back(new TWButton("limbo", m_current_level, 680, 410, "limbo-botao.png", 142, 50));
     m_buttons.push_back(new TWButton("restart", m_current_level, 30, 410, "restart-botao.png", 142, 50));
 

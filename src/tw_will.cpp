@@ -26,6 +26,7 @@ TWWill::TWWill(double will_x, double will_y, int initial_state) : m_x(will_x), m
     m_active_events = true;
     m_jump_counter = 0;
     m_triple_jump = false;
+    m_active = true;
 
     m_sprite[RUNNING] = resources::get_texture("will/running.png");
     m_sprite[JUMPING] = resources::get_texture("will/jumping.png");
@@ -98,7 +99,11 @@ bool TWWill::on_event(const GameEvent& event){
 }
 
 bool TWWill::active() const{
-    return true;
+    return m_active;
+}
+
+void TWWill::set_active(int act){
+    m_active = act;
 }
 
 pair<double, double> TWWill::direction() const{

@@ -117,6 +117,7 @@ void TWPortalToLevel::update_self(unsigned now, unsigned) {
 
     m_start = now;
 }
+
 void TWPortalToLevel::draw_self(Canvas* canvas, unsigned, unsigned) {
     if(m_info){
         canvas->draw(m_background.get(), m_baloon_x, m_baloon_y);
