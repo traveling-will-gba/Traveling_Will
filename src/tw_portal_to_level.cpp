@@ -32,6 +32,30 @@ TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int level
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     physics::register_object(this);
 
+    if(current_level == "1"){
+        m_baloon_x = m_x - 50;
+        m_baloon_y = m_y + 60;
+    }
+    else if(current_level == "2"){
+        m_baloon_x = m_x - 50;
+        m_baloon_y = m_y + 60;
+    }
+    else if(current_level == "3"){
+        m_baloon_x = m_x - 50;
+        m_baloon_y = m_y + 60;
+    }
+    else if(current_level == "4"){
+        m_baloon_x = m_x - 160;
+        m_baloon_y = m_y - 40;
+    }
+    else if(current_level == "5"){
+        m_baloon_x = m_x - 50;
+        m_baloon_y = m_y + 60;
+    }
+    else if(current_level == "6"){
+        m_baloon_x = m_x - 50;
+        m_baloon_y = m_y - 150;
+    }
 }
 
 TWPortalToLevel::~TWPortalToLevel(){
@@ -93,21 +117,22 @@ void TWPortalToLevel::update_self(unsigned now, unsigned) {
 
     m_start = now;
 }
+
 void TWPortalToLevel::draw_self(Canvas* canvas, unsigned, unsigned) {
     if(m_info){
-        canvas->draw(m_background.get(), m_x + 40, m_y - 30);
-        canvas->draw(m_col.get(), Rectangle(0, 0, 30, 30), m_x + 70, m_y + 20);
+        canvas->draw(m_background.get(), m_baloon_x, m_baloon_y);
+        canvas->draw(m_label.get(), m_baloon_x + 20, m_baloon_y + 10);
+        canvas->draw(m_col.get(), Rectangle(0, 0, 30, 30), m_baloon_x + 20, m_baloon_y + 70);
 
-        int x_digit_col = m_x;
+        int x_digit_col = m_baloon_x + 50;
         int counter_col = m_num_col;
 
         do{
-            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col + 160, m_y + 20);
+            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col + 60, m_baloon_y + 70);
             counter_col /= 10;
             x_digit_col -= 25;
         }while(counter_col);
 
-        canvas->draw(m_label.get(), m_x + 60, m_y - 30);
     }
 
     if(m_active){

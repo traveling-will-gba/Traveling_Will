@@ -2,6 +2,7 @@
 #include "tw_menu.h"
 #include "tw_cutscene.h"
 #include "tw_result.h"
+#include "tw_limbo.h"
 
 #include <ijengine/canvas.h>
 
@@ -57,6 +58,10 @@ bool TWButton::on_event(const GameEvent& event){
 					auto parent_class = dynamic_cast <TWResult *>(p);
 					parent_class -> do_action(m_label);
 				}
+                else if(m_level == "limbo"){
+                    auto parent_class = dynamic_cast <TWLimbo *>(p);
+                    parent_class -> do_action(m_label);
+                }
 
                 m_click_state = NOT_CLICKING;
                 return true;

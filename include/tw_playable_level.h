@@ -4,10 +4,11 @@
 #include "tw_will.h"
 #include "tw_level.h"
 #include "tw_button.h"
+#include "tw_portal.h"
 #include "tw_platform.h"
+#include "tw_tutorial.h"
 #include "tw_progress_bar.h"
 #include "tw_collectable_status.h"
-#include "tw_portal.h"
 
 using std::string;
 using std::shared_ptr;
@@ -72,6 +73,7 @@ class TWPlayableLevel : public TWLevel{
         TWProgressBar * m_progress_bar;
         TWCollectableStatus * m_collectable_status;
 		TWPortal * m_portal_start, * m_portal_end[2];
+        TWTutorial * m_tutorial, * m_triple_jump;
 
 
         shared_ptr<Texture> m_floor_texture;

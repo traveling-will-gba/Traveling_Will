@@ -25,6 +25,8 @@ TWWill::TWWill(double will_x, double will_y, int initial_state) : m_x(will_x), m
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     m_active_events = true;
     m_jump_counter = 0;
+    m_triple_jump = false;
+    m_active = true;
 
     m_sprite[RUNNING] = resources::get_texture("will/running.png");
     m_sprite[JUMPING] = resources::get_texture("will/jumping.png");
@@ -61,6 +63,8 @@ double TWWill::speed(){ return m_y_speed; }
 double TWWill::x_speed(){ return m_x_speed; }
 int TWWill::collectables(){ return m_collectables; }
 int TWWill::enemies(){ return m_enemies; }
+bool TWWill::punching(){ return m_is_punching; }
+bool TWWill::triple_jump() { return m_triple_jump; }
 
 bool TWWill::on_event(const GameEvent& event){
     if(m_state != GAME_OVER && m_active_events){
@@ -74,6 +78,7 @@ bool TWWill::on_event(const GameEvent& event){
             if(m_state == RUNNING || ((m_state == JUMPING || m_state == FALLING) && m_jump_counter < 3)){
                 m_y_speed = -0.5;
                 m_jump_counter++;
+                if(m_jump_counter == 3) m_triple_jump = true;
                 this->set_state(JUMPING);
                 return true;
             }
@@ -94,7 +99,11 @@ bool TWWill::on_event(const GameEvent& event){
 }
 
 bool TWWill::active() const{
-    return true;
+    return m_active;
+}
+
+void TWWill::set_active(int act){
+    m_active = act;
 }
 
 pair<double, double> TWWill::direction() const{
@@ -150,7 +159,7 @@ void TWWill::update_self(unsigned now, unsigned){
         m_sprite_counter -= 5.9;
     }
 
-    if(m_is_punching && (now - m_punch_counter) > 80){
+    if(m_is_punching && (now - m_punch_counter) > 240){
         m_punch_counter = now;
         m_is_punching = false;
     }
