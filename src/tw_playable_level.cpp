@@ -200,7 +200,7 @@ void TWPlayableLevel::update_self(unsigned now, unsigned last){
         m_audio_start = m_start;
     }
 
-    if(m_tutorial){
+    if(m_tutorial && (m_current_level == "1" || m_current_level == "2" || m_current_level == "3")){
         if(m_will->state() == JUMPING && m_tutorial->label() == "jump"){
             m_tutorial->set_active(false);
         }

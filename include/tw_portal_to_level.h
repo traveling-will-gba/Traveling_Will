@@ -49,6 +49,7 @@ class TWPortalToLevel : public GameObject, public Collidable {
 
         double m_x, m_y;
         double m_height, m_width;
+        double m_baloon_x, m_baloon_y;
         double m_sprite_counter, m_sprite_speed;
         int m_start, m_num_col;
         string m_level;

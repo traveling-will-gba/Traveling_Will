@@ -32,16 +32,16 @@ int audio_duration) :
 
     m_background_texture = resources::get_texture(m_current_level + "/background.png");
     
-    m_will = new TWWill(53, 430 - WILL_HEIGHT, STOPPED);
+    m_will = new TWWill(100, 5);
     m_will->set_m_active_events(false);
     add_child(m_will);
 
 	int n_levels = 6;
 	m_save = new TWSave(n_levels);
 
-	pair <int, int> portals_pos[] = {   make_pair(0, 0), make_pair(100, 70), make_pair(210, 220),
-                                        make_pair(100, 370), make_pair(500, 70), make_pair(610, 220),
-                                        make_pair(500, 370)};
+	pair <int, int> portals_pos[] = {   make_pair(0, 0), make_pair(100, 5), make_pair(480, 0),
+                                        make_pair(615, 135), make_pair(285, 140),
+                                        make_pair(330, 280), make_pair(130, 340)};
 
 	int n_unlocked_portals = 0;
 
