@@ -19,11 +19,8 @@ TWPlayableLevel::TWPlayableLevel(const string &current_level, const string& next
 int audio_duration) : 
 	m_is_punching(false), level_started(false), level_finished(false),
     m_audio_duration(audio_duration), m_audio_counter(0),
-    m_punch_counter(0), n_collectables(0), n_enemies(0),
-    m_cur_collectable_it(INVALID), m_cur_enemy_it(INVALID), m_y_speed(0),
-    sprite_counter(0), m_sprite_speed(1/170.0),
-    m_camera_x(0), m_camera_y(0), m_reverse_camera_x(1), m_reverse_camera_y(480),
-    m_cur_collectable(nullptr), m_cur_enemy(nullptr){
+    m_punch_counter(0), n_collectables(0), n_enemies(0), m_y_speed(0),
+    m_camera_x(0), m_camera_y(0), m_reverse_camera_x(0), m_reverse_camera_y(480){
 
     // printf("Entrando em construtor\n");
 
@@ -251,9 +248,6 @@ void TWPlayableLevel::update_platforms_position(){
 }
 
 void TWPlayableLevel::update_counters(unsigned now){
-    //Update counters based on time
-    sprite_counter += (now - m_start) * m_sprite_speed;
-
     if(not level_finished){
         m_audio_counter = now - m_audio_start;
     }
@@ -271,16 +265,12 @@ void TWPlayableLevel::update_counters(unsigned now){
 			m_x_speed = 0;
 			m_portal_end[0]->set_x_speed(0);
             m_portal_end[1]->set_x_speed(0);
-            m_will->set_x_speed(m_sprite_speed * 100);
+            m_will->set_x_speed(1/1.7);
 		}
 
         platforms[NUMBER_OF_SECTIONS-1]->set_x(852);
         platforms[NUMBER_OF_SECTIONS-1]->register_objects(852);
         add_child(platforms[NUMBER_OF_SECTIONS-1]);
-    }
-
-    if(sprite_counter > 5.9){
-        sprite_counter -= 5.9;
     }
 
     m_collectable_status->update_collectable_counter(m_will->collectables());

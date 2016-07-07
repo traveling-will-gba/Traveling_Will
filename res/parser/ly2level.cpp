@@ -11,7 +11,7 @@ typedef struct _Note{
     int duration;
 } Note;
 
-#define Y_BLOCK 10
+#define Y_BLOCK 5
 #define X_BLOCK 142
 #define SCALE_SHIFT (12 * Y_BLOCK)
 

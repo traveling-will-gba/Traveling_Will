@@ -22,7 +22,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
     m_state = NOTHING;
     m_start = -1;
 
-    m_sprite_speed = 1/270.0;
+    m_sprite_speed = 1/85.0;
     m_sprite_counter = 0;
 
     int n_levels = 6;

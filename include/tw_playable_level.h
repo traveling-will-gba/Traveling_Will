@@ -58,20 +58,17 @@ class TWPlayableLevel : public TWLevel{
         int m_audio_duration, m_audio_counter;
         int n_screens, m_punch_counter;
         int n_collectables, n_enemies;
-        int m_cur_collectable_it, m_cur_enemy_it, n_backgrounds;
+        int n_backgrounds;
         
         deque<int> enemy_type, collectable, enemy;
         deque<double> collectable_height, enemy_height, platform_height;
         deque<TWPlatform *> platforms;
 
         double m_x_speed, m_y_speed;
-        double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_floor;
 
         TWWill * m_will;
-        TWCollectable * m_cur_collectable;
-        TWEnemy * m_cur_enemy;
         TWProgressBar * m_progress_bar;
         TWCollectableStatus * m_collectable_status;
 		TWPortal * m_portal_start, * m_portal_end[2];

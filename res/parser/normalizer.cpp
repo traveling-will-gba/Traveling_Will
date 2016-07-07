@@ -37,7 +37,7 @@ int main(){
 
     int new_high = 0, new_low = 100000;
     for(int j = 0; j < i; ++j){
-        highs[j] = 300*((highs[j]-low)/range) + 50;
+        if(highs[j] != 50)highs[j] = highs[j]%301 + 50;
         collectables[j] = highs[j] + 40;
         new_high = max(new_high, highs[j]);
         new_low = min(new_low, highs[j]);
