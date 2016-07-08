@@ -22,7 +22,7 @@ Level * TWLevelFactory::make_level(const string& level_id){
     else if(level_id == "6")
         return new TWPlayableLevel("6", "result", "res/6/music.wav", 147000);
     else if(level_id == "limbo")
-        return new TWLimbo("limbo", "", "res/1/music.wav", -1);
+        return new TWLimbo("limbo", "", "res/limbo/music.wav", -1);
     else
         return nullptr;
 }
