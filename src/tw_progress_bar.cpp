@@ -23,9 +23,10 @@ void TWProgressBar::update_self(unsigned, unsigned){
 
 void TWProgressBar::draw_self(Canvas *canvas, unsigned, unsigned){
     double bar_width = 20 + (7.64 * 100 * m_audio_counter) / m_audio_duration;
+    double bar_x = 450;
 
-    canvas->draw(m_textures[0].get(), Rectangle(0, 0, 800, 19), 26, 18);
-    canvas->draw(m_textures[1].get(), Rectangle(0, 0, bar_width, 15), 30, 20);
-    canvas->draw(m_textures[2].get(), Rectangle(0, 0, 2, 15), 28, 20);
-    canvas->draw(m_textures[3].get(), Rectangle(0, 0, 20, 17), bar_width + 20, 20 - 1);
+    canvas->draw(m_textures[0].get(), Rectangle(0, 0, 800, 19), 26, bar_x);
+    canvas->draw(m_textures[1].get(), Rectangle(0, 0, bar_width, 15), 30, bar_x + 2);
+    canvas->draw(m_textures[2].get(), Rectangle(0, 0, 2, 15), 28, bar_x + 2);
+    canvas->draw(m_textures[3].get(), Rectangle(0, 0, 20, 17), bar_width + 20, bar_x + 1);
 }

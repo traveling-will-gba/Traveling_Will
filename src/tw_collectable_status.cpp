@@ -19,13 +19,13 @@ void TWCollectableStatus::update_self(unsigned, unsigned){
 }
 
 void TWCollectableStatus::draw_self(Canvas *canvas, unsigned, unsigned){
-    canvas->draw(m_textures[0].get(), 680, 400);
+    canvas->draw(m_textures[0].get(), 680, 20);
 
     int x_digit = 780;
     int counter = m_collectable_counter;
 
     do{
-        canvas->draw(m_textures[1].get(), Rectangle(23 * (counter % 10), 0, 23, 36), x_digit, 410);
+        canvas->draw(m_textures[1].get(), Rectangle(23 * (counter % 10), 0, 23, 36), x_digit, 30);
         counter /= 10;
         x_digit -= 25;
     }while(counter);
