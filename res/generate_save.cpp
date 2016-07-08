@@ -26,13 +26,15 @@ int main(){
 
 		int n_collectables = 0, n_enemies = 0;
 		while(not feof(level)){
-			int height_plat, have_col, have_enemie, height_col, height_enemie;				
+			int height_plat, have_col, have_enemie, height_col, type_enemie, height_enemie;				
 
 			fscanf(level, "%d %d", &height_plat, &have_enemie);
 
 			if(have_enemie){
-				fscanf(level, "%d", &height_enemie);
-				n_enemies++;
+				fscanf(level, "%d %d", &type_enemie, &height_enemie);
+
+				if(type_enemie == 2)
+					n_enemies++;
 			}
 
 			fscanf(level, "%d", &have_col);
@@ -48,7 +50,6 @@ int main(){
 
 		level_info[level_id].max_collectables = n_collectables;
 		level_info[level_id].max_enemies = n_enemies;
-		level_info[level_id].times_played = 0;
 
 		fclose(level);
 		level_id++;
