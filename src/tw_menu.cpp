@@ -25,12 +25,23 @@ TWMenu::TWMenu(const string &current_level, const string& next_level, const stri
 	m_background[0] = resources::get_texture(m_current_level + "/menu-fundo.png");
 	m_background[1] = resources::get_texture(m_current_level + "/menu-titulo.png");
 
+    int n_levels = 6;
+    m_save = new TWSave(n_levels);
+
 	m_buttons.clear();
 	m_buttons.push_back(new TWButton("new-adventure", m_current_level, 50, 220, "menu-nova-aventura.png", 299, 34));
-	m_buttons.push_back(new TWButton("continue-adventure", m_current_level, 50, 264, "menu-continuar-aventura.png", 409, 35));
-	m_buttons.push_back(new TWButton("options", m_current_level, 50, 309, "menu-opcoes.png", 139, 51));
-	m_buttons.push_back(new TWButton("exit", m_current_level, 50, 370, "menu-sair.png", 86, 34));
-    m_buttons.push_back(new TWButton("credits", m_current_level, 680, 410, "creditos-botao.png", 142, 50));
+
+	if(m_save->times_played(1) == 0){
+		m_buttons.push_back(new TWButton("options", m_current_level, 50, 264, "menu-opcoes.png", 139, 51));
+		m_buttons.push_back(new TWButton("exit", m_current_level, 50, 325, "menu-sair.png", 86, 34));
+	    m_buttons.push_back(new TWButton("credits", m_current_level, 680, 369, "creditos-botao.png", 142, 50));
+	}
+	else{
+		m_buttons.push_back(new TWButton("continue-adventure", m_current_level, 50, 264, "menu-continuar-aventura.png", 409, 35));
+		m_buttons.push_back(new TWButton("options", m_current_level, 50, 309, "menu-opcoes.png", 139, 51));
+		m_buttons.push_back(new TWButton("exit", m_current_level, 50, 370, "menu-sair.png", 86, 34));
+	    m_buttons.push_back(new TWButton("credits", m_current_level, 680, 410, "creditos-botao.png", 142, 50));
+	}
 
 	for(auto btn : m_buttons){
 		add_child(btn);
