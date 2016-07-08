@@ -43,8 +43,6 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
     m_game_over = v[3];
     m_prev_level = v[4];
 
-    m_audio = "res/" + to_string(played_level) + "/victory.wav";
-
     system("rm result.dat");
 
     double max_col = m_save -> max_collectables(played_level);
@@ -52,6 +50,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
 
     if(m_game_over){
         m_background = resources::get_texture(current_level + "/background-game-over.png");
+        m_audio = "res/result/losing.wav";
 
         m_win = false;
         m_result = resources::get_texture(current_level + "/game-over.png");
@@ -64,6 +63,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
 
         if(percentage_col >= MINIMUM_PERCENTAGE){
             m_win = true;
+            m_audio = "res/" + to_string(played_level) + "/victory.wav";
             m_result = resources::get_texture(current_level + "/win.png");
             m_will_sprite = resources::get_texture(current_level + "/will-win.png");
 
@@ -71,6 +71,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
             m_save -> set_unlocked(played_level + 1);
         }else{
             m_win = false;
+            m_audio = "res/result/losing.wav";
             m_result = resources::get_texture(current_level + "/lose.png");
             m_will_sprite = resources::get_texture(current_level + "/will-lose.png");
         }
