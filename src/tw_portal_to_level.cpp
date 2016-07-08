@@ -119,13 +119,13 @@ void TWPortalToLevel::update_self(unsigned now, unsigned) {
 void TWPortalToLevel::draw_self(Canvas* canvas, unsigned, unsigned) {
     if(m_info){
         canvas->draw(m_background.get(), m_baloon_x, m_baloon_y);
-        canvas->draw(m_col.get(), Rectangle(0, 0, 30, 30), m_baloon_x + 20, m_baloon_y + 70);
+        canvas->draw(m_col.get(), Rectangle(0, 0, 30, 30), m_baloon_x + 20, m_baloon_y + 80);
 
         int x_digit_col = m_baloon_x + 50;
         int counter_col = m_num_col;
 
         do{
-            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col + 60, m_baloon_y + 70);
+            canvas->draw(m_numbers.get(), Rectangle(23 * (counter_col % 10), 0, 23, 36), x_digit_col + 60, m_baloon_y + 80);
             counter_col /= 10;
             x_digit_col -= 25;
         }while(counter_col);
