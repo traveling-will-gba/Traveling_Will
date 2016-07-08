@@ -50,7 +50,6 @@ void TWWill::set_height(double will_h){ m_height = will_h; }
 void TWWill::set_width(double will_w){ m_width = will_w; }
 void TWWill::set_x(double will_x){ m_x = will_x; }
 void TWWill::set_y(double will_y){ m_y = will_y; }
-void TWWill::set_state(int will_state){ m_state = TWWill::State(will_state); }
 void TWWill::set_y_speed(double will_speed){ m_y_speed = will_speed; }
 void TWWill::set_x_speed(double will_speed){ m_x_speed = will_speed; }
 void TWWill::set_m_active_events(bool ac_events){ m_active_events = ac_events; }
@@ -65,6 +64,10 @@ int TWWill::collectables(){ return m_collectables; }
 int TWWill::enemies(){ return m_enemies; }
 bool TWWill::punching(){ return m_is_punching; }
 bool TWWill::triple_jump() { return m_triple_jump; }
+void TWWill::set_state(int will_state){ 
+    m_state = TWWill::State(will_state); 
+    m_sprite_counter = 0;
+}
 
 bool TWWill::on_event(const GameEvent& event){
     if(m_state != GAME_OVER && m_active_events){

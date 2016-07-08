@@ -74,7 +74,7 @@ void TWEnemy::update_self(unsigned now, unsigned) {
         m_start = now;
     }
 
-    m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
+    m_bounding_box = Rectangle(m_x + 10, m_y, m_width - 10, m_height);
     l.clear();
     l.insert(l.begin(), m_bounding_box);
 
