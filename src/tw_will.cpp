@@ -71,6 +71,7 @@ bool TWWill::on_event(const GameEvent& event){
         if(event.id() == EVENT_PUNCH && m_state != SLIDING && event.timestamp() - m_punch_counter > 230){
             m_is_punching = true;
             m_punch_counter = event.timestamp();
+            audio::play_sound_effect("res/effects/punch.wav");
             return true;
         }
 
@@ -80,17 +81,22 @@ bool TWWill::on_event(const GameEvent& event){
                 m_jump_counter++;
                 if(m_jump_counter == 3) m_triple_jump = true;
                 this->set_state(JUMPING);
+                audio::play_sound_effect("res/effects/jump.wav");
                 return true;
             }
         }
 
         if(event.id() == EVENT_DOWN_PRESSED && m_state != JUMPING && m_state != FALLING){
+            if(m_state != SLIDING){
+                audio::play_sound_effect("res/effects/slide.wav");
+            }
             this->set_state(SLIDING);
             return false;
         }
 
         if(event.id() == EVENT_DOWN_RELEASED && m_state == SLIDING){
             this->set_state(RUNNING);
+            audio::play_sound_effect("res/effects/slide.wav");
             return false;
         }
     }
@@ -129,12 +135,17 @@ void TWWill::on_collision(const Collidable *who, const Rectangle&, const unsigne
         if(q->type() == 1){
             auto p = dynamic_cast<TWPlayableLevel *>(this->parent());
             p->set_done(true, true);
+            audio::play_sound_effect("res/effects/enemy.wav");
         }
         else{
-            if(m_is_punching) m_enemies++;
+            if(m_is_punching){
+                audio::play_sound_effect("res/effects/punch.wav");
+                m_enemies++;
+            }
             else{
                 auto p = dynamic_cast<TWPlayableLevel *>(this->parent());
                 p->set_done(true, true);
+                audio::play_sound_effect("res/effects/enemy.wav");
             }
         }
     }

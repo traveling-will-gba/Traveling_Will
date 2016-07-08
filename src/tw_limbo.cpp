@@ -58,7 +58,7 @@ int audio_duration) :
     }
 
     m_buttons.clear();
-    m_buttons.push_back(new TWButton("back", m_current_level, 30, 410, "voltar-botao.png", 142, 50));
+    m_buttons.push_back(new TWButton("back", m_current_level, 680, 410, "voltar-botao.png", 142, 50));
 
     for(auto btn : m_buttons)
         add_child(btn);

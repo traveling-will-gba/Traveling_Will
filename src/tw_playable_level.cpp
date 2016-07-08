@@ -24,6 +24,10 @@ int audio_duration) :
 
     // printf("Entrando em construtor\n");
 
+    if(current_level == "3"){
+        audio::set_audio_volume(0.7);
+    }
+
 	m_current_level = current_level;
 	m_audio = audio_path;
 	m_next = next_level;

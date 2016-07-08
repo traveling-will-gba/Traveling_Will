@@ -68,6 +68,7 @@ void TWMenu::do_action(string label){
 	}
 
 	if(label == "exit"){
+		audio::play_sound_effect("res/effects/exit.wav");
 		exit(0);
 	}
 }
