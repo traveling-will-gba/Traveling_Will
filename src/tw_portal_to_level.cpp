@@ -19,15 +19,13 @@ TWPortalToLevel::TWPortalToLevel(string current_level, int px, int py, int, int 
     m_texture = resources::get_texture("limbo/portal.png");
     m_numbers = resources::get_texture("numbers.png");
     m_col = resources::get_texture(current_level + "/collectable.png");
-    m_background = resources::get_texture("limbo/limbo-baloon.png");
 
     m_active = true;
     m_info = false;
     this->set_priority(4);
     
     m_level = current_level;
-
-    m_label = resources::get_texture("limbo/label" + m_level + ".png");
+    m_background = resources::get_texture("limbo/baloon-" + m_level + ".png");
 
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     physics::register_object(this);
@@ -121,7 +119,6 @@ void TWPortalToLevel::update_self(unsigned now, unsigned) {
 void TWPortalToLevel::draw_self(Canvas* canvas, unsigned, unsigned) {
     if(m_info){
         canvas->draw(m_background.get(), m_baloon_x, m_baloon_y);
-        canvas->draw(m_label.get(), m_baloon_x + 20, m_baloon_y + 10);
         canvas->draw(m_col.get(), Rectangle(0, 0, 30, 30), m_baloon_x + 20, m_baloon_y + 70);
 
         int x_digit_col = m_baloon_x + 50;

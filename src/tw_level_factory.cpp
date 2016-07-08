@@ -10,7 +10,7 @@ Level * TWLevelFactory::make_level(const string& level_id){
     else if(level_id == "1")
         return new TWPlayableLevel("1", "result", "res/1/music.wav", 31000);
 	else if(level_id == "result")
-        return new TWResult("result", "2", "res/1/music.wav", 31000);
+        return new TWResult("result", "2", "", 31000);
     else if(level_id == "2")
         return new TWPlayableLevel("2", "result", "res/2/music.wav", 31000);
     else if(level_id == "3")

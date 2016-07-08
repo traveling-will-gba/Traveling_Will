@@ -57,7 +57,7 @@ class TWPortalToLevel : public GameObject, public Collidable {
         list<Rectangle> l;
         bool m_active, m_info;
         shared_ptr<Texture> m_texture, m_numbers;
-        shared_ptr<Texture> m_col, m_background, m_label;
+        shared_ptr<Texture> m_col, m_background;
 };
 
 #endif

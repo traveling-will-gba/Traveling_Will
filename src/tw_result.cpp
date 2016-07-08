@@ -13,9 +13,8 @@
 using namespace std;
 using namespace ijengine;
 
-TWResult::TWResult(const string &current_level, const string& next_level, const string audio_path, int){
+TWResult::TWResult(const string &current_level, const string& next_level, const string, int){
     m_current_level = current_level;
-    m_audio = audio_path;
     m_next = next_level;
     m_done = false;
     m_win = false;
@@ -43,6 +42,8 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
     n_defeated_enemies = v[2];
     m_game_over = v[3];
     m_prev_level = v[4];
+
+    m_audio = "res/" + to_string(played_level) + "/victory.wav";
 
     system("rm result.dat");
 
@@ -88,8 +89,8 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
     numbers = resources::get_texture("numbers.png");
 
     m_buttons.clear();
-    m_buttons.push_back(new TWButton("limbo", m_current_level, 680, 410, "limbo-botao.png", 142, 50));
-    m_buttons.push_back(new TWButton("restart", m_current_level, 30, 410, "restart-botao.png", 142, 50));
+    m_buttons.push_back(new TWButton("limbo", m_current_level, 680, 410, "limbo-botao.png", 104, 34));
+    m_buttons.push_back(new TWButton("restart", m_current_level, 30, 410, "restart-botao.png", 354, 34));
 
     for(auto btn : m_buttons){
         add_child(btn);
@@ -147,12 +148,10 @@ void TWResult::draw_self(Canvas *canvas, unsigned, unsigned){
         canvas->draw(m_enemy.get(), 200, 100);
     }
 
-    if(not m_win && not m_game_over)
+    if(not m_game_over)
         canvas->draw(m_will_sprite.get(), Rectangle(45 * (int)m_sprite_counter, 0, 45, 45), 75, 75);
-    else if(not m_win && m_game_over)
+    else
         canvas->draw(m_will_sprite.get(), Rectangle(45 * (int)m_sprite_counter, 0, 45, 45), 400, 75);
-    else if(m_win)
-        canvas->draw(m_will_sprite.get(), 75, 75);
 
     int x_digit_col = 700;
     int counter_col = n_collectables;
