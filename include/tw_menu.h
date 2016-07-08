@@ -24,6 +24,10 @@ class TWMenu : public TWLevel {
 	protected:
 		void update_self(unsigned, unsigned last);
 		void draw_self(Canvas *canvas, unsigned, unsigned last);
+
+	private:
+		shared_ptr<Texture> m_credits;
+		bool on_credit;
 };
 
 #endif
