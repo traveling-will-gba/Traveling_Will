@@ -1,6 +1,7 @@
 #ifndef TW_MENU_H
 #define TW_MENU_H
 
+#include "tw_save.h"
 #include "tw_level.h"
 #include "tw_button.h"
 
@@ -28,6 +29,7 @@ class TWMenu : public TWLevel {
 	private:
 		shared_ptr<Texture> m_credits;
 		bool on_credit;
+		TWSave *m_save;
 };
 
 #endif
