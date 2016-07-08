@@ -25,7 +25,11 @@ class TWButton : public GameObject, public GameEventsListener {
         string level();
         string label();
         string texture();
+        double percentage();
+        double width();
         void set_texture(string btn_texture);
+        void set_active(bool act);
+        void set_x(int bx);
 
         bool on_event(const GameEvent& event);
 
@@ -43,7 +47,8 @@ class TWButton : public GameObject, public GameEventsListener {
         HoverState m_hover_state;
         string m_label, m_texture_label;
         string m_img, m_action, m_level;
-        double m_x, m_y, m_h, m_w;
+        double m_x, m_y, m_h, m_w, m_percentage;
+        bool m_active;
         shared_ptr<Texture> m_texture;
 };
 

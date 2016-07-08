@@ -10,6 +10,8 @@ TWButton::TWButton(string btn_label, string cur_level, double b_x, double b_y, s
     m_click_state(NOT_CLICKING), m_hover_state(NOT_HOVERING), m_label(btn_label), m_img(img), m_level(cur_level),
     m_x(b_x), m_y(b_y), m_h(b_h), m_w(b_w) {
     
+    m_percentage = 100.0;
+    m_active = true;
     m_texture_label = img;
     m_texture = resources::get_texture(cur_level + "/" + m_texture_label);
 
@@ -24,9 +26,13 @@ double TWButton::x(){ return m_x; }
 double TWButton::y(){ return m_y; }
 double TWButton::w(){ return m_w; }
 double TWButton::h(){ return m_h; }
+double TWButton::percentage(){ return m_percentage; }
+double TWButton::width(){ return m_w; }
 string TWButton::level(){ return m_level; }
 string TWButton::label(){ return m_label; }
 string TWButton::texture(){ return m_texture_label; }
+void TWButton::set_x(int bx){ m_x = bx; }
+void TWButton::set_active(bool act){ m_active = act; }
 
 void TWButton::set_texture(string btn_texture){
     m_texture = resources::get_texture(m_level + "/" + btn_texture);
@@ -35,6 +41,8 @@ void TWButton::set_texture(string btn_texture){
 void TWButton::update_self(unsigned, unsigned){}
 
 bool TWButton::on_event(const GameEvent& event){
+    if(not m_active) return false;
+
     if(event.id() == GAME_MOUSE_CLICK){
         double mouse_x = event.get_property<double>("x");
         double mouse_y = event.get_property<double>("y");
@@ -44,6 +52,8 @@ bool TWButton::on_event(const GameEvent& event){
 
         if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
             if(m_click_state == CLICKING){
+                m_percentage = mouse_x;
+
                 auto p = this->parent();
 
                 if(m_level == "menu"){
@@ -104,5 +114,6 @@ bool TWButton::on_event(const GameEvent& event){
 }
 
 void TWButton::draw_self(Canvas *canvas, unsigned, unsigned){
-    canvas->draw(m_texture.get(), m_x, m_y);
+    if(m_active)
+        canvas->draw(m_texture.get(), m_x, m_y);
 }

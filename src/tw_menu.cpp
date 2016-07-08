@@ -58,15 +58,41 @@ void TWMenu::do_action(string label){
 		m_next = "cutscene-intro";
 		m_done = true;
 	}
-	
 	if(label == "continue-adventure"){
 		m_next = "limbo";
 		m_done = true;
 	}
-
 	if(label == "options"){
-	}
+		for(auto btn : m_buttons){
+			btn->set_active(false);
+		}
 
+	    m_buttons.push_back(new TWButton("back", m_current_level, 30, 410, "voltar-botao.png", 142, 50));
+		m_buttons.push_back(new TWButton("volume", m_current_level, 150, 280, "opcoes/volume-botao.png", 189, 28));
+		m_buttons.push_back(new TWButton("volume-bar", m_current_level, 370, 280, "opcoes/volume-barra.png", 225, 28));
+		m_buttons.push_back(new TWButton("volume-ind", m_current_level, 575, 280, "opcoes/volume-indicador.png", 189, 28));
+
+		for(auto btn : m_buttons){
+			add_child(btn);
+		}
+	}
+	if(label == "fullscreen-button"){
+		printf("botao tela cheia\n");
+	}
+	if(label == "volume-bar"){
+		auto indicator = m_buttons[m_buttons.size() - 1];
+		auto bar = m_buttons[m_buttons.size() - 2];
+		double old_x = indicator->x();
+		double percentage = bar->percentage();
+		double width = indicator->width();
+		indicator->set_x(percentage - 14);
+		double new_x = indicator->x();
+        audio::set_audio_volume(1 - (575 - new_x)/225);
+	}
+	if(label == "back"){
+		m_next = "menu";
+		m_done = true;
+	}
 	if(label == "exit"){
 		audio::play_sound_effect("res/effects/exit.wav");
 		exit(0);
