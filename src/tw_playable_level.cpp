@@ -33,13 +33,8 @@ int audio_duration) :
     counting = 0;
 	m_start = -1;
 
-	
-    m_progress_bar = new TWProgressBar(m_current_level, m_audio_duration);
-    add_child(m_progress_bar);
-
     m_collectable_status = new TWCollectableStatus(m_current_level);
     add_child(m_collectable_status);
-
 
     m_floor_texture = resources::get_texture(m_current_level + "/floor.png");
 
@@ -99,6 +94,9 @@ int audio_duration) :
         if(prev_h != cur_h && cur_h == next_h) cur_plat->set_texture(2);
         if(prev_h == cur_h && cur_h != next_h) cur_plat->set_texture(3);
     }
+
+    m_progress_bar = new TWProgressBar(m_current_level, n_screens*1.0);
+    add_child(m_progress_bar);
 
     m_portal_start = new TWPortal(53, 355, m_x_speed, START);
     add_child(m_portal_start);
@@ -318,7 +316,7 @@ void TWPlayableLevel::update_counters(unsigned now){
     }
 
     m_collectable_status->update_collectable_counter(m_will->collectables());
-    m_progress_bar->update_audio_counter(m_audio_counter);
+    m_progress_bar->update_current_length(counting + 25);
 }
 
 void TWPlayableLevel::draw_self(Canvas *canvas, unsigned, unsigned){
