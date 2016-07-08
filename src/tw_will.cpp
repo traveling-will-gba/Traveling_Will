@@ -35,6 +35,7 @@ TWWill::TWWill(double will_x, double will_y, int initial_state) : m_x(will_x), m
     m_sprite[PUNCHING] = resources::get_texture("will/punching.png");
     m_sprite[GAME_OVER] = resources::get_texture("will/gameover.png");
     m_sprite[STOPPED] = resources::get_texture("will/stopped.png");
+    m_sprite[REVERSE_RUNNING] = resources::get_texture("will/reverse-running.png");
     this->set_priority(10);
 
     event::register_listener(this);

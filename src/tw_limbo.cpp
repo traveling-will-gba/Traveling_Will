@@ -95,6 +95,7 @@ string TWLimbo::audio() const{
 void TWLimbo::do_action(string label){
     if(label == "back"){
         m_will->set_active(false);
+        on_portal = true;
         m_next = "menu";
         m_done = true;
     }
@@ -102,7 +103,7 @@ void TWLimbo::do_action(string label){
 
 bool TWLimbo::on_event(const GameEvent& event){
     if(event.id() == GAME_EVENT_DOWN_PRESSED){
-        m_will->set_y_speed(0.15);
+        m_will->set_y_speed(0.25);
     }
 
     if(event.id() == GAME_EVENT_DOWN_RELEASED){
@@ -110,7 +111,7 @@ bool TWLimbo::on_event(const GameEvent& event){
     }
 
     if(event.id() == GAME_EVENT_UP_PRESSED){
-        m_will->set_y_speed(-0.15);
+        m_will->set_y_speed(-0.25);
     }
 
     if(event.id() == GAME_EVENT_UP_RELEASED){
@@ -118,7 +119,7 @@ bool TWLimbo::on_event(const GameEvent& event){
     }
 
     if(event.id() == GAME_EVENT_LEFT_PRESSED){
-        m_will->set_x_speed(-0.15);
+        m_will->set_x_speed(-0.25);
     }
 
     if(event.id() == GAME_EVENT_LEFT_RELEASED){
@@ -126,7 +127,7 @@ bool TWLimbo::on_event(const GameEvent& event){
     }
 
     if(event.id() == GAME_EVENT_RIGHT_PRESSED){
-        m_will->set_x_speed(0.15);
+        m_will->set_x_speed(0.25);
     }
 
     if(event.id() == GAME_EVENT_RIGHT_RELEASED){
@@ -143,7 +144,12 @@ bool TWLimbo::on_event(const GameEvent& event){
 }
 
 void TWLimbo::update_self(unsigned now, unsigned last){
-    if(m_will->x_speed() || m_will->speed()) m_will->set_state(RUNNING);
+    if(m_will->x_speed() || m_will->speed()){
+        if(m_will->x_speed() < 0)  
+            m_will->set_state(TWWill::State::REVERSE_RUNNING); 
+        else
+            m_will->set_state(RUNNING);
+    } 
     else m_will->set_state(STOPPED);
 
     sprite_counter += (now - m_start) * m_sprite_speed;
@@ -160,6 +166,9 @@ void TWLimbo::update_self(unsigned now, unsigned last){
 
     physics::do_collisions(now, last);
 
+    if(not on_portal){
+        m_next = "";
+    }
     on_portal = false;
 
     m_start = now;

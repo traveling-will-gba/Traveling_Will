@@ -15,7 +15,7 @@ using namespace ijengine;
 class TWWill : public GameObject, public GameEventsListener, public Collidable {
 
     public:
-        typedef enum { RUNNING, JUMPING, SLIDING, FALLING, GAME_OVER, PUNCHING, STOPPED } State;
+        typedef enum { RUNNING, JUMPING, SLIDING, FALLING, GAME_OVER, PUNCHING, STOPPED, REVERSE_RUNNING } State;
 
         TWWill(double will_x, double will_y, int initial_state = RUNNING);
         ~TWWill();
