@@ -4,6 +4,8 @@
 #include <ijengine/level_factory.h>
 
 #include "tw_menu.h"
+#include "tw_playable_level.h"
+#include "tw_limbo.h"
 #include "tw_cutscene.h"
 
 using namespace ijengine;

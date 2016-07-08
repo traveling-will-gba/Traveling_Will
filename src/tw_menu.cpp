@@ -20,20 +20,29 @@ TWMenu::TWMenu(const string &current_level, const string& next_level, const stri
 	m_done = false;
 	m_state = NOTHING;
 	m_start = -1;
+	on_credit = false;
 
-	m_background[0] = resources::get_texture(m_current_level + "/menu-tela.png");
+	m_background[0] = resources::get_texture(m_current_level + "/menu-fundo.png");
+	m_background[1] = resources::get_texture(m_current_level + "/menu-titulo.png");
 
-	m_buttons.push_back(new TWButton(0, m_current_level, 20, 400, "voltar-botao.png", 144, 40, 0));
-	m_buttons.push_back(new TWButton(1, m_current_level, 260, 280, "opcoes-botao.png", 270, 70, 1));
-	m_buttons.push_back(new TWButton(2, m_current_level, 260, 360, "sair-botao.png", 270, 70, 1));
-	m_buttons.push_back(new TWButton(3, m_current_level, 700, 400, "creditos-botao.png", 144, 40, 1));
-	m_buttons.push_back(new TWButton(4, m_current_level, 260, 200, "novo-jogo-botao.png", 270, 70, 1));
+    int n_levels = 6;
+    m_save = new TWSave(n_levels);
 
-	m_buttons.push_back(new TWButton(5, m_current_level + "/opcoes", 260, 200, "volume-botao.png", 144, 40, 0));
-	m_buttons.push_back(new TWButton(6, m_current_level + "/opcoes", 260, 280, "tela-cheia-botao.png", 144, 40, 0));
-	m_buttons.push_back(new TWButton(7, m_current_level + "/fases", 80, 210, "fase-1.png", 200, 150, 0));
-	m_buttons.push_back(new TWButton(8, m_current_level + "/fases", 320, 210, "fase-2.png", 200, 150, 0));
-	m_buttons.push_back(new TWButton(9, m_current_level + "/fases", 560, 210, "fase-3.png", 200, 150, 0));
+	m_buttons.clear();
+
+	if(m_save->times_played(1) == 0){
+		m_buttons.push_back(new TWButton("new-adventure", m_current_level, 50, 240, "menu-nova-aventura.png", 299, 34));
+		m_buttons.push_back(new TWButton("options", m_current_level, 50, 284, "menu-opcoes.png", 139, 51));
+		m_buttons.push_back(new TWButton("exit", m_current_level, 50, 345, "menu-sair.png", 86, 34));
+	}
+	else{
+		m_buttons.push_back(new TWButton("new-adventure", m_current_level, 50, 220, "menu-nova-aventura.png", 299, 34));
+		m_buttons.push_back(new TWButton("continue-adventure", m_current_level, 50, 264, "menu-continuar-aventura.png", 409, 35));
+		m_buttons.push_back(new TWButton("options", m_current_level, 50, 309, "menu-opcoes.png", 139, 51));
+		m_buttons.push_back(new TWButton("exit", m_current_level, 50, 370, "menu-sair.png", 86, 34));
+	}
+
+    m_buttons.push_back(new TWButton("credits", m_current_level, 680, 410, "creditos-botao.png", 142, 50));
 
 	for(auto btn : m_buttons){
 		add_child(btn);
@@ -58,98 +67,66 @@ string TWMenu::audio() const{
 	return m_audio;
 }
 
-bool TWMenu::on_event(const GameEvent& event){
-	if(event.id() == GAME_MOUSE_CLICK){
-		double mouse_x = event.get_property<double>("x");
-		double mouse_y = event.get_property<double>("y");
+void TWMenu::do_action(string label){
+	if(label == "new-adventure"){
+		m_next = "cutscene-intro";
+		m_done = true;
+	}
+	if(label == "continue-adventure"){
+		m_next = "limbo";
+		m_done = true;
+	}
+	if(label == "options"){
+		for(auto btn : m_buttons){
+			btn->set_active(false);
+		}
+
+	    m_buttons.push_back(new TWButton("back", m_current_level, 30, 410, "voltar-botao.png", 142, 50));
+		m_buttons.push_back(new TWButton("volume", m_current_level, 150, 280, "opcoes/volume-botao.png", 189, 28));
+		m_buttons.push_back(new TWButton("volume-bar", m_current_level, 370, 280, "opcoes/volume-barra.png", 225, 28));
+		m_buttons.push_back(new TWButton("volume-ind", m_current_level, 575, 280, "opcoes/volume-indicador.png", 189, 28));
 
 		for(auto btn : m_buttons){
-			if(btn->able_to_draw() == 0) continue;
-
-			int min_x = btn->x(), max_x = min_x + btn->w();
-			int min_y = btn->y(), max_y = min_y + btn->h();
-
-			if(mouse_x >= min_x && mouse_x <= max_x && mouse_y >= min_y && mouse_y <= max_y){
-				switch(btn->id()){
-					case BACK_BUTTON:
-						m_background[0] = resources::get_texture(m_current_level + "/menu-tela.png");
-						for(auto button : m_buttons){
-							if(button->level() == "menu" && button->id() != BACK_BUTTON)
-								button->set_able_to_draw(1);
-							else
-								button->set_able_to_draw(0);
-						}
-						break;
-					case 1:
-						m_background[0] = resources::get_texture(m_current_level + "/opcoes-tela.png");
-
-						for(auto button : m_buttons){
-							if(button->level() == "menu")
-								button->set_able_to_draw(0);
-							else if(button->level() == m_current_level + "/opcoes")
-								button->set_able_to_draw(1);
-
-							if(button->id() == BACK_BUTTON && button->able_to_draw() == 0)
-								button->set_able_to_draw(1);
-						}
-						break;
-					case 2:
-						exit(1);
-						break;
-					case 3:
-						m_background[0] = resources::get_texture(m_current_level + "/creditos-tela.png");
-						for(auto button : m_buttons){
-							if(button->level() == "menu")
-								button->set_able_to_draw(0);
-							else if(button->level() == m_current_level + "/creditos")
-								button->set_able_to_draw(1);
-
-							if(button->id() == BACK_BUTTON && button->able_to_draw() == 0)
-								button->set_able_to_draw(1); 
-						}
-						break;
-					case 4:
-						m_background[0] = resources::get_texture(m_current_level + "/fases-tela.png");
-
-						for(auto button : m_buttons){
-							if(button->level() == "menu")
-								button->set_able_to_draw(0);
-							else if(button->level() == m_current_level + "/fases")
-								button->set_able_to_draw(1);
-
-							if(button->id() == BACK_BUTTON && button->able_to_draw() == 0)
-								button->set_able_to_draw(1);
-						}
-						break;
-					case 5:
-						printf("VOLUME\n");
-						break;
-					case 6:
-						video::set_full_screen(1);
-						break;
-					case 7:
-						m_state = SELECTING;
-						break;
-					case 8:
-						printf("FASE 2\n");
-						break;
-					case 9:
-						printf("FASE 3\n");
-						break;
-					default:
-						break;
-				}
-
-				return true;
-			}
-
+			add_child(btn);
 		}
 	}
+	if(label == "credits"){
+		for(auto btn : m_buttons){
+			btn->set_active(false);
+		}
 
+		m_credits = resources::get_texture(m_current_level + "/creditos.png");
+		on_credit = true;
+
+	    m_buttons.push_back(new TWButton("back", m_current_level, 680, 410, "voltar-botao.png", 142, 50));
+		for(auto btn : m_buttons){
+			add_child(btn);
+		}
+	}
+	if(label == "volume-bar"){
+		auto indicator = m_buttons[m_buttons.size() - 1];
+		auto bar = m_buttons[m_buttons.size() - 2];
+		double percentage = bar->percentage();
+		indicator->set_x(percentage - 14);
+		double new_x = indicator->x();
+        audio::set_audio_volume(1 - (575 - new_x)/225);
+	}
+	if(label == "back"){
+		m_next = "menu";
+		m_done = true;
+	}
+	if(label == "exit"){
+		audio::play_sound_effect("res/effects/exit.wav");
+		exit(0);
+	}
+}
+
+bool TWMenu::on_event(const GameEvent&){
 	return false;
 }
 
 void TWMenu::update_self(unsigned, unsigned){
+
 	if(m_state == SELECTING){
 		m_state = RUNNING;
 		m_done = true;
@@ -158,5 +135,12 @@ void TWMenu::update_self(unsigned, unsigned){
 
 void TWMenu::draw_self(Canvas *canvas, unsigned, unsigned){
 	canvas->clear();
-	canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+
+	if(on_credit){
+		canvas->draw(m_credits.get(), 0, 0);
+	}
+	else{
+		canvas->draw(m_background[0].get(), Rectangle(0, 0, 852, 480), 0, 0);
+		canvas->draw(m_background[1].get(), Rectangle(0, 0, 852, 480), 0, 0);
+	}
 }

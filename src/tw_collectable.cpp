@@ -17,9 +17,9 @@ TWCollectable::TWCollectable(std::string current_level, double ch){
 }
 
 TWCollectable::~TWCollectable(){
-    printf("Vamos destruir collectable\n");
+    //printf("Vamos destruir collectable\n");
     physics::unregister_object(this);
-    printf("Destruiu de boa\n");
+    //printf("Destruiu de boa\n");
 }
 
 double TWCollectable::x(){ return m_x; }
@@ -56,8 +56,8 @@ const list<Rectangle>& TWCollectable::hit_boxes() const{
     return l;
 }
 
-void TWCollectable::on_collision(const Collidable *who, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("TWCollectable colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
+void TWCollectable::on_collision(const Collidable *, const Rectangle&, const unsigned, const unsigned){
+    //printf("TWCollectable colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
     m_active = false;
 }
 
@@ -78,8 +78,8 @@ void TWCollectable::update_self(unsigned now, unsigned) {
     m_start = now;
 }
 void TWCollectable::draw_self(Canvas* canvas, unsigned, unsigned) {
-    //printf("Entrando no draw de collectable\n");
+    ////printf("Entrando no draw de collectable\n");
     if(m_active) canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
-    //printf("Saindo do draw de collectable\n");
+    ////printf("Saindo do draw de collectable\n");
 }
 

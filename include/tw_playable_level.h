@@ -2,9 +2,12 @@
 #define TW_PLAYABLE_LEVEL_H
 
 #include "tw_will.h"
+#include "tw_save.h"
 #include "tw_level.h"
 #include "tw_button.h"
+#include "tw_portal.h"
 #include "tw_platform.h"
+#include "tw_tutorial.h"
 #include "tw_progress_bar.h"
 #include "tw_collectable_status.h"
 
@@ -25,17 +28,20 @@ class TWPlayableLevel : public TWLevel{
 
 		bool on_event(const GameEvent& event);
 
+		void set_done(bool is_done, bool game_over);
+
 	protected:
 		void update_self(unsigned now, unsigned last);
 		void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
 	private:
-        static const int GAME_EVENT_JUMP =              1 << 4;
-        static const int GAME_EVENT_SLIDE_PRESSED =     1 << 5;
-        static const int GAME_EVENT_SLIDE_RELEASED =    1 << 6;
+        static const int GAME_EVENT_JUMP =				1 << 4;
+        static const int GAME_EVENT_DOWN_PRESSED =		1 << 5;
+        static const int GAME_EVENT_DOWN_RELEASED =		1 << 6;
         static const int GAME_EVENT_MENU_SELECT =       1 << 7;
         static const int GAME_EVENT_PUNCH =             1 << 11;
-        static const int NUMBER_OF_SECTIONS =           7;
+        static const int GAME_EVENT_DEBUG =             1 << 19;
+        static const int NUMBER_OF_SECTIONS =           25;
         static const int WILL_HEIGHT =                  45;
         static const int WILL_WIDTH =                   45;
         static const int COLLECTABLE_DIMENSION =        30;
@@ -45,29 +51,35 @@ class TWPlayableLevel : public TWLevel{
         static const int INVALID =                      -10000000;
         static const int COLLECTABLE =                  0;
         static const int ENEMY =                        1; 
-        static const int PLATFORM_SIZE =                142;
+        static const int PLATFORM_SIZE =                36;
+		static const int PORTAL_HEIGHT =				77;
+		static const int END =							1;
+		static const int START = 						0;
 
         bool m_is_punching, level_started, level_finished;
         
         int m_audio_duration, m_audio_counter;
         int n_screens, m_punch_counter;
         int n_collectables, n_enemies;
-        int m_cur_collectable_it, m_cur_enemy_it, n_backgrounds;
+        int n_backgrounds;
+
+        int counting;
         
         deque<int> enemy_type, collectable, enemy;
         deque<double> collectable_height, enemy_height, platform_height;
         deque<TWPlatform *> platforms;
 
         double m_x_speed, m_y_speed;
-        double sprite_counter, m_sprite_speed;
         double m_camera_x, m_camera_y, m_reverse_camera_x, m_reverse_camera_y;
         double m_floor;
 
         TWWill * m_will;
-        TWCollectable *m_cur_collectable;
-        TWEnemy *m_cur_enemy;
-        TWProgressBar *m_progress_bar;
-        TWCollectableStatus *m_collectable_status;
+        TWSave *m_save;
+        TWProgressBar * m_progress_bar;
+        TWCollectableStatus * m_collectable_status;
+		TWPortal * m_portal_start, * m_portal_end[2];
+        TWTutorial * m_tutorial, * m_triple_jump;
+
 
         shared_ptr<Texture> m_floor_texture;
 

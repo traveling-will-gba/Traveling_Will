@@ -17,13 +17,21 @@ namespace ijengine
     namespace game_event
     {
         const unsigned GAME_EVENT_JUMP =            1 << 4;
-        const unsigned GAME_EVENT_SLIDE_PRESSED =   1 << 5;
-        const unsigned GAME_EVENT_SLIDE_RELEASED =  1 << 6;
+        const unsigned GAME_EVENT_DOWN_PRESSED =    1 << 5;
+        const unsigned GAME_EVENT_DOWN_RELEASED =   1 << 6;
         const unsigned GAME_EVENT_MENU_SELECT =     1 << 7;
         const unsigned GAME_MOUSE_CLICK =           1 << 8;
         const unsigned GAME_MOUSE_MOVEMENT =        1 << 9;
         const unsigned GAME_MOUSE_MOTION =          1 << 10;
         const unsigned GAME_EVENT_PUNCH =           1 << 11;
+        const unsigned GAME_EVENT_UP_PRESSED =      1 << 12;
+        const unsigned GAME_EVENT_UP_RELEASED =     1 << 13;
+        const unsigned GAME_EVENT_LEFT_PRESSED =    1 << 14;
+        const unsigned GAME_EVENT_LEFT_RELEASED =   1 << 15;
+        const unsigned GAME_EVENT_RIGHT_PRESSED =   1 << 16;
+        const unsigned GAME_EVENT_RIGHT_RELEASED =  1 << 17;
+        const unsigned GAME_EVENT_ENTER =           1 << 18;
+        const unsigned GAME_EVENT_DEBUG =           1 << 19;
     }
 }
 
@@ -72,8 +80,11 @@ class TWGame {
 
                 switch(from.key()){
                     case KeyboardEvent::SPACE:
-                        to.set_property<string>("jump", "space");
-                        to.set_id(game_event::GAME_EVENT_JUMP);
+                        if(from.state() == KeyboardEvent::PRESSED){
+                            to.set_property<string>("jump", "space");
+                            to.set_id(game_event::GAME_EVENT_JUMP);
+                        }
+
                         break;
 
                     case KeyboardEvent::C:
@@ -90,10 +101,50 @@ class TWGame {
                         to.set_property<string>("slide", "down");
 
                         if(from.state() == KeyboardEvent::PRESSED)
-                            to.set_id(game_event::GAME_EVENT_SLIDE_PRESSED);
+                            to.set_id(game_event::GAME_EVENT_DOWN_PRESSED);
                         else if(from.state() == KeyboardEvent::RELEASED)
-                            to.set_id(game_event::GAME_EVENT_SLIDE_RELEASED);
+                            to.set_id(game_event::GAME_EVENT_DOWN_RELEASED);
 
+                        break;
+
+                    case KeyboardEvent::UP:
+                        to.set_property<string>("slide", "up");
+
+                        if(from.state() == KeyboardEvent::PRESSED)
+                            to.set_id(game_event::GAME_EVENT_UP_PRESSED);
+                        else if(from.state() == KeyboardEvent::RELEASED)
+                            to.set_id(game_event::GAME_EVENT_UP_RELEASED);
+
+                        break;
+
+                    case KeyboardEvent::LEFT:
+                        to.set_property<string>("slide", "left");
+
+                        if(from.state() == KeyboardEvent::PRESSED)
+                            to.set_id(game_event::GAME_EVENT_LEFT_PRESSED);
+                        else if(from.state() == KeyboardEvent::RELEASED)
+                            to.set_id(game_event::GAME_EVENT_LEFT_RELEASED);
+
+                        break;
+
+                    case KeyboardEvent::RIGHT:
+                        to.set_property<string>("slide", "right");
+
+                        if(from.state() == KeyboardEvent::PRESSED)
+                            to.set_id(game_event::GAME_EVENT_RIGHT_PRESSED);
+                        else if(from.state() == KeyboardEvent::RELEASED)
+                            to.set_id(game_event::GAME_EVENT_RIGHT_RELEASED);
+
+                        break;
+
+                    case KeyboardEvent::RETURN:
+                        to.set_property<string>("jump", "enter");
+                        to.set_id(game_event::GAME_EVENT_ENTER);
+                        break;
+
+                    case KeyboardEvent::B:
+                        to.set_property<string>("debug", "b");
+                        to.set_id(game_event::GAME_EVENT_DEBUG);
                         break;
 
                     default:
@@ -111,3 +162,4 @@ class TWGame {
 };
 
 #endif
+

@@ -6,7 +6,7 @@ TWEnemy::TWEnemy(){
 }
 
 TWEnemy::TWEnemy(double et, double eh){
-    m_sprite_speed = 1/170.0;
+    m_sprite_speed = 1/85.0;
     m_sprite_counter = 0;
     m_start = -1;
 
@@ -15,10 +15,10 @@ TWEnemy::TWEnemy(double et, double eh){
     m_y = 480 - eh;
 
     if(m_type == 1){
-        m_texture = resources::get_texture("1/enemy1.png");
+        m_texture = resources::get_texture("enemies/1.png");
     }
     else{
-        m_texture = resources::get_texture("1/enemy2.png");
+        m_texture = resources::get_texture("enemies/2.png");
     }
 
     m_active = false;
@@ -32,7 +32,7 @@ double TWEnemy::x(){ return m_x; }
 double TWEnemy::y(){ return m_y; }
 double TWEnemy::height(){ return m_height; }
 double TWEnemy::width(){ return m_width; }
-int TWEnemy::type(){ return m_type; }
+int TWEnemy::type() const{ return m_type; }
 shared_ptr<Texture> TWEnemy::texture(){ return m_texture; }
 
 void TWEnemy::set_x(double ex){ m_x = ex; }
@@ -48,7 +48,7 @@ void TWEnemy::register_self(int current_x){
 }
 
 bool TWEnemy::active() const{
-    return true;
+    return m_active;
 }
 
 pair<double, double> TWEnemy::direction() const{
@@ -64,8 +64,8 @@ const list<Rectangle>& TWEnemy::hit_boxes() const{
     return l;
 }
 
-void TWEnemy::on_collision(const Collidable *, const Rectangle& where, const unsigned now, const unsigned last){
-    printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
+void TWEnemy::on_collision(const Collidable *, const Rectangle&, const unsigned, const unsigned){
+    //printf("TWWill colidiu em %.2f,%.2f em %u-%u\n", where.x(), where.y(), now, last);
     m_active = false;
 }
 
@@ -74,7 +74,7 @@ void TWEnemy::update_self(unsigned now, unsigned) {
         m_start = now;
     }
 
-    m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
+    m_bounding_box = Rectangle(m_x + 10, m_y, m_width - 10, m_height);
     l.clear();
     l.insert(l.begin(), m_bounding_box);
 

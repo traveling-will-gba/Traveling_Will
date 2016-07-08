@@ -24,7 +24,7 @@ class TWEnemy : public GameObject, public Collidable {
         double y();
         double height();
         double width();
-        int type();
+        int type() const;
         shared_ptr<Texture> texture();
 
         void set_x(double ex);

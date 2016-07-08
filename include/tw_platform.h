@@ -18,7 +18,7 @@ using std::string;
 class TWPlatform : public GameObject {
     public:
         TWPlatform();
-        TWPlatform(string current_level, double ph, double et, double eh, int ep, double ch, int cp);
+        TWPlatform(string current_level, double ph, double et, double eh, int ep, double ch, int cp, int plat_num);
         ~TWPlatform();
         double x();
         double y();
@@ -31,6 +31,7 @@ class TWPlatform : public GameObject {
         void set_x(double px);
         void set_y(double py);
         void set_height(double ph);
+        void set_texture(int n);
         void remove(int option);
         void register_objects(int m_x);
 
@@ -39,12 +40,12 @@ class TWPlatform : public GameObject {
         void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
     private:
-        // insert level later
         double m_x, m_y;
         double m_height, m_width;
         static const int INVALID = -10000000;
         static const int COLLECTABLE = 0;
         shared_ptr<Texture> m_texture, m_floor;
+        string m_level;
         TWEnemy *m_enemy;
         TWCollectable *m_collectable;
 };

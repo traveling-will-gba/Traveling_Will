@@ -5,17 +5,17 @@
 
 class TWProgressBar : public TWHud {
     public:
-        TWProgressBar(string level, int audio_duration);
+        TWProgressBar(string level, double length);
         ~TWProgressBar();
 
-        void update_audio_counter(int audio);
+        void update_current_length(double length);
 
     protected:
         void update_self(unsigned now, unsigned last);
         void draw_self(Canvas *canvas, unsigned now, unsigned last);        
 
     private:
-        int m_audio_counter, m_audio_duration;
+        double m_total_length, m_cur_length;
 };
 
 
