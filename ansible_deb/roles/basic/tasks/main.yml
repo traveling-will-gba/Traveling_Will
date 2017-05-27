@@ -1,0 +1,12 @@
+- name: "Installing VIM"
+  apt: pkg=vim state=installed
+
+- name: "Installing GIT"
+  apt: pkg=git state=installed
+
+- name: "Installing build-essential"
+  apt: pkg=build-essential state=installed
+
+- name: "Installing devscripts"
+  apt: pkg=devscripts state=installed
+
