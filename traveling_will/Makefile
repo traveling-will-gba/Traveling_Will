@@ -48,3 +48,7 @@ clean:
 	@echo Cleaning...
 	@find . -name *.o -exec rm {} \;
 	@find . -name *.d -exec rm {} \;
+
+dist-clean: clean
+	@rm -f $(TARGET)/$(NAME)
+	@rm -rf *.tar.gz $(OBJ_DIR) $(BIN_DIR)
