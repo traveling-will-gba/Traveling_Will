@@ -4,12 +4,12 @@
 #include "tw_result.h"
 #include "tw_limbo.h"
 
-#include <ijengine/canvas.h>
+#include "../engine/include/canvas.h"
 
 TWButton::TWButton(string btn_label, string cur_level, double b_x, double b_y, string img, double b_w, double b_h) :
     m_click_state(NOT_CLICKING), m_hover_state(NOT_HOVERING), m_label(btn_label), m_img(img), m_level(cur_level),
     m_x(b_x), m_y(b_y), m_h(b_h), m_w(b_w) {
-    
+
     m_percentage = 100.0;
     m_active = true;
     m_texture_label = img;

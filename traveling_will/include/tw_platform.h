@@ -6,9 +6,9 @@
 
 #include <memory>
 #include <iostream>
-#include <ijengine/engine.h>
-#include <ijengine/rectangle.h>
-#include <ijengine/game_object.h>
+#include "../engine/include/engine.h"
+#include "../engine/include/rectangle.h"
+#include "../engine/include/game_object.h"
 
 using namespace ijengine;
 using namespace std;

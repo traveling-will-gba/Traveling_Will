@@ -3,11 +3,11 @@
 
 #include <memory>
 #include <iostream>
-#include <ijengine/engine.h>
-#include <ijengine/rectangle.h>
-#include <ijengine/game_object.h>
-#include <ijengine/events_translator.h>
-#include <ijengine/game_events_listener.h>
+#include "../engine/include/engine.h"
+#include "../engine/include/rectangle.h"
+#include "../engine/include/game_object.h"
+#include "../engine/include/events_translator.h"
+#include "../engine/include/game_events_listener.h"
 
 using namespace ijengine;
 using std::shared_ptr;
@@ -38,7 +38,7 @@ class TWButton : public GameObject, public GameEventsListener {
 
     protected:
         void update_self(unsigned now, unsigned last);
-        void draw_self(Canvas *canvas, unsigned now, unsigned last);        
+        void draw_self(Canvas *canvas, unsigned now, unsigned last);
 
     private:
         static const int GAME_MOUSE_CLICK = 1 << 8;
