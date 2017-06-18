@@ -1,13 +1,13 @@
 #ifndef TW_PORTAL_TO_LEVEL_H
 #define TW_PORTAL_TO_LEVEL_H
 
-#include <ijengine/engine.h>
-#include <ijengine/collidable.h>
-#include <ijengine/canvas.h>
-#include <ijengine/texture.h>
-#include <ijengine/game_object.h>
-#include <ijengine/events_translator.h>
-#include <ijengine/game_events_listener.h>
+#include "../engine/include/engine.h"
+#include "../engine/include/collidable.h"
+#include "../engine/include/canvas.h"
+#include "../engine/include/texture.h"
+#include "../engine/include/game_object.h"
+#include "../engine/include/events_translator.h"
+#include "../engine/include/game_events_listener.h"
 
 #include <string>
 #include <list>

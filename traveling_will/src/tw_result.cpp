@@ -1,8 +1,8 @@
 #include "tw_result.h"
 
-#include <ijengine/canvas.h>
-#include <ijengine/engine.h>
-#include <ijengine/keyboard_event.h>
+#include "../engine/include/canvas.h"
+#include "../engine/include/engine.h"
+#include "../engine/include/keyboard_event.h"
 
 #include <unistd.h>
 

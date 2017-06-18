@@ -1,10 +1,10 @@
 #include "tw_game.h"
 
 #include <iostream>
-#include <ijengine/game.h>
-#include <ijengine/exception.h>
-#include <ijengine/engine.h>
-#include <ijengine/events_translator.h>
+#include "../engine/include/game.h"
+#include "../engine/include/exception.h"
+#include "../engine/include/engine.h"
+#include "../engine/include/events_translator.h"
 
 using namespace ijengine;
 using namespace std;

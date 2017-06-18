@@ -23,7 +23,8 @@ CFLAGS = -pedantic -std=c++11 -MMD -g3 -g -fPIC\
 		 -Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual -Wredundant-decls\
 		 -Wsign-promo -Wstrict-null-sentinel -Wswitch-default -Wundef\
 		 -Wzero-as-null-pointer-constant -Wuseless-cast -Wnon-virtual-dtor
-INCLUDES = -Iinclude -Itest
+INCLUDES = -Iinclude -Itest 
+LIBS = 
 
 TARGET = $(LIB_DIR)/lib$(NAME).a
 
@@ -45,18 +46,15 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@echo Building $@
 	@$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
 
-# Not necessary
 $(TST_DIR)/%.o: $(TST_DIR)/%.cpp
 	@echo Building $@
 	@$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@
 
-# ar -(?)rcs *.o
 $(TARGET): $(OBJ)
 	@echo Building $@
 	@$(AR) $(ARFLAGS) $@ $(OBJ)
 	@echo Done.
 
-# Not necessary
 $(TEST): $(TST_OBJ) $(TARGET)
 	@echo Building executable...
 	@$(CC) $(CFLAGS) $(INCLUDES) $(TST_OBJ) $(TARGET) -o $@ $(LIBS)

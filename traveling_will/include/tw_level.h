@@ -6,11 +6,11 @@
 
 #include <string>
 #include <memory>
-#include <ijengine/level.h>
-#include <ijengine/texture.h>
-#include <ijengine/events_translator.h>
-#include <ijengine/game_events_listener.h>
-#include <ijengine/game_object.h>
+#include "../engine/include/level.h"
+#include "../engine/include/texture.h"
+#include "../engine/include/events_translator.h"
+#include "../engine/include/game_events_listener.h"
+#include "../engine/include/game_object.h"
 
 #include <deque>
 #include <vector>
@@ -25,7 +25,7 @@ class TWLevel : public Level, public GameEventsListener {
 	public:
 		~TWLevel(){}
 
-	protected:		
+	protected:
         static const int GAME_MOUSE_MOVEMENT =          1 << 9;
         static const int GAME_MOUSE_MOTION =            1 << 10;
         static const int BACK_BUTTON =                  0;

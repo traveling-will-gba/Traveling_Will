@@ -2,9 +2,9 @@
 #include "tw_will.h"
 #include "tw_portal_to_level.h"
 
-#include <ijengine/canvas.h>
-#include <ijengine/engine.h>
-#include <ijengine/keyboard_event.h>
+#include "../engine/include/canvas.h"
+#include "../engine/include/engine.h"
+#include "../engine/include/keyboard_event.h"
 
 #include <unistd.h>
 #include <cmath>
@@ -16,8 +16,8 @@
 using namespace std;
 using namespace ijengine;
 
-TWLimbo::TWLimbo(const string &current_level, const string& next_level, const string audio_path, 
-int audio_duration) : 
+TWLimbo::TWLimbo(const string &current_level, const string& next_level, const string audio_path,
+int audio_duration) :
     m_audio_duration(audio_duration), m_audio_counter(0), sprite_counter(0), m_sprite_speed(1/170.0){
 
     m_current_level = current_level;
@@ -31,7 +31,7 @@ int audio_duration) :
     on_portal = false;
 
     m_background_texture = resources::get_texture(m_current_level + "/background.png");
-    
+
     m_will = new TWWill(100, 5);
     m_will->set_m_active_events(false);
     add_child(m_will);
@@ -145,11 +145,11 @@ bool TWLimbo::on_event(const GameEvent& event){
 
 void TWLimbo::update_self(unsigned now, unsigned last){
     if(m_will->x_speed() || m_will->speed()){
-        if(m_will->x_speed() < 0)  
-            m_will->set_state(TWWill::State::REVERSE_RUNNING); 
+        if(m_will->x_speed() < 0)
+            m_will->set_state(TWWill::State::REVERSE_RUNNING);
         else
             m_will->set_state(RUNNING);
-    } 
+    }
     else m_will->set_state(STOPPED);
 
     sprite_counter += (now - m_start) * m_sprite_speed;
@@ -172,7 +172,7 @@ void TWLimbo::update_self(unsigned now, unsigned last){
     on_portal = false;
 
     m_start = now;
-}  
+}
 
 void TWLimbo::draw_self(Canvas *canvas, unsigned, unsigned){
     canvas->clear();
