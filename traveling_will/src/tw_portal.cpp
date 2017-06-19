@@ -61,7 +61,7 @@ const list<Rectangle>& TWPortal::hit_boxes() const{
 void TWPortal::on_collision(const Collidable *, const Rectangle&, const unsigned, const unsigned){
 	if(m_type == END){
 		if(auto p = dynamic_cast<TWPlayableLevel *>(this->parent())){
-            audio::play_sound_effect("res/effects/jump.wav");
+            audio::play_sound_effect("/opt/traveling_will/res/effects/jump.wav");
 	        p->set_done(true, false);
 	    }
 	}

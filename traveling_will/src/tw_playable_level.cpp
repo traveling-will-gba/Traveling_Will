@@ -43,7 +43,7 @@ int audio_duration) :
     m_floor_texture = resources::get_texture(m_current_level + "/floor.png");
 
 	//Read level design from txt
-	fstream level_design("res/" + m_current_level + "/level_design.txt");
+	ifstream level_design("/opt/traveling_will/res/" + m_current_level + "/level_design.txt");
 
 	if(not level_design.is_open()){
 		printf("Level design txt not available\n");

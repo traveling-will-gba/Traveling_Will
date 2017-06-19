@@ -33,10 +33,11 @@ namespace ijengine
         for (auto file : files)
             if (file.find("kernel") != string::npos)
             {
-                path = "libs/" + file;
+                path = "/opt/traveling_will/libs/" + file;
                 break;
             }
 
+        path = "/opt/traveling_will/libs/kernel.so.0.1.0";
         if (path.size() == 0)
             throw Exception("Kernel not found in libs dir");
 
