@@ -27,15 +27,16 @@ namespace ijengine
 
     Engine::Engine()
     {
-        auto files = os::list_files("libs");
+        auto files = os::list_files("/opt/traveling_will/libs");
         string path("");
 
-        for (auto file : files)
+        for (auto file : files){
             if (file.find("kernel") != string::npos)
             {
-                path = "libs/" + file;
+                path = "/opt/traveling_will/libs/" + file;
                 break;
             }
+        }
 
         if (path.size() == 0)
             throw Exception("Kernel not found in libs dir");

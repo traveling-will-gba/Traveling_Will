@@ -15,10 +15,10 @@ TWPortal::TWPortal(int px, int py, double speed, bool type){
     m_y = py;
     m_x = px;
     m_texture = resources::get_texture("portal.png");
-    
+
     m_active = true;
     this->set_priority(5);
-    
+
     m_bounding_box = Rectangle(m_x, m_y, m_width, m_height);
     physics::register_object(this);
 }
@@ -37,7 +37,7 @@ shared_ptr<Texture> TWPortal::texture(){ return m_texture; }
 
 void TWPortal::set_x(double cx) { m_x = cx; }
 void TWPortal::set_y(double cy) { m_y = cy; }
-void TWPortal::set_height(double ch) { m_height = ch; }    
+void TWPortal::set_height(double ch) { m_height = ch; }
 
 void TWPortal::set_x_speed(double speed){ m_x_speed = speed; }
 
@@ -59,12 +59,12 @@ const list<Rectangle>& TWPortal::hit_boxes() const{
 }
 
 void TWPortal::on_collision(const Collidable *, const Rectangle&, const unsigned, const unsigned){
-	if(m_type == END){
-		if(auto p = dynamic_cast<TWPlayableLevel *>(this->parent())){
-            audio::play_sound_effect("res/effects/jump.wav");
-	        p->set_done(true, false);
-	    }
-	}
+    if(m_type == END){
+        if(auto p = dynamic_cast<TWPlayableLevel *>(this->parent())){
+            audio::play_sound_effect("/opt/traveling_will/res/effects/jump.wav");
+            p->set_done(true, false);
+        }
+    }
 }
 
 void TWPortal::update_self(unsigned now, unsigned) {
@@ -91,4 +91,3 @@ void TWPortal::draw_self(Canvas* canvas, unsigned, unsigned) {
 /*    if(m_active)*/ canvas->draw(m_texture.get(), Rectangle(m_width * ((int) m_sprite_counter), 0, m_width, m_height), m_x, m_y);
     ////printf("Saindo do draw de collectable\n");
 }
-

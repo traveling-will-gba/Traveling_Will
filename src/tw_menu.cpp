@@ -117,7 +117,7 @@ void TWMenu::do_action(string label){
 		m_done = true;
 	}
 	if(label == "exit"){
-		audio::play_sound_effect("res/effects/exit.wav");
+		audio::play_sound_effect("/opt/traveling_will/res/effects/exit.wav");
 		exit(0);
 	}
 }

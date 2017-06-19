@@ -8,7 +8,7 @@ using namespace std;
 TWSave::TWSave(int n){
 	n_levels = n;
 
-	save = fopen("res/save.dat", "rb");
+	save = fopen("/opt/traveling_will/res/save.dat", "rb");
 
 	if(not save){
 		printf("Não foi possível abrir o arquivo save.dat\n");
@@ -53,11 +53,11 @@ void TWSave::increase_times_played(int level){
 
 
 int TWSave::max_collectables(int level){
-	return m_level_info[level].max_collectables;	
+	return m_level_info[level].max_collectables;
 }
 
 int TWSave::max_enemies(int level){
-	return m_level_info[level].max_enemies;	
+	return m_level_info[level].max_enemies;
 }
 
 int TWSave::record_collectables(int level){
@@ -73,7 +73,7 @@ int TWSave::times_played(int level){
 }
 
 void TWSave::update(){
-	save = fopen("res/save.dat", "wb");
+	save = fopen("/opt/traveling_will/res/save.dat", "wb");
 	fwrite(&m_level_info[1], sizeof(Level_stat), n_levels, save);
 	fclose(save);
 }
