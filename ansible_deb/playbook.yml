@@ -1,5 +1,0 @@
----
-- hosts: gcs
-  become: true
-  roles:
-  - basic
