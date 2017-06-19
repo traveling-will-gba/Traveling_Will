@@ -17,3 +17,6 @@ add_executable(kernel.0.1.0.so ${SOURCES})
 set_property(TARGET kernel.0.1.0.so PROPERTY CXX_STANDARD 11)
 target_link_libraries(kernel.0.1.0.so engine SDL2 SDL2_image SDL2_ttf SDL2_mixer dl)
 target_compile_options(kernel.0.1.0.so PRIVATE -shared -rdynamic -fPIC)
+
+add_custom_command(TARGET kernel.0.1.0.so COMMAND ${CMAKE_COMMAND}
+                    -E copy kernel.0.1.0.so ${PROJECT_SOURCE_DIR}/libs)

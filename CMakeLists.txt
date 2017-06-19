@@ -9,6 +9,7 @@ set (INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 set (SRC_DIR     "${PROJECT_SOURCE_DIR}/src")
 set (ASSETS_DIR  "${PROJECT_SOURCE_DIR}/res")
 
+file(MAKE_DIRECTORY "libs")
 file(GLOB_RECURSE SOURCES "${SRC_DIR}/*.cpp")
 
 include_directories("${INCLUDE_DIR}")
@@ -28,3 +29,22 @@ target_link_libraries(traveling_will
                         kernel
                         SDL2 SDL2_image SDL2_ttf SDL2_mixer
                         ${CMAKE_DL_LIBS})
+
+add_custom_command(TARGET traveling_will COMMAND ${CMAKE_COMMAND} -E copy traveling_will ${PROJECT_SOURCE_DIR})
+
+install(TARGETS traveling_will DESTINATION "/bin")
+
+install(DIRECTORY res DESTINATION "/opt/traveling_will" DIRECTORY_PERMISSIONS
+        OWNER_WRITE OWNER_READ OWNER_EXECUTE
+        GROUP_WRITE GROUP_READ GROUP_EXECUTE
+        WORLD_WRITE WORLD_READ WORLD_EXECUTE)
+
+install(DIRECTORY libs DESTINATION "/opt/traveling_will" DIRECTORY_PERMISSIONS
+        OWNER_WRITE OWNER_READ OWNER_EXECUTE
+        GROUP_WRITE GROUP_READ GROUP_EXECUTE
+        WORLD_WRITE WORLD_READ WORLD_EXECUTE)
+
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Victor Navarro e Vitor Barbosa")
+
+INCLUDE(CPack)
