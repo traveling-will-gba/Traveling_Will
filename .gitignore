@@ -1,11 +1,11 @@
 libs/*
-traveling_will/build/*
-traveling_will/traveling_will
-traveling_will/engine/lib
-traveling_will/engine/obj
-traveling_will/engine/*.swp
-traveling_will/engine/*.o
-traveling_will/engine/*~
-traveling_will/engine/*.d
-traveling_will/engine/*.so*
+build/*
+traveling_will
+engine/lib
+engine/obj
+engine/*.swp
+engine/*.o
+engine/*~
+engine/*.d
+engine/*.so*
 

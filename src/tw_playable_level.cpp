@@ -55,8 +55,6 @@ int audio_duration) :
 	level_design >> tempo;
 
 	m_x_speed = tempo * 4 * 36 / 60000.0;
-    //m_x_speed = 0.284; //FIXME
-    printf("tempo: %d, m_x_speed: %f\n", tempo, m_x_speed);
 
     level_design >> n_screens >> n_backgrounds;
 

@@ -7,7 +7,6 @@ add_library(kernel SHARED ${SOURCES})
 
 set (ENGINE_DIR "${PROJECT_SOURCE_DIR}/engine")
 set(ENGINE_INCLUDE_DIR "${ENGINE_DIR}/include")
-include_directories(${ENGINE_INCLUDE_DIR})
 
 include_directories(${ENGINE_INCLUDE_DIR})
 
