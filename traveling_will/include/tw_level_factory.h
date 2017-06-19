@@ -1,7 +1,7 @@
 #ifndef TW_LEVEL_FACTORY_H
 #define TW_LEVEL_FACTORY_H
 
-#include <ijengine/level_factory.h>
+#include "../engine/include/level_factory.h"
 
 #include "tw_menu.h"
 #include "tw_playable_level.h"
