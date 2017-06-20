@@ -243,7 +243,7 @@ button_state(int button_mask, int button_id)
         MouseEvent::RELEASED;
 }
 
-static string audio_dir_path { "." };
+static string audio_dir_path { "" };
 
 void
 SDL2Kernel::set_audio_dir(const string& dir_path)
@@ -410,7 +410,7 @@ SDL2Kernel::pending_keyboard_events(unsigned now) {
             bool repeated = it->key.repeat != 0;
             auto event = KeyboardEvent(timestamp,
                 KeyboardEvent::State::PRESSED,
-                m_key_table[it->key.keysym.sym],   
+                m_key_table[it->key.keysym.sym],
                 key_modifier(it->key.keysym.mod),
                 repeated);
 
@@ -421,7 +421,7 @@ SDL2Kernel::pending_keyboard_events(unsigned now) {
             bool repeated = it->key.repeat != 0;
             auto event = KeyboardEvent(timestamp,
                 KeyboardEvent::State::RELEASED,
-                m_key_table[it->key.keysym.sym],   
+                m_key_table[it->key.keysym.sym],
                 key_modifier(it->key.keysym.mod),
                 repeated);
 
@@ -430,9 +430,9 @@ SDL2Kernel::pending_keyboard_events(unsigned now) {
         } else
             ++it;
     }
- 
+
     return events;
-} 
+}
 
 list<MouseEvent>
 SDL2Kernel::pending_mouse_events(unsigned now)
@@ -564,4 +564,3 @@ SDL2Kernel::mouse_position()
 
     return pair<int, int>(x, y);
 }
-

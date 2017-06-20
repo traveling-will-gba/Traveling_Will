@@ -27,13 +27,13 @@ namespace ijengine
 
     Engine::Engine()
     {
-        auto files = os::list_files("/opt/traveling_will/libs");
+        auto files = os::list_files("/opt/traveling-will/libs");
         string path("");
 
         for (auto file : files){
             if (file.find("kernel") != string::npos)
             {
-                path = "/opt/traveling_will/libs/" + file;
+                path = "/opt/traveling-will/libs/" + file;
                 break;
             }
         }

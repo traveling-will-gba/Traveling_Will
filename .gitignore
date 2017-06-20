@@ -1,6 +1,6 @@
 libs/*
 build/*
-traveling_will
+traveling-will
 engine/lib
 engine/obj
 engine/*.swp

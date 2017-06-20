@@ -51,7 +51,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
 
     if(m_game_over){
         m_background = resources::get_texture(current_level + "/background-game-over.png");
-        m_audio = "/opt/traveling_will/res/result/losing.wav";
+        m_audio = "/opt/traveling-will/res/result/losing.wav";
 
         m_win = false;
         m_result = resources::get_texture(current_level + "/game-over.png");
@@ -64,7 +64,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
 
         if(percentage_col >= MINIMUM_PERCENTAGE){
             m_win = true;
-            m_audio = "/opt/traveling_will/res/" + to_string(played_level) + "/victory.wav";
+            m_audio = "/opt/traveling-will/res/" + to_string(played_level) + "/victory.wav";
             m_result = resources::get_texture(current_level + "/win.png");
             m_will_sprite = resources::get_texture(current_level + "/will-win.png");
 
@@ -72,7 +72,7 @@ TWResult::TWResult(const string &current_level, const string& next_level, const 
             m_save -> set_unlocked(played_level + 1);
         }else{
             m_win = false;
-            m_audio = "/opt/traveling_will/res/result/losing.wav";
+            m_audio = "/opt/traveling-will/res/result/losing.wav";
             m_result = resources::get_texture(current_level + "/lose.png");
             m_will_sprite = resources::get_texture(current_level + "/will-lose.png");
         }
