@@ -37,6 +37,9 @@ for line in f.readlines():
     collectable_present = False
     collectable_height = 0
 
+    if len(args) == 0:
+        continue
+
     platform_height = args[0]
     enemy_present = int(args[1])
 
@@ -55,13 +58,6 @@ for line in f.readlines():
     eh.append(str(enemy_height))
     cp.append(str(collectable_present))
     ch.append(str(collectable_height))
-
-#header_file.write("#define {}_platform_heights_len {}\n".format(len(heights)))
-#header_file.write("#define {}_enemy_present_len {}\n".format(len(ep)))
-#header_file.write("#define {}_enemy_type_len {}\n".format(len(et)))
-#header_file.write("#define {}_enemy_heights_len {}\n".format(len(eh)))
-#header_file.write("#define {}_collectable_present_len {}\n".format(len(cp)))
-#header_file.write("#define {}_collectable_heights_len {}\n".format(len(ch)))
 
 header_file.close()
 
