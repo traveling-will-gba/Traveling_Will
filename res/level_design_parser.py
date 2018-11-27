@@ -18,6 +18,14 @@ header_file.write("#ifndef {}_H\n".format(file_name.upper()))
 header_file.write("#define {}_H\n\n".format(file_name.upper()))
 header_file.write("#define {}_tempo {}\n".format(file_name, level_tempo))
 header_file.write("#define {}_len {}\n".format(file_name, level_len))
+
+header_file.write("extern const int {}_platform_heights[{}];\n".format(file_name, str(level_len)))
+header_file.write("extern const int {}_enemy_present[{}];\n".format(file_name, str(level_len)))
+header_file.write("extern const int {}_enemy_type[{}];\n".format(file_name, str(level_len)))
+header_file.write("extern const int {}_enemy_heights[{}];\n".format(file_name, str(level_len)))
+header_file.write("extern const int {}_collectable_present[{}];\n".format(file_name, str(level_len)))
+header_file.write("extern const int {}_collectable_heights[{}];\n".format(file_name, str(level_len)))
+
 header_file.write("\n#endif")
 
 heights = []
@@ -49,14 +57,14 @@ for line in f.readlines():
     else:
         collectable_present = int(args[2])
         if collectable_present:
-            collectable_height = args[2]
+            collectable_height = args[3]
 
 
     heights.append(str(platform_height))
-    ep.append(str(enemy_present))
+    ep.append(str("1" if enemy_present else "0"))
     et.append(str(enemy_type))
     eh.append(str(enemy_height))
-    cp.append(str(collectable_present))
+    cp.append(str("1" if collectable_present else "0"))
     ch.append(str(collectable_height))
 
 header_file.close()
