@@ -177,7 +177,7 @@ void note_to_string(Note note) {
     printf("base: %s %d modifier %s duration %d\n", note.base.c_str(), find_note(note.base), note.modifier.c_str(), note.duration);
 }
 
-void make_files(string filename, const vector<int> notes, const vector<int> tempos) {
+void generate_sound_files(string filename, const vector<int> notes, const vector<int> tempos) {
     string header_filename = filename + ".h";
     FILE* header_file = fopen(header_filename.c_str(), "w");
 
@@ -292,7 +292,7 @@ int main(int argc, char *argv[]){
         }
     }
 
-    make_files(argv[2], final_notes, final_tempos);
+    generate_sound_files(argv[2], final_notes, final_tempos);
 
     fclose(score);
 
